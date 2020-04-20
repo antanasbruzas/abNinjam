@@ -1,0 +1,37 @@
+set(CMAKE_CXX_STANDARD 20 CACHE STRING "C++ standard to be used")
+set(CMAKE_C_STANDARD 11 CACHE STRING "C standard to be used")
+
+# Export the compile_commands.json file
+set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Only install what's explicitely said
+set (CMAKE_SKIP_INSTALL_ALL_DEPENDENCY true)
+set (CMAKE_CXX_VISIBILITY_PRESET hidden)
+set (CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+
+# Add required flags for the builds
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    add_compile_options(-Wall)
+    add_compile_options(-Wextra)
+    add_compile_options(-ffast-math)
+    if (CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$")
+        add_compile_options(-msse2)
+    endif()
+endif()
+
+# Show build information
+function (show_build_info)
+    message (STATUS "
+Project name:                  ${PROJECT_NAME}
+Build processor:               ${CMAKE_SYSTEM_PROCESSOR}
+
+Install prefix:                ${CMAKE_INSTALL_PREFIX}
+
+Compiler CXX debug flags:      ${CMAKE_CXX_FLAGS_DEBUG}
+Compiler CXX release flags:    ${CMAKE_CXX_FLAGS_RELEASE}
+Compiler CXX min size flags:   ${CMAKE_CXX_FLAGS_MINSIZEREL}
+")
+endfunction()
+
+find_package(PkgConfig REQUIRED)
+find_package(Threads REQUIRED)
