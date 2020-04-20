@@ -1,10 +1,9 @@
 # abNINJAM
 
 ## Building
-- `git submodule update --init1`
-- `git submodule sync`
-- `mkdir build/ && cd build/ && cmake ..`
-- `cmake -DCMAKE_INSTALL_PREFIX=~/.vst3 --build . --config Release`
+- `git submodule update --init`
+- `mkdir build/ && cd build/ && cmake -DCMAKE_INSTALL_PREFIX:PATH=~/.vst3 ..`
+- `cmake --build . --config Release`
 
 ## Installing
 `cmake --build . --config Release --target install`
