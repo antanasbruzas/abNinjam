@@ -1,12 +1,15 @@
 # abNINJAM
 
-## Building
-- `git submodule update --init`
-- `mkdir build/ && cd build/ && cmake -DCMAKE_INSTALL_PREFIX:PATH=~/.vst3 ..`
-- `cmake --build . --config Release`
+## Build
+- Initialize dependencies:
+`git submodule update --init`
+- Configure build:
+`mkdir build/ && cd build/ && cmake -DCMAKE_INSTALL_PREFIX:PATH=~/.vst3 ..`
+- Compile:
+`cmake --build . --config Release`
 
-## Installing
+## Install
 `cmake --build . --config Release --target install`
 
-## Uninstalling
+## Uninstall
 `cmake --build . --target uninstall`
