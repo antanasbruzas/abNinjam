@@ -9,37 +9,37 @@
 
 #pragma once
 #if !defined(__APPLE__) && !defined(_WIN32)
-#include "vstgui/lib/platform/linux/x11frame.h"
 #include "pluginterfaces/gui/iplugview.h"
+#include "vstgui/lib/platform/linux/x11frame.h"
 
 namespace VSTGUI {
 
 class RunLoop final : public X11::IRunLoop, public AtomicReferenceCounted {
 public:
-    explicit RunLoop(Steinberg::FUnknown* runLoop);
-    ~RunLoop();
+  explicit RunLoop(Steinberg::FUnknown *runLoop);
+  ~RunLoop();
 
-    static SharedPointer<RunLoop> get();
+  static SharedPointer<RunLoop> get();
 
-    void processSomeEvents();
-    void cleanupDeadHandlers();
+  void processSomeEvents();
+  void cleanupDeadHandlers();
 
-    // X11::IRunLoop
-    bool registerEventHandler(int fd, X11::IEventHandler* handler);
-    bool unregisterEventHandler(X11::IEventHandler* handler);
-    bool registerTimer(uint64_t interval, X11::ITimerHandler* handler);
-    bool unregisterTimer(X11::ITimerHandler* handler);
-
-private:
-    struct EventHandler;
-    struct TimerHandler;
+  // X11::IRunLoop
+  bool registerEventHandler(int fd, X11::IEventHandler *handler);
+  bool unregisterEventHandler(X11::IEventHandler *handler);
+  bool registerTimer(uint64_t interval, X11::ITimerHandler *handler);
+  bool unregisterTimer(X11::ITimerHandler *handler);
 
 private:
-    using EventHandlers = std::vector<Steinberg::IPtr<EventHandler>>;
-    using TimerHandlers = std::vector<Steinberg::IPtr<TimerHandler>>;
-    EventHandlers eventHandlers;
-    TimerHandlers timerHandlers;
-    Steinberg::FUnknownPtr<Steinberg::Linux::IRunLoop> runLoop;
+  struct EventHandler;
+  struct TimerHandler;
+
+private:
+  using EventHandlers = std::vector<Steinberg::IPtr<EventHandler>>;
+  using TimerHandlers = std::vector<Steinberg::IPtr<TimerHandler>>;
+  EventHandlers eventHandlers;
+  TimerHandlers timerHandlers;
+  Steinberg::FUnknownPtr<Steinberg::Linux::IRunLoop> runLoop;
 };
 
 } // namespace VSTGUI

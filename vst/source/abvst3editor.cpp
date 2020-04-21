@@ -5,15 +5,18 @@
 
 using namespace VSTGUI;
 
-namespace Steinberg {
-namespace HelloWorld {
+namespace AbNinjam {
 
 AbVST3Editor::AbVST3Editor(Steinberg::Vst::EditController *editController,
                            UTF8StringPtr templateName,
                            UTF8StringPtr xmlFileName)
     : VST3Editor(editController, templateName, xmlFileName) {}
 
-CMessageResult AbVST3Editor::notify(CBaseObject *sender, const char *message) {
+CMessageResult AbVST3Editor::notify(CBaseObject *sender, IdStringPtr message) {
+  if (message == CVSTGUITimer::kMsgTimer) {
+    if (doCreateView)
+      recreateView();
+  }
   CMessageResult result = VSTGUIEditor::notify(sender, message);
 
   if (result != kMessageNotified)
@@ -36,5 +39,4 @@ CMessageResult AbVST3Editor::notify(CBaseObject *sender, const char *message) {
   return result;
 }
 
-} // namespace HelloWorld
-} // namespace Steinberg
+} // namespace AbNinjam

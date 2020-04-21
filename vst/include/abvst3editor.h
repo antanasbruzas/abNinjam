@@ -10,11 +10,9 @@ class RunLoop;
 }
 #endif
 
-using namespace Steinberg;
 using namespace VSTGUI;
 
-namespace Steinberg {
-namespace HelloWorld {
+namespace AbNinjam {
 
 class AbVST3Editor : public VST3Editor {
 public:
@@ -23,7 +21,6 @@ public:
   CMessageResult notify(CBaseObject *sender, IdStringPtr message) override;
 };
 
-} // namespace HelloWorld
-} // namespace Steinberg
+} // namespace AbNinjam
 
 #endif // ABVST3EDITOR_H
