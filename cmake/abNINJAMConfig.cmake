@@ -19,13 +19,19 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     endif()
 endif()
 
+# Default build type set as Release
+if(NOT CMAKE_CONFIGURATION_TYPES)
+    if(NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE Release)
+    endif()
+    message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+endif()
+
 # Show build information
 function (show_build_info)
     message (STATUS "
 Project name:                  ${PROJECT_NAME}
 Build processor:               ${CMAKE_SYSTEM_PROCESSOR}
-
-Install prefix:                ${CMAKE_INSTALL_PREFIX}
 
 Compiler CXX debug flags:      ${CMAKE_CXX_FLAGS_DEBUG}
 Compiler CXX release flags:    ${CMAKE_CXX_FLAGS_RELEASE}

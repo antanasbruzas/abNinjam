@@ -3,8 +3,24 @@ set (VSTPLUGIN_VENDOR          "Antanas Bruzas")
 set (VSTPLUGIN_URL             "http://hippie.lt")
 set (VSTPLUGIN_EMAIL           "antanas@hippie.lt")
 
-set (VSTPLUGIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/passengerAudio" CACHE STRING
-    "Install destination for VST bundle [default: ${CMAKE_INSTALL_PREFIX}/passengerAudio}]")
+include("cmake/modules/SetupVST3LibraryDefaultPath.cmake")
+
+# here you can define the VST3 plug-ins folder (it will be created)
+setup_default_vst3_path()
+if ("${DEFAULT_VST3_FOLDER}" STREQUAL "")
+    set (DEFAULT_VST3_FOLDER "${CMAKE_INSTALL_PREFIX}")
+endif()
+if (NOT VSTPLUGIN_INSTALL_DIR)
+    set(VSTPLUGIN_INSTALL_DIR "${DEFAULT_VST3_FOLDER}")
+endif()
+if (NOT ${VSTPLUGIN_INSTALL_DIR} STREQUAL "")
+    file(MAKE_DIRECTORY ${VSTPLUGIN_INSTALL_DIR})
+    if(EXISTS ${VSTPLUGIN_INSTALL_DIR})
+        message(STATUS "VSTPLUGIN_INSTALL_DIR is set to : " ${VSTPLUGIN_INSTALL_DIR})
+    else()
+        message(STATUS "VSTPLUGIN_INSTALL_DIR is not set!")
+    endif()
+endif()
 
 message(STATUS "System architecture: ${CMAKE_SYSTEM_PROCESSOR}")
 

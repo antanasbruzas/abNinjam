@@ -273,6 +273,7 @@ function(plugin_add_vstgui NAME)
 
     if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
         target_compile_definitions("${NAME}" PRIVATE "DEVELOPMENT")
+        target_compile_options(${NAME} PRIVATE -DVSTGUI_LIVE_EDITING=1)
     endif()
 
     if(${CMAKE_BUILD_TYPE} MATCHES "Release")
