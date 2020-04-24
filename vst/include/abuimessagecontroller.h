@@ -96,12 +96,14 @@ private:
           // add this as listener in order to get viewWillDelete and
           // viewLostFocus calls
           textEdits[i]->registerViewListener(this);
-          break;
 
-          // initialize it content
+          // initialize content
           String str(plugController->getMessageText(i));
           str.toMultiByte(kCP_Utf8);
-          textEdits[i]->setText(str.text8());
+          if (str.text8()) {
+            textEdits[i]->setText(str.text8());
+          }
+          break;
         }
       }
       // initialize it content
