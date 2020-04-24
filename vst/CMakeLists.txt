@@ -18,6 +18,7 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     include/plugprocessor.h
     include/version.h
     include/abvst3editor.h
+    include/abuimessagecontroller.h
     include/X11RunLoop.h
     source/plugfactory.cpp
     source/plugcontroller.cpp

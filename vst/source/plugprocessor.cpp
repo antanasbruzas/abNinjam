@@ -79,10 +79,15 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
               kResultTrue)
             mParam1 = value;
           break;
-        case AbNinjamParams::kParamOnId:
+        case AbNinjamParams::kParamConnectId:
           if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
               kResultTrue)
-            mParam2 = value > 0 ? 1 : 0;
+            connectParam = value > 0 ? 1 : 0;
+          break;
+        case AbNinjamParams::kParamConnectionIndicatorId:
+          if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
+              kResultTrue)
+            connectionIndicatorParam = value > 0 ? 1 : 0;
           break;
         case AbNinjamParams::kBypassId:
           if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
@@ -122,8 +127,8 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream *state) {
   if (streamer.readDouble(savedParam1) == false)
     return kResultFalse;
 
-  int32 savedParam2 = 0;
-  if (streamer.readInt32(savedParam2) == false)
+  int32 savedConnectParam = 0;
+  if (streamer.readInt32(savedConnectParam) == false)
     return kResultFalse;
 
   int32 savedBypass = 0;
@@ -131,7 +136,7 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream *state) {
     return kResultFalse;
 
   mParam1 = savedParam1;
-  mParam2 = savedParam2 > 0 ? 1 : 0;
+  connectParam = savedConnectParam > 0 ? 1 : 0;
   mBypass = savedBypass > 0;
 
   return kResultOk;
@@ -142,13 +147,23 @@ tresult PLUGIN_API PlugProcessor::getState(IBStream *state) {
   // here we need to save the model (preset or project)
 
   double toSaveParam1 = mParam1;
-  int32 toSaveParam2 = mParam2;
+  int32 toSaveConnectParam = connectParam;
   int32 toSaveBypass = mBypass ? 1 : 0;
 
   IBStreamer streamer(state, kLittleEndian);
   streamer.writeDouble(toSaveParam1);
-  streamer.writeInt32(toSaveParam2);
+  streamer.writeInt32(toSaveConnectParam);
   streamer.writeInt32(toSaveBypass);
+
+  return kResultOk;
+}
+
+//------------------------------------------------------------------------
+tresult PlugProcessor::receiveText(const char *text) {
+  // received from Controller
+  fprintf(stderr, "[PlugProcessor] received: ");
+  fprintf(stderr, "%s", text);
+  fprintf(stderr, "\n");
 
   return kResultOk;
 }

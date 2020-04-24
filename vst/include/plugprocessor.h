@@ -25,13 +25,17 @@ public:
   tresult PLUGIN_API setState(IBStream *state) SMTG_OVERRIDE;
   tresult PLUGIN_API getState(IBStream *state) SMTG_OVERRIDE;
 
+  /** Test of a communication channel between controller and component */
+  tresult receiveText(const char *text) SMTG_OVERRIDE;
+
   static FUnknown *createInstance(void *) {
     return static_cast<Vst::IAudioProcessor *>(new PlugProcessor());
   }
 
 protected:
   Vst::ParamValue mParam1 = 0;
-  int16 mParam2 = 0;
+  int16 connectParam = 0;
+  int16 connectionIndicatorParam = 0;
   bool mBypass = false;
 };
 
