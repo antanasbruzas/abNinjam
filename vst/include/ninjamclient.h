@@ -5,16 +5,20 @@
 
 #include "../../../../external/ninjam/ninjam/njclient.h"
 #include <iostream>
+#include <pthread.h>
 
 class NinjamClient {
 
 public:
   NinjamClient();
+  ~NinjamClient();
   int connect();
+  void disconnect();
+  NJClient *g_client;
+  bool stopConnectionThread;
 
 private:
-  NJClient *g_client;
-  int g_done = 0;
+  pthread_t connectionThread;
 };
 
 #endif // NINJAMCLIENT_H

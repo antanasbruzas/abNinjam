@@ -20,30 +20,54 @@ NinjamClient::NinjamClient() {
                                       false, false);
 }
 
+NinjamClient::~NinjamClient() { disconnect(); }
+
+void *keepConnectionThread(void *arg) {
+  std::cout << "keepConnectionThread" << std::endl;
+  NinjamClient *ninjamClient = (NinjamClient *)arg;
+  ninjamClient->stopConnectionThread = false;
+  NJClient *g_client = ninjamClient->g_client;
+
+  bool connected = false;
+  while (g_client->GetStatus() >= 0 &&
+         ninjamClient->stopConnectionThread == false) {
+    if (g_client->Run()) {
+      if (g_client->GetStatus() == 0) {
+        if (!connected) {
+          std::cout << "status: " << g_client->GetStatus() << std::endl;
+          std::cout << "bpi: " << g_client->GetBPI() << std::endl;
+          std::cout << "bpm: " << g_client->GetActualBPM() << std::endl;
+          std::cout << "is audio running: " << g_client->IsAudioRunning()
+                    << std::endl;
+          std::cout << "user: " << g_client->GetUser() << std::endl;
+          std::cout << "hostname: " << g_client->GetHostName() << std::endl;
+          std::cout << "num users: " << g_client->GetNumUsers() << "\n"
+                    << std::endl;
+        }
+        connected = true;
+      }
+    }
+  }
+  connected = false;
+
+  return nullptr;
+}
+
 int NinjamClient::connect() {
+  std::cout << "NinjamClient::connect()" << std::endl;
 
   char *hostname = strdup("192.168.11.145");
   char *parmuser = strdup("anonymous");
   char *parmpass = strdup("");
 
   g_client->Connect(hostname, parmuser, parmpass);
-
-  while (g_client->GetStatus() >= 0 && !g_done) {
-    if (g_client->Run()) {
-      if (g_client->GetStatus() == 0) {
-        g_done++;
-        std::cout << "status: " << g_client->GetStatus() << std::endl;
-        std::cout << "bpi: " << g_client->GetBPI() << std::endl;
-        std::cout << "bpm: " << g_client->GetActualBPM() << std::endl;
-        std::cout << "is audio running: " << g_client->IsAudioRunning()
-                  << std::endl;
-        std::cout << "user: " << g_client->GetUser() << std::endl;
-        std::cout << "hostname: " << g_client->GetHostName() << std::endl;
-        std::cout << "num users: " << g_client->GetNumUsers() << "\n"
-                  << std::endl;
-      }
-    }
-  }
+  pthread_create(&connectionThread, nullptr, keepConnectionThread, this);
 
   return 0;
+}
+
+void NinjamClient::disconnect() {
+  stopConnectionThread = true;
+  pthread_join(connectionThread, nullptr);
+  g_client->Disconnect();
 }

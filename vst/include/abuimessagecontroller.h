@@ -59,6 +59,7 @@ private:
   void controlEndEdit(CControl *pControl) override {
     if (pControl->getTag() == kConnectTag) {
       if (pControl->getValueNormalized() > 0.5f) {
+        fprintf(stderr, "Connect initiated\n");
 
         for (auto &textEdit : textEdits) {
           if (textEdit) {
@@ -85,6 +86,9 @@ private:
         //          message->getAttributes()->setBinary("MyData", data, size);
         //          plugController->sendMessage(message);
         //        }
+      } else {
+        fprintf(stderr, "Disconnect initiated\n");
+        ninjamClient->disconnect();
       }
     }
   }
