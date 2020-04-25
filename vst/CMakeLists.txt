@@ -20,11 +20,13 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     include/abvst3editor.h
     include/abuimessagecontroller.h
     include/X11RunLoop.h
+    include/ninjamclient.h
     source/plugfactory.cpp
     source/plugcontroller.cpp
     source/plugprocessor.cpp
     source/abvst3editor.cpp
-    source/X11RunLoop.cpp)
+    source/X11RunLoop.cpp
+    source/ninjamclient.cpp)
 
 target_include_directories(${VSTPLUGIN_PRJ_NAME}
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
@@ -34,6 +36,16 @@ set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
 
 plugin_add_vst3sdk(${VSTPLUGIN_PRJ_NAME})
 plugin_add_vstgui(${VSTPLUGIN_PRJ_NAME})
+
+# Add ninjam
+target_include_directories(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam")
+target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/njclient.cpp")
+target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/netmsg.cpp")
+target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/mpb.cpp")
+target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/rng.cpp")
+target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/sha.cpp")
+target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/asyncdns.cpp")
+target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/connection.cpp")
 
 
 # Create the bundle (see "VST 3 Locations / Format")

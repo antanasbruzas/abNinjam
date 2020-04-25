@@ -1,11 +1,10 @@
 #pragma once
-
+#include "ninjamclient.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
 #include "vstgui/lib/controls/ctextedit.h"
 #include "vstgui/lib/iviewlistener.h"
 #include "vstgui/uidescription/icontroller.h"
 #include <array>
-
 //------------------------------------------------------------------------
 using namespace Steinberg;
 using namespace Vst;
@@ -21,8 +20,12 @@ class AbUIMessageController : public VSTGUI::IController,
 public:
   enum Tags { kConnectTag = 1000 };
 
+  NinjamClient *ninjamClient;
+
   AbUIMessageController(ControllerType *plugController)
-      : plugController(plugController), textEdits() {}
+      : plugController(plugController), textEdits() {
+    ninjamClient = new NinjamClient();
+  }
   ~AbUIMessageController() override {
 
     for (auto &textEdit : textEdits) {
@@ -62,6 +65,10 @@ private:
             plugController->sendTextMessage(textEdit->getText().data());
           }
         }
+
+        int status = ninjamClient->connect();
+        fprintf(stderr, "NinjamClient status: %d\n", status);
+
         // pControl->setValue(0.f);
         // pControl->invalid();
 
