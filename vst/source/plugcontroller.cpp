@@ -17,13 +17,15 @@ tresult PLUGIN_API PlugController::initialize(FUnknown *context) {
                                 ParameterInfo::kIsBypass,
                             AbNinjamParams::kBypassId);
 
-    parameters.addParameter(STR16("Parameter 1"), STR16("dB"), 0, .5,
-                            ParameterInfo::kIsReadOnly,
-                            AbNinjamParams::kParamVolId, 0, STR16("Param1"));
     parameters.addParameter(STR16("Connect to server"), STR16("On/Off"), 1, 0,
                             ParameterInfo::kCanAutomate,
                             AbNinjamParams::kParamConnectId, 0,
                             STR16("Connect"));
+
+    parameters.addParameter(
+        STR16("Connection indicator"), STR16("Connected/Disconnected"), 1, 0,
+        ParameterInfo::kIsReadOnly, AbNinjamParams::kParamConnectionIndicatorId,
+        0, STR16("Connection"));
 
     //---Custom state init------------
     Steinberg::String defaultPort("2049");
@@ -50,11 +52,6 @@ tresult PLUGIN_API PlugController::setComponentState(IBStream *state) {
     return kResultFalse;
 
   IBStreamer streamer(state, kLittleEndian);
-
-  double savedParam1 = 0.0;
-  if (streamer.readDouble(savedParam1) == false)
-    return kResultFalse;
-  setParamNormalized(AbNinjamParams::kParamVolId, savedParam1);
 
   int8 connectState = 0;
   if (streamer.readInt8(connectState) == false)

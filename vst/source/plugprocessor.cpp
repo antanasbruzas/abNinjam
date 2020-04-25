@@ -74,11 +74,6 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
         int32 sampleOffset;
         int32 numPoints = paramQueue->getPointCount();
         switch (paramQueue->getParameterId()) {
-        case AbNinjamParams::kParamVolId:
-          if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
-              kResultTrue)
-            mParam1 = value;
-          break;
         case AbNinjamParams::kParamConnectId:
           if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
               kResultTrue)
