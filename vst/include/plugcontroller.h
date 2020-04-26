@@ -57,7 +57,7 @@ public:
 private:
   using UIMessageControllerList = std::vector<UIMessageController *>;
   UIMessageControllerList uiMessageControllers;
-  std::array<String128, 4> messageTexts;
+  std::array<String128, 3> messageTexts;
 };
 
 //------------------------------------------------------------------------

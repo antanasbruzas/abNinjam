@@ -28,8 +28,8 @@ tresult PLUGIN_API PlugController::initialize(FUnknown *context) {
         0, STR16("Connection"));
 
     //---Custom state init------------
-    Steinberg::String defaultPort("2049");
-    defaultPort.copyTo16(messageTexts[3], 0, 127);
+    // Steinberg::String defaultPort("2049");
+    // defaultPort.copyTo16(messageTexts[3], 0, 127);
   }
   return kResultTrue;
 }

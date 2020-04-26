@@ -67,25 +67,14 @@ private:
           }
         }
 
-        int status = ninjamClient->connect();
+        int status =
+            ninjamClient->connect(utf8StringToCharPtr(textEdits[0]->getText()),
+                                  utf8StringToCharPtr(textEdits[1]->getText()),
+                                  utf8StringToCharPtr(textEdits[2]->getText()));
         fprintf(stderr, "NinjamClient status: %d\n", status);
 
         // pControl->setValue(0.f);
         // pControl->invalid();
-
-        //---send a binary message
-        //        if (IPtr<IMessage> message =
-        //        owned(plugController->allocateMessage())) {
-        //          message->setMessageID("BinaryMessage");
-        //          uint32 size = 100;
-        //          uint32 data[100];
-        //          memset(data, 0, size * sizeof(char));
-        //          // fill my data with dummy stuff
-        //          for (uint32 i = 0; i < size; i++)
-        //            data[i] = i;
-        //          message->getAttributes()->setBinary("MyData", data, size);
-        //          plugController->sendMessage(message);
-        //        }
       } else {
         fprintf(stderr, "Disconnect initiated\n");
         ninjamClient->disconnect();
@@ -117,10 +106,6 @@ private:
           break;
         }
       }
-      // initialize it content
-      // String str("TODO");
-      // str.toMultiByte(kCP_Utf8);
-      // textEdits[0]->setText(str.text8());
     }
     return view;
   }
@@ -151,25 +136,16 @@ private:
         }
       }
     }
-    //    auto it = std::begin(textEdits);
-    //    for (auto &textEdit : textEdits) {
-    //      if (textEdit) {
-    //        if (dynamic_cast<CTextEdit *>(view) == textEdit) {
-    //          // save the last content of the text edit view
-    //          const UTF8String &text = textEdit->getText();
-    //          String128 messageText;
-    //          String str;
-    //          str.fromUTF8(text.data());
-    //          str.copyTo(messageText, 0, 128);
-    //          plugController->setMessageText(messageText, it);
-    //        }
-    //      }
-    //      ++it;
-    //    }
+  }
+
+  char *utf8StringToCharPtr(UTF8String utf8String) {
+    const UTF8String &text = utf8String;
+    String str;
+    str.fromUTF8(text.data());
+    return strdup(str.text8());
   }
   ControllerType *plugController;
-  std::array<CTextEdit *, 4> textEdits;
-  // CTextEdit *textEdits[4];
+  std::array<CTextEdit *, 3> textEdits;
 };
 
 //------------------------------------------------------------------------

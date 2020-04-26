@@ -23,7 +23,6 @@ NinjamClient::NinjamClient() {
 NinjamClient::~NinjamClient() { disconnect(); }
 
 void *keepConnectionThread(void *arg) {
-  std::cout << "keepConnectionThread" << std::endl;
   NinjamClient *ninjamClient = (NinjamClient *)arg;
   ninjamClient->stopConnectionThread = false;
   NJClient *g_client = ninjamClient->g_client;
@@ -53,14 +52,17 @@ void *keepConnectionThread(void *arg) {
   return nullptr;
 }
 
-int NinjamClient::connect() {
-  std::cout << "NinjamClient::connect()" << std::endl;
+int NinjamClient::connect(char *host, char *user, char *pass) {
 
-  char *hostname = strdup("192.168.11.145");
-  char *parmuser = strdup("anonymous");
-  char *parmpass = strdup("");
+  if (isEmpty(host)) {
+    return -1;
+  }
 
-  g_client->Connect(hostname, parmuser, parmpass);
+  if (isEmpty(user)) {
+    user = strdup("anonymous");
+  }
+
+  g_client->Connect(host, user, pass);
   pthread_create(&connectionThread, nullptr, keepConnectionThread, this);
 
   return 0;
@@ -68,6 +70,18 @@ int NinjamClient::connect() {
 
 void NinjamClient::disconnect() {
   stopConnectionThread = true;
-  pthread_join(connectionThread, nullptr);
-  g_client->Disconnect();
+
+  if (pthread_equal(pthread_self(), connectionThread) != 0) {
+    pthread_join(connectionThread, nullptr);
+  }
+  if (g_client) {
+    g_client->Disconnect();
+  }
+}
+
+bool NinjamClient::isEmpty(char *c) {
+  if ((c != nullptr) && (c[0] == '\0')) {
+    return true;
+  }
+  return false;
 }
