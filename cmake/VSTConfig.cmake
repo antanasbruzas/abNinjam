@@ -1,4 +1,4 @@
-set (VSTPLUGIN_NAME            "abNINJAM")
+set (VSTPLUGIN_NAME            "abNinjam")
 set (VSTPLUGIN_VENDOR          "Antanas Bruzas")
 set (VSTPLUGIN_URL             "http://hippie.lt")
 set (VSTPLUGIN_EMAIL           "antanas@hippie.lt")

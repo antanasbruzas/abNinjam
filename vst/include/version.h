@@ -25,7 +25,7 @@
 // HERE you have to define your plug-in, company name, email and web
 #define stringPluginName "NINJAM client"
 
-#define stringOriginalFilename "abNINJAM.vst3"
+#define stringOriginalFilename "abNinjam.vst3"
 #if SMTG_PLATFORM_64
 #define stringFileDescription stringPluginName " VST3 (64Bit)"
 #else

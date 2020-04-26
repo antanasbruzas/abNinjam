@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.16.2)
-project (abNINJAM)
+project (abNinjam)
 set (PROJECT_DESCRIPTION "NINJAM client")
 
 # External configuration CMake scripts
 set (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-include (abNINJAMConfig)
+include (abNinjamConfig)
 
 option (ABNINJAM_VST "Enable VST plug-in build [default: ON]" ON)
 
@@ -14,7 +14,7 @@ endif()
 
 # Put it at the end so that the vst directories are registered
 if (NOT MSVC)
-    include(abNINJAMUninstall)
+    include(abNinjamUninstall)
 endif()
 
 show_build_info()
