@@ -18,7 +18,7 @@ jobs:
     - name: initialize
       run: git submodule update --init
     - name: configure
-      run: mkdir build/ && cd build/ && cmake ..
+      run: cmake .
     - name: build
       run: cmake --build .
     - name: install
