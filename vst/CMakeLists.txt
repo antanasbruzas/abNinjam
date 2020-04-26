@@ -37,7 +37,11 @@ set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
 plugin_add_vst3sdk(${VSTPLUGIN_PRJ_NAME})
 plugin_add_vstgui(${VSTPLUGIN_PRJ_NAME})
 
-# Add ninjam
+# Add ninjam -------
+pkg_check_modules(VORBIS vorbis>=1.3.3)
+target_include_directories("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBIS_INCLUDE_DIRS})
+target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBIS_LIBRARIES})
+
 target_include_directories(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam")
 target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/njclient.cpp")
 target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/netmsg.cpp")
@@ -46,6 +50,7 @@ target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../ext
 target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/sha.cpp")
 target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/asyncdns.cpp")
 target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/connection.cpp")
+# Add ninjam end ---
 
 
 # Create the bundle (see "VST 3 Locations / Format")
