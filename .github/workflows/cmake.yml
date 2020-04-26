@@ -26,4 +26,4 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: abNinjam
-        path: /home/runner/.vst3/abNINJAM.vst3
+        path: /home/runner/.vst3/
