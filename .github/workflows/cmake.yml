@@ -23,3 +23,8 @@ jobs:
       run: cmake --build .
     - name: install
       run: cmake --build . --target install
+    - name: archive artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: abNinjam
+          path: ~/.vst3/abNINJAM.vst3
