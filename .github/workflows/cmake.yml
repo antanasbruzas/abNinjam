@@ -1,0 +1,23 @@
+name: cmake CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: initialize
+      run: git submodule update --init
+    - name: configure
+      run: mkdir build/ && cd build/ && cmake ..
+    - name: build
+      run: cmake --build .
+    - name: install
+      run: cmake --build . --target install
