@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <filesystem>
+#include "../filesystem.hpp"
 
 using namespace std;
 using namespace std::filesystem;
@@ -19,10 +19,12 @@ public:
   auto &gsHost() { return host; }
   auto &gsUsername() { return username; }
   auto &gsPassword() { return password; }
+  auto &gsLicenseAutoAgree() { return licenseAutoAgree; }
   void readFromFile(path path);
 
 private:
   char *host, *username, *password;
+  bool licenseAutoAgree;
 };
 
 } // namespace abNinjam

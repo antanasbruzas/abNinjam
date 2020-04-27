@@ -82,8 +82,10 @@ private:
             utf8StringToCharPtr(textEdits[2]->getText());
 
         int status = ninjamClient->connect(connectionProperties);
+        if (status != 0) {
+          pControl->setValue(0.f);
+        }
         fprintf(stderr, "NinjamClient status: %d\n", status);
-
         // pControl->setValue(0.f);
         // pControl->invalid();
       } else {
@@ -96,23 +98,7 @@ private:
   //--- is called when a view is created -----
   CView *verifyView(CView *view, const UIAttributes & /*attributes*/,
                     const IUIDescription * /*description*/) override {
-
-    //    if (VSTGUI::CViewContainer *vc =
-    //            dynamic_cast<VSTGUI::CViewContainer *>(view)) {
-    //      VSTGUI::CRect fr(0, 0, 10, 10);
-    //      VSTGUI::COptionMenu *optionMenu = new VSTGUI::COptionMenu(fr, this,
-    //      1002); optionMenu->addEntry("License");
-    //      optionMenu->addEntry("Agree");
-    //      optionMenu->addEntry("Disagree");
-    //      bool added = false;
-    //      if (!added) {
-    //        vc->addView(optionMenu);
-    //        added = true;
-    //      }
-    //    }
-
     if (CTextEdit *te = dynamic_cast<CTextEdit *>(view)) {
-
       // this allows us to keep a pointer of the text edit view
       for (unsigned short i = 0; i < textEdits.size(); i++) {
         if (!textEdits[i]) {

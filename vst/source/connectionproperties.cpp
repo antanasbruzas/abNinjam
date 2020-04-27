@@ -15,7 +15,9 @@ void ConnectionProperties::readFromFile(path path) {
     string line;
     while (getline(ifs, line)) {
       if (line.rfind("host", 0) == 0) {
-        this->host = strdup(line.substr(5, line.length()).c_str());
+        if (isEmpty(this->host)) {
+          this->host = strdup(line.substr(5, line.length()).c_str());
+        }
       }
       if (line.rfind("user", 0) == 0) {
         if (isEmpty(this->username)) {
@@ -26,6 +28,10 @@ void ConnectionProperties::readFromFile(path path) {
         if (isEmpty(this->password)) {
           this->password = strdup(line.substr(5, line.length()).c_str());
         }
+      }
+      if (line.rfind("licenseAutoAgree", 0) == 0) {
+        istringstream(line.substr(17, line.length())) >> boolalpha >>
+            this->licenseAutoAgree;
       }
     }
   }

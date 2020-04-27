@@ -1,14 +1,26 @@
 #include "../include/ninjamclient.h"
 #include "../include/fileutil.h"
+#include "../include/licensedialog.h"
 #include "../include/stringutil.h"
 
 #include <iostream>
+#include <sstream>
 
 using namespace abNinjam;
 
+static int agree = 1;
+static bool autoAgree = false;
+
 int licensecallback(void *userData, const char *licensetext) {
-  cout << "status: " << licensetext << endl;
-  return 1;
+  if (autoAgree) {
+    return true;
+  }
+  LicenseDialog *licenseDialog = new LicenseDialog();
+  agree = licenseDialog->showDialog(licensetext);
+  if (agree == 0) {
+    return true;
+  }
+  return false;
 }
 
 void chatmsg_cb(void *userData, NJClient *inst, const char **parms,
@@ -48,6 +60,7 @@ void *keepConnectionThread(void *arg) {
           cout << "num users: " << g_client->GetNumUsers() << "\n" << endl;
         }
         connected = true;
+        break;
       }
     }
   }
@@ -57,31 +70,53 @@ void *keepConnectionThread(void *arg) {
 }
 
 int NinjamClient::connect(ConnectionProperties connectionProperties) {
-  if (isEmpty(connectionProperties.gsHost())) {
-    path propertiesPath = getHomePath();
-    propertiesPath /= "abNinjam/connection.properties";
-    if (exists(propertiesPath)) {
-      cout << "Configuration file provided: " << propertiesPath << endl;
-      connectionProperties.readFromFile(propertiesPath);
-    } else {
-      cout << "Configuration file not provided." << endl;
-    }
 
-    if (isEmpty(connectionProperties.gsHost())) {
-      return -1;
-    }
+  path propertiesPath = getHomePath();
+
+  ostringstream oss;
+  oss << "abNinjam" << separator() << "connection.properties";
+  propertiesPath /= oss.str();
+  if (exists(propertiesPath)) {
+    cout << "Configuration file provided: " << propertiesPath << endl;
+    connectionProperties.readFromFile(propertiesPath);
+  } else {
+    cout << "Configuration file not provided." << endl;
+  }
+
+  if (isEmpty(connectionProperties.gsHost())) {
+    return -1;
   }
 
   if (isEmpty(connectionProperties.gsUsername())) {
     connectionProperties.gsUsername() = strdup("anonymous");
   }
 
+  agree = 1;
+  autoAgree = connectionProperties.gsLicenseAutoAgree();
+
   njClient->Connect(connectionProperties.gsHost(),
                     connectionProperties.gsUsername(),
                     connectionProperties.gsPassword());
-  pthread_create(&connectionThread, nullptr, keepConnectionThread, this);
 
-  return 0;
+  bool connected = false;
+  while (njClient->GetStatus() >= 0) {
+    if (njClient->Run()) {
+      if (njClient->GetStatus() == 0) {
+        cout << "Connected" << endl;
+        connected = true;
+        pthread_create(&connectionThread, nullptr, keepConnectionThread, this);
+        break;
+      }
+    }
+  }
+
+  if (agree == 256) {
+    return -2;
+  }
+  if (connected) {
+    return 0;
+  }
+  return -3;
 }
 
 void NinjamClient::disconnect() {

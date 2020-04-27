@@ -24,6 +24,7 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     include/fileutil.h
     include/stringutil.h
     include/connectionproperties.h
+    include/licensedialog.h
     source/plugfactory.cpp
     source/plugcontroller.cpp
     source/plugprocessor.cpp
@@ -32,7 +33,8 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     source/ninjamclient.cpp
     source/fileutil.cpp
     source/stringutil.cpp
-    source/connectionproperties.cpp)
+    source/connectionproperties.cpp
+    source/licensedialog.cpp)
 
 target_include_directories(${VSTPLUGIN_PRJ_NAME}
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")

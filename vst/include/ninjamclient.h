@@ -16,9 +16,6 @@ public:
   ~NinjamClient();
   int connect(ConnectionProperties connectionProperties);
   void disconnect();
-  // NJClient *getNjClient() const { return njClient; }
-
-  // NJClient *&getNjClient() { return njClient; }
   auto &gsNjClient() { return njClient; }
   auto &gsStopConnectionThread() { return stopConnectionThread; }
 
