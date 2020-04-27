@@ -60,7 +60,6 @@ void *keepConnectionThread(void *arg) {
           cout << "num users: " << g_client->GetNumUsers() << "\n" << endl;
         }
         connected = true;
-        break;
       }
     }
   }
@@ -104,17 +103,16 @@ int NinjamClient::connect(ConnectionProperties connectionProperties) {
       if (njClient->GetStatus() == 0) {
         cout << "Connected" << endl;
         connected = true;
-        pthread_create(&connectionThread, nullptr, keepConnectionThread, this);
         break;
       }
     }
   }
-
+  if (connected) {
+    pthread_create(&connectionThread, nullptr, keepConnectionThread, this);
+    return 0;
+  }
   if (agree == 256) {
     return -2;
-  }
-  if (connected) {
-    return 0;
   }
   return -3;
 }
