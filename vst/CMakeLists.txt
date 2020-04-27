@@ -21,12 +21,18 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     include/abuimessagecontroller.h
     include/X11RunLoop.h
     include/ninjamclient.h
+    include/fileutil.h
+    include/stringutil.h
+    include/connectionproperties.h
     source/plugfactory.cpp
     source/plugcontroller.cpp
     source/plugprocessor.cpp
     source/abvst3editor.cpp
     source/X11RunLoop.cpp
-    source/ninjamclient.cpp)
+    source/ninjamclient.cpp
+    source/fileutil.cpp
+    source/stringutil.cpp
+    source/connectionproperties.cpp)
 
 target_include_directories(${VSTPLUGIN_PRJ_NAME}
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")

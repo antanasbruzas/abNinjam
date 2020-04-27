@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vstgui-ui-description version="1">
+	<fonts>
+	</fonts>
+	<colors>
+	</colors>
+	<template background-color="~ BlackCColor" background-color-draw-style="filled and stroked" bitmap="background" class="CViewContainer" mouse-enabled="true" name="view" opacity="1" origin="0, 0" size="350, 120" transparent="false" wants-focus="false">
+		<view bitmap="light" class="COnOffButton" control-tag="ConnectionIndicator" default-value="0" max-value="1" min-value="0" mouse-enabled="false" opacity="1" origin="313, 48" size="20, 20" tooltip="Connection indicator" transparent="false" wants-focus="true" wheel-inc-value="0.1"/>
+		<view background-color="~ BlackCColor" background-color-draw-style="filled and stroked" class="CViewContainer" mouse-enabled="true" opacity="1" origin="20, 45" size="300, 68" sub-controller="MessageController" transparent="true" wants-focus="false">
+			<view bitmap="onoff_button" class="COnOffButton" control-tag="Connect" default-value="0" max-value="1" min-value="0" mouse-enabled="true" opacity="1" origin="240, 5" size="60, 60" tooltip="Connect" transparent="false" wants-focus="true" wheel-inc-value="0.1"/>
+			<view back-color="~ TransparentCColor" background-offset="0, 0" class="CTextEdit" default-value="0.5" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" frame-color="~ TransparentCColor" frame-width="1" immediate-text-change="false" max-value="1" min-value="0" mouse-enabled="true" opacity="1" origin="0, 5" placeholder-title="Server" round-rect-radius="6" secure-style="false" shadow-color="~ TransparentCColor" size="160, 20" style-3D-in="false" style-3D-out="false" style-doubleclick="false" style-no-draw="false" style-no-frame="false" style-no-text="false" style-round-rect="false" style-shadow-text="false" text-alignment="left" text-inset="0, 0" text-rotation="0" text-shadow-offset="1, 1" tooltip="Server URL" transparent="false" value-precision="2" wants-focus="true" wheel-inc-value="0.1"/>
+			<view back-color="~ TransparentCColor" background-offset="0, 0" class="CTextEdit" default-value="0.5" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" frame-color="~ TransparentCColor" frame-width="1" immediate-text-change="false" max-value="1" min-value="0" mouse-enabled="true" opacity="1" origin="0, 25" placeholder-title="User name" round-rect-radius="6" secure-style="false" shadow-color="~ TransparentCColor" size="160, 20" style-3D-in="false" style-3D-out="false" style-doubleclick="false" style-no-draw="false" style-no-frame="false" style-no-text="false" style-round-rect="false" style-shadow-text="false" text-alignment="left" text-inset="0, 0" text-rotation="0" text-shadow-offset="1, 1" transparent="false" value-precision="2" wants-focus="true" wheel-inc-value="0.1"/>
+			<view back-color="~ TransparentCColor" background-offset="0, 0" class="CTextEdit" default-value="0.5" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" frame-color="~ TransparentCColor" frame-width="1" immediate-text-change="false" max-value="1" min-value="0" mouse-enabled="true" opacity="1" origin="0, 45" placeholder-title="Password" round-rect-radius="6" secure-style="true" shadow-color="~ TransparentCColor" size="160, 20" style-3D-in="false" style-3D-out="false" style-doubleclick="false" style-no-draw="false" style-no-frame="false" style-no-text="false" style-round-rect="false" style-shadow-text="false" text-alignment="left" text-inset="0, 0" text-rotation="0" text-shadow-offset="1, 1" transparent="false" value-precision="2" wants-focus="true" wheel-inc-value="0.1"/>
+			<view back-color="~ GreyCColor" background-offset="0, 0" class="COptionMenu" control-tag="LicensePopup" default-value="0.5" font="~ NormalFont" font-antialias="true" font-color="~ WhiteCColor" frame-color="~ TransparentCColor" frame-width="1" max-value="1.84467e+19" menu-check-style="false" menu-popup-style="true" min-value="0" mouse-enabled="true" opacity="1" origin="230, 5" round-rect-radius="6" shadow-color="~ TransparentCColor" size="10, 60" style-3D-in="false" style-3D-out="false" style-no-draw="false" style-no-frame="false" style-no-text="false" style-round-rect="false" style-shadow-text="false" text-alignment="center" text-inset="0, 0" text-rotation="0" text-shadow-offset="1, 1" transparent="false" value-precision="2" wants-focus="true" wheel-inc-value="0.1"/>
+			<view background-color="~ BlueCColor" background-color-draw-style="filled and stroked" class="CViewContainer" mouse-enabled="true" opacity="1" origin="170, 0" size="50, 70" transparent="false" wants-focus="false"/>
+		</view>
+	</template>
+	<custom>
+		<attributes name="FocusDrawing"/>
+		<attributes Path="/home/antanas/abNinjam/vst/resource/plug.uidesc" name="VST3Editor"/>
+		<attributes Grids="1x 1,5x 5,10x 10,12x 12,15x 15" Size="10, 10" name="UIGridController"/>
+		<attributes SelectedTemplate="view" name="UITemplateController"/>
+		<attributes EditViewScale="2" EditorSize="0, 0, 1225, 1016" SplitViewSize_0_0="0.8696969696969697460886550288705620914698" SplitViewSize_0_1="0.1101010101010101022156462136081245262176" SplitViewSize_1_0="0.5111111111111110716365146799944341182709" SplitViewSize_1_1="0.4838383838383838453367502552282530814409" SplitViewSize_2_0="0.686530612244897975315893745573703199625" SplitViewSize_2_1="0.3093877551020408067650180328200804069638" TabSwitchValue="0" Version="1" name="UIEditController"/>
+		<attributes name="UIAttributesController"/>
+		<attributes SelectedRow="30" name="UIViewCreatorDataSource"/>
+		<attributes SelectedRow="0" name="UIBitmapsDataSource"/>
+		<attributes SelectedRow="1" name="UITagsDataSource"/>
+		<attributes SelectedRow="-1" name="UIColorsDataSource"/>
+		<attributes SelectedRow="-1" name="UIGradientsDataSource"/>
+	</custom>
+	<bitmaps>
+		<bitmap name="background" path="background.png"/>
+		<bitmap name="onoff_button" path="onoff_button.png"/>
+		<bitmap name="light" path="light.png"/>
+		<bitmap name="background_2x" path="background_2x.png" scale-factor="2"/>
+		<bitmap name="onoff_button_2x" path="onoff_button_2x.png" scale-factor="2"/>
+		<bitmap name="light_2x" path="light_2x.png" scale-factor="2"/>
+		<bitmap name="background_3x" path="background_3x.png" scale-factor="3"/>
+		<bitmap name="onoff_button_3x" path="onoff_button_3x.png" scale-factor="3"/>
+		<bitmap name="light_3x" path="light_3x.png" scale-factor="3"/>
+	</bitmaps>
+	<control-tags>
+		<control-tag name="Bypass" tag="100"/>
+		<control-tag name="Connect" tag="1000"/>
+		<control-tag name="ConnectionIndicator" tag="1001"/>
+		<control-tag name="LicensePopup" tag="1002"/>
+	</control-tags>
+	<gradients/>
+</vstgui-ui-description>

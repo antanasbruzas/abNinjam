@@ -9,7 +9,7 @@
 using namespace Steinberg;
 using namespace Vst;
 
-namespace AbNinjam {
+namespace abNinjam {
 
 template <typename T> class AbUIMessageController;
 
@@ -61,4 +61,4 @@ private:
 };
 
 //------------------------------------------------------------------------
-} // namespace AbNinjam
+} // namespace abNinjam

@@ -5,8 +5,7 @@
 #include "pluginterfaces/base/ibstream.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 
-namespace AbNinjam {
-
+using namespace abNinjam;
 //-----------------------------------------------------------------------------
 PlugProcessor::PlugProcessor() {
   // register its editor class
@@ -164,4 +163,3 @@ tresult PlugProcessor::receiveText(const char *text) {
 }
 
 //------------------------------------------------------------------------
-} // namespace AbNinjam

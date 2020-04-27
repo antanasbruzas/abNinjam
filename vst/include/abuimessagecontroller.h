@@ -1,15 +1,21 @@
 #pragma once
+#include "connectionproperties.h"
 #include "ninjamclient.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
+#include "vstgui/lib/controls/coptionmenu.h"
 #include "vstgui/lib/controls/ctextedit.h"
+#include "vstgui/lib/crect.h"
 #include "vstgui/lib/iviewlistener.h"
+#include "vstgui/uidescription/editing/uibitmapscontroller.h"
+#include "vstgui/uidescription/editing/uidialogcontroller.h"
 #include "vstgui/uidescription/icontroller.h"
 #include <array>
+#include <iostream>
 //------------------------------------------------------------------------
 using namespace Steinberg;
 using namespace Vst;
 
-namespace AbNinjam {
+namespace abNinjam {
 
 //------------------------------------------------------------------------
 // AbUIMessageController
@@ -67,10 +73,15 @@ private:
           }
         }
 
-        int status =
-            ninjamClient->connect(utf8StringToCharPtr(textEdits[0]->getText()),
-                                  utf8StringToCharPtr(textEdits[1]->getText()),
-                                  utf8StringToCharPtr(textEdits[2]->getText()));
+        ConnectionProperties connectionProperties;
+        connectionProperties.gsHost() =
+            utf8StringToCharPtr(textEdits[0]->getText());
+        connectionProperties.gsUsername() =
+            utf8StringToCharPtr(textEdits[1]->getText());
+        connectionProperties.gsPassword() =
+            utf8StringToCharPtr(textEdits[2]->getText());
+
+        int status = ninjamClient->connect(connectionProperties);
         fprintf(stderr, "NinjamClient status: %d\n", status);
 
         // pControl->setValue(0.f);
@@ -85,6 +96,21 @@ private:
   //--- is called when a view is created -----
   CView *verifyView(CView *view, const UIAttributes & /*attributes*/,
                     const IUIDescription * /*description*/) override {
+
+    //    if (VSTGUI::CViewContainer *vc =
+    //            dynamic_cast<VSTGUI::CViewContainer *>(view)) {
+    //      VSTGUI::CRect fr(0, 0, 10, 10);
+    //      VSTGUI::COptionMenu *optionMenu = new VSTGUI::COptionMenu(fr, this,
+    //      1002); optionMenu->addEntry("License");
+    //      optionMenu->addEntry("Agree");
+    //      optionMenu->addEntry("Disagree");
+    //      bool added = false;
+    //      if (!added) {
+    //        vc->addView(optionMenu);
+    //        added = true;
+    //      }
+    //    }
+
     if (CTextEdit *te = dynamic_cast<CTextEdit *>(view)) {
 
       // this allows us to keep a pointer of the text edit view
@@ -123,6 +149,7 @@ private:
   }
   //--- is called when the view is loosing the focus -----------------
   void viewLostFocus(CView *view) override {
+
     for (unsigned short i = 0; i < textEdits.size(); i++) {
       if (textEdits[i]) {
         if (dynamic_cast<CTextEdit *>(view) == textEdits[i]) {
@@ -149,4 +176,4 @@ private:
 };
 
 //------------------------------------------------------------------------
-} // namespace AbNinjam
+} // namespace abNinjam

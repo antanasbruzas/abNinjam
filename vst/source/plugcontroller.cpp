@@ -5,7 +5,7 @@
 
 #include "base/source/fstring.h"
 
-namespace AbNinjam {
+using namespace abNinjam;
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugController::initialize(FUnknown *context) {
@@ -167,5 +167,3 @@ tresult PLUGIN_API PlugController::getState(IBStream *state) {
 
   return kResultTrue;
 }
-
-} // namespace AbNinjam

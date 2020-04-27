@@ -5,7 +5,7 @@
 
 using namespace Steinberg;
 
-namespace AbNinjam {
+namespace abNinjam {
 
 // HERE are defined the parameter Ids which are exported to the host
 enum AbNinjamParams : Vst::ParamID {
@@ -22,4 +22,4 @@ static const FUID abNinjamControllerUID(0x38BA0928, 0x13AE46A0, 0x8419DACB,
                                         0xE8151301);
 
 //------------------------------------------------------------------------
-} // namespace AbNinjam
+} // namespace abNinjam

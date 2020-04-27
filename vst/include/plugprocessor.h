@@ -4,7 +4,7 @@
 
 using namespace Steinberg;
 
-namespace AbNinjam {
+namespace abNinjam {
 
 //-----------------------------------------------------------------------------
 class PlugProcessor : public Vst::AudioEffect {
@@ -40,4 +40,4 @@ protected:
 };
 
 //------------------------------------------------------------------------
-} // namespace AbNinjam
+} // namespace abNinjam

@@ -4,8 +4,7 @@
 #endif
 
 using namespace VSTGUI;
-
-namespace AbNinjam {
+using namespace abNinjam;
 
 AbVST3Editor::AbVST3Editor(Steinberg::Vst::EditController *editController,
                            UTF8StringPtr templateName,
@@ -38,5 +37,3 @@ CMessageResult AbVST3Editor::notify(CBaseObject *sender, IdStringPtr message) {
 
   return result;
 }
-
-} // namespace AbNinjam

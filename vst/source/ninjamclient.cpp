@@ -1,7 +1,13 @@
 #include "../include/ninjamclient.h"
+#include "../include/fileutil.h"
+#include "../include/stringutil.h"
+
+#include <iostream>
+
+using namespace abNinjam;
 
 int licensecallback(void *userData, const char *licensetext) {
-  // TODO: implement
+  cout << "status: " << licensetext << endl;
   return 1;
 }
 
@@ -11,37 +17,35 @@ void chatmsg_cb(void *userData, NJClient *inst, const char **parms,
 }
 
 NinjamClient::NinjamClient() {
-  g_client = new NJClient;
-  g_client->config_savelocalaudio = 1;
-  g_client->LicenseAgreementCallback = licensecallback;
-  g_client->ChatMessage_Callback = chatmsg_cb;
-  g_client->SetLocalChannelInfo(0, "channel0", true, 0, false, 0, true, true);
-  g_client->SetLocalChannelMonitoring(0, false, 0.0f, false, 0.0f, false, false,
+  njClient = new NJClient;
+  njClient->config_savelocalaudio = 1;
+  njClient->LicenseAgreementCallback = licensecallback;
+  njClient->ChatMessage_Callback = chatmsg_cb;
+  njClient->SetLocalChannelInfo(0, "channel0", true, 0, false, 0, true, true);
+  njClient->SetLocalChannelMonitoring(0, false, 0.0f, false, 0.0f, false, false,
                                       false, false);
 }
 
 NinjamClient::~NinjamClient() { disconnect(); }
 
 void *keepConnectionThread(void *arg) {
-  NinjamClient *ninjamClient = (NinjamClient *)arg;
-  ninjamClient->stopConnectionThread = false;
-  NJClient *g_client = ninjamClient->g_client;
+  NinjamClient *ninjamClient = static_cast<NinjamClient *>(arg);
+  ninjamClient->gsStopConnectionThread() = false;
+  NJClient *g_client = ninjamClient->gsNjClient();
 
   bool connected = false;
   while (g_client->GetStatus() >= 0 &&
-         ninjamClient->stopConnectionThread == false) {
+         ninjamClient->gsStopConnectionThread() == false) {
     if (g_client->Run()) {
       if (g_client->GetStatus() == 0) {
         if (!connected) {
-          std::cout << "status: " << g_client->GetStatus() << std::endl;
-          std::cout << "bpi: " << g_client->GetBPI() << std::endl;
-          std::cout << "bpm: " << g_client->GetActualBPM() << std::endl;
-          std::cout << "is audio running: " << g_client->IsAudioRunning()
-                    << std::endl;
-          std::cout << "user: " << g_client->GetUser() << std::endl;
-          std::cout << "hostname: " << g_client->GetHostName() << std::endl;
-          std::cout << "num users: " << g_client->GetNumUsers() << "\n"
-                    << std::endl;
+          cout << "status: " << g_client->GetStatus() << endl;
+          cout << "bpi: " << g_client->GetBPI() << endl;
+          cout << "bpm: " << g_client->GetActualBPM() << endl;
+          cout << "is audio running: " << g_client->IsAudioRunning() << endl;
+          cout << "user: " << g_client->GetUser() << endl;
+          cout << "hostname: " << g_client->GetHostName() << endl;
+          cout << "num users: " << g_client->GetNumUsers() << "\n" << endl;
         }
         connected = true;
       }
@@ -52,17 +56,29 @@ void *keepConnectionThread(void *arg) {
   return nullptr;
 }
 
-int NinjamClient::connect(char *host, char *user, char *pass) {
+int NinjamClient::connect(ConnectionProperties connectionProperties) {
+  if (isEmpty(connectionProperties.gsHost())) {
+    path propertiesPath = getHomePath();
+    propertiesPath /= "abNinjam/connection.properties";
+    if (exists(propertiesPath)) {
+      cout << "Configuration file provided: " << propertiesPath << endl;
+      connectionProperties.readFromFile(propertiesPath);
+    } else {
+      cout << "Configuration file not provided." << endl;
+    }
 
-  if (isEmpty(host)) {
-    return -1;
+    if (isEmpty(connectionProperties.gsHost())) {
+      return -1;
+    }
   }
 
-  if (isEmpty(user)) {
-    user = strdup("anonymous");
+  if (isEmpty(connectionProperties.gsUsername())) {
+    connectionProperties.gsUsername() = strdup("anonymous");
   }
 
-  g_client->Connect(host, user, pass);
+  njClient->Connect(connectionProperties.gsHost(),
+                    connectionProperties.gsUsername(),
+                    connectionProperties.gsPassword());
   pthread_create(&connectionThread, nullptr, keepConnectionThread, this);
 
   return 0;
@@ -74,14 +90,7 @@ void NinjamClient::disconnect() {
   if (pthread_equal(pthread_self(), connectionThread) != 0) {
     pthread_join(connectionThread, nullptr);
   }
-  if (g_client) {
-    g_client->Disconnect();
+  if (njClient) {
+    njClient->Disconnect();
   }
-}
-
-bool NinjamClient::isEmpty(char *c) {
-  if ((c != nullptr) && (c[0] == '\0')) {
-    return true;
-  }
-  return false;
 }

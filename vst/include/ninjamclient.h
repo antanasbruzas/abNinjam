@@ -4,22 +4,30 @@
 #pragma once
 
 #include "../../../../external/ninjam/ninjam/njclient.h"
-#include <iostream>
+#include "connectionproperties.h"
 #include <pthread.h>
+
+namespace abNinjam {
 
 class NinjamClient {
 
 public:
   NinjamClient();
   ~NinjamClient();
-  int connect(char *host, char *user, char *pass);
+  int connect(ConnectionProperties connectionProperties);
   void disconnect();
-  NJClient *g_client;
-  bool stopConnectionThread;
+  // NJClient *getNjClient() const { return njClient; }
+
+  // NJClient *&getNjClient() { return njClient; }
+  auto &gsNjClient() { return njClient; }
+  auto &gsStopConnectionThread() { return stopConnectionThread; }
 
 private:
   pthread_t connectionThread;
-  bool isEmpty(char *c);
+  NJClient *njClient;
+  bool stopConnectionThread;
 };
+
+} // namespace abNinjam
 
 #endif // NINJAMCLIENT_H

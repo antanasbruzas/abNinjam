@@ -11,7 +11,7 @@
 
 BEGIN_FACTORY_DEF(stringCompanyName, stringCompanyWeb, stringCompanyEmail)
 
-DEF_CLASS2(INLINE_UID_FROM_FUID(AbNinjam::abNinjamProcessorUID),
+DEF_CLASS2(INLINE_UID_FROM_FUID(abNinjam::abNinjamProcessorUID),
            PClassInfo::kManyInstances, // cardinality
            kVstAudioEffectClass, // the component category (do not changed this)
            stringPluginName,     // here the Plug-in name (to be changed)
@@ -21,12 +21,12 @@ DEF_CLASS2(INLINE_UID_FROM_FUID(AbNinjam::abNinjamProcessorUID),
            FULL_VERSION_STR,     // Plug-in version (to be changed)
            kVstVersionString, // the VST 3 SDK version (do not changed this, use
                               // always this define)
-           AbNinjam::PlugProcessor::createInstance) // function pointer called
+           abNinjam::PlugProcessor::createInstance) // function pointer called
                                                     // when this component
                                                     // should be instantiated
 
 DEF_CLASS2(
-    INLINE_UID_FROM_FUID(AbNinjam::abNinjamControllerUID),
+    INLINE_UID_FROM_FUID(abNinjam::abNinjamControllerUID),
     PClassInfo::kManyInstances,   // cardinality
     kVstComponentControllerClass, // the Controller category (do not changed
                                   // this)
@@ -37,7 +37,7 @@ DEF_CLASS2(
     FULL_VERSION_STR, // Plug-in version (to be changed)
     kVstVersionString, // the VST 3 SDK version (do not changed this, use always
                        // this define)
-    AbNinjam::PlugController::createInstance) // function pointer called when
+    abNinjam::PlugController::createInstance) // function pointer called when
                                               // this component should be
                                               // instantiated
 
