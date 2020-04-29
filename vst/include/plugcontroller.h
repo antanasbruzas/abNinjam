@@ -47,6 +47,7 @@ public:
   //---Internal functions-------
   void addUIMessageController(UIMessageController *controller);
   void removeUIMessageController(UIMessageController *controller);
+  IController *getUIMessageController(unsigned long index);
 
   //---from ComponentBase-----
   tresult receiveText(const char *text) SMTG_OVERRIDE;

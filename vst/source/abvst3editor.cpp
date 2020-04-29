@@ -1,4 +1,5 @@
 #include "../include/abvst3editor.h"
+#include "../include/plugids.h"
 #if !defined(__APPLE__) && !defined(_WIN32)
 #include "../include/X11RunLoop.h"
 #endif
@@ -6,10 +7,20 @@
 using namespace VSTGUI;
 using namespace abNinjam;
 
-AbVST3Editor::AbVST3Editor(Steinberg::Vst::EditController *editController,
+AbVST3Editor::AbVST3Editor(PlugController *editController,
                            UTF8StringPtr templateName,
                            UTF8StringPtr xmlFileName)
-    : VST3Editor(editController, templateName, xmlFileName) {}
+    : VST3Editor(editController, templateName, xmlFileName) {
+  plugController = editController;
+}
+
+AbVST3Editor::~AbVST3Editor() {
+  IController *subController = plugController->getUIMessageController(0);
+  if (subController && subControllerTrigger) {
+    subControllerTrigger->unregisterControlListener(
+        subController->getControlListener("Connect"));
+  }
+}
 
 CMessageResult AbVST3Editor::notify(CBaseObject *sender, IdStringPtr message) {
   if (message == CVSTGUITimer::kMsgTimer) {
@@ -36,4 +47,16 @@ CMessageResult AbVST3Editor::notify(CBaseObject *sender, IdStringPtr message) {
 #endif
 
   return result;
+}
+
+void AbVST3Editor::controlEndEdit(CControl *pControl) {
+  auto *oob = dynamic_cast<COnOffButton *>(pControl);
+  if (oob && oob->getTag() == kParamConnectId) {
+    IController *subController = plugController->getUIMessageController(0);
+    if (subController && !subControllerTrigger) {
+      subControllerTrigger = oob;
+      subControllerTrigger->registerControlListener(
+          subController->getControlListener("Connect"));
+    }
+  }
 }

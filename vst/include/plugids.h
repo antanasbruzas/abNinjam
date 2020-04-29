@@ -10,7 +10,7 @@ namespace abNinjam {
 // HERE are defined the parameter Ids which are exported to the host
 enum AbNinjamParams : Vst::ParamID {
   kBypassId = 100,
-  kParamConnectId = 1002,
+  kParamConnectId = 1000,
   kParamConnectionIndicatorId = 1001
 };
 

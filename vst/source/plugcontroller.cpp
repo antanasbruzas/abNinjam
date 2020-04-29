@@ -35,6 +35,20 @@ tresult PLUGIN_API PlugController::initialize(FUnknown *context) {
 }
 
 //------------------------------------------------------------------------
+IController *
+PlugController::createSubController(UTF8StringPtr name,
+                                    const IUIDescription * /*description*/,
+                                    VST3Editor * /*editor*/) {
+  if (UTF8StringView(name) == "MessageController") {
+    auto *controller = new UIMessageController(this);
+    addUIMessageController(controller);
+    return controller;
+  }
+
+  return nullptr;
+}
+
+//------------------------------------------------------------------------
 IPlugView *PLUGIN_API PlugController::createView(const char *name) {
   // someone wants my editor
   if (name && strcmp(name, "editor") == 0) {
@@ -74,19 +88,6 @@ tresult PLUGIN_API PlugController::setComponentState(IBStream *state) {
 }
 
 //------------------------------------------------------------------------
-IController *
-PlugController::createSubController(UTF8StringPtr name,
-                                    const IUIDescription * /*description*/,
-                                    VST3Editor * /*editor*/) {
-  if (UTF8StringView(name) == "MessageController") {
-    auto *controller = new UIMessageController(this);
-    addUIMessageController(controller);
-    return controller;
-  }
-  return nullptr;
-}
-
-//------------------------------------------------------------------------
 void PlugController::addUIMessageController(UIMessageController *controller) {
   uiMessageControllers.push_back(controller);
 }
@@ -98,6 +99,14 @@ void PlugController::removeUIMessageController(
       uiMessageControllers.begin(), uiMessageControllers.end(), controller);
   if (it != uiMessageControllers.end())
     uiMessageControllers.erase(it);
+}
+
+//------------------------------------------------------------------------
+IController *PlugController::getUIMessageController(unsigned long index) {
+  if (uiMessageControllers.size() > index) {
+    return uiMessageControllers.at(index);
+  }
+  return nullptr;
 }
 
 //------------------------------------------------------------------------
