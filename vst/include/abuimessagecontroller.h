@@ -1,18 +1,8 @@
 #pragma once
-#include "connectionproperties.h"
-#include "ninjamclient.h"
 #include "plugids.h"
-#include "public.sdk/source/vst/vsteditcontroller.h"
-#include "vstgui/lib/controls/ccontrol.h"
-#include "vstgui/lib/controls/coptionmenu.h"
-#include "vstgui/lib/controls/ctextedit.h"
-#include "vstgui/lib/crect.h"
-#include "vstgui/lib/iviewlistener.h"
-#include "vstgui/uidescription/editing/uibitmapscontroller.h"
-#include "vstgui/uidescription/editing/uidialogcontroller.h"
 #include "vstgui/uidescription/icontroller.h"
 #include <array>
-#include <iostream>
+
 //------------------------------------------------------------------------
 using namespace Steinberg;
 using namespace Vst;
@@ -26,12 +16,8 @@ template <typename ControllerType>
 class AbUIMessageController : public VSTGUI::IController,
                               public VSTGUI::ViewListenerAdapter {
 public:
-  NinjamClient *ninjamClient;
-
   AbUIMessageController(ControllerType *plugController)
-      : plugController(plugController), textEdits() {
-    ninjamClient = new NinjamClient();
-  }
+      : plugController(plugController), textEdits() {}
   ~AbUIMessageController() override {
 
     for (auto &textEdit : textEdits) {
@@ -58,45 +44,10 @@ private:
   using UIAttributes = VSTGUI::UIAttributes;
   using IUIDescription = VSTGUI::IUIDescription;
 
-  void connect(VSTGUI::CControl *pControl) {
-    if (pControl->getValue() > 0.5f) {
-      fprintf(stderr, "Connect initiated\n");
-
-      for (auto &textEdit : textEdits) {
-        if (textEdit) {
-          plugController->sendTextMessage(textEdit->getText().data());
-        }
-      }
-
-      ConnectionProperties connectionProperties;
-      connectionProperties.gsHost() =
-          utf8StringToCharPtr(textEdits[0]->getText());
-      connectionProperties.gsUsername() =
-          utf8StringToCharPtr(textEdits[1]->getText());
-      connectionProperties.gsPassword() =
-          utf8StringToCharPtr(textEdits[2]->getText());
-
-      int status = ninjamClient->connect(connectionProperties);
-      if (status != 0) {
-        pControl->setValue(0.f);
-      }
-      fprintf(stderr, "NinjamClient status: %d\n", status);
-      // pControl->setValue(0.f);
-      // pControl->invalid();
-    } else {
-      fprintf(stderr, "Disconnect initiated\n");
-      ninjamClient->disconnect();
-    }
-  }
-
   //--- from IControlListener ----------------------
   void valueChanged(CControl * /*pControl*/) override {}
   void controlBeginEdit(CControl * /*pControl*/) override {}
-  void controlEndEdit(VSTGUI::CControl *pControl) override {
-    if (pControl->getTag() == kParamConnectId) {
-      connect(pControl);
-    }
-  }
+  void controlEndEdit(VSTGUI::CControl * /*pControl*/) override {}
   //--- is called when a view is created -----
   CView *verifyView(CView *view, const UIAttributes & /*attributes*/,
                     const IUIDescription * /*description*/) override {
@@ -153,13 +104,6 @@ private:
         }
       }
     }
-  }
-
-  char *utf8StringToCharPtr(UTF8String utf8String) {
-    const UTF8String &text = utf8String;
-    String str;
-    str.fromUTF8(text.data());
-    return strdup(str.text8());
   }
   ControllerType *plugController;
   std::array<CTextEdit *, 3> textEdits;

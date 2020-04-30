@@ -4,6 +4,7 @@
 #pragma once
 
 #include "plugcontroller.h"
+#include "plugids.h"
 
 #include "vstgui/plugin-bindings/vst3editor.h"
 #if !defined(__APPLE__) && !defined(_WIN32)
@@ -18,15 +19,9 @@ namespace abNinjam {
 
 class AbVST3Editor : public VST3Editor {
 public:
-  AbVST3Editor(PlugController *controller, UTF8StringPtr templateName,
-               UTF8StringPtr xmlFile);
-  ~AbVST3Editor() override;
+  AbVST3Editor(Steinberg::Vst::EditController *controller,
+               UTF8StringPtr templateName, UTF8StringPtr xmlFile);
   CMessageResult notify(CBaseObject *sender, IdStringPtr message) override;
-  void controlEndEdit(CControl *pControl) override;
-
-private:
-  PlugController *plugController;
-  COnOffButton *subControllerTrigger;
 };
 
 } // namespace abNinjam

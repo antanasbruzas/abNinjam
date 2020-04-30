@@ -1,16 +1,20 @@
 #include "../include/licensedialog.h"
 
-#include <iostream>
-
 using namespace abNinjam;
 
 static constexpr auto zenitypath = "/usr/bin/zenity";
 
-LicenseDialog::LicenseDialog() {}
+LicenseDialog::LicenseDialog() {
+  L_(ltrace) << "Entering LicenseDialog::LicenseDialog";
+}
 
-LicenseDialog::~LicenseDialog() { closeProcess(); }
+LicenseDialog::~LicenseDialog() {
+  L_(ltrace) << "Entering LicenseDialog::~LicenseDialog";
+  closeProcess();
+}
 
 int LicenseDialog::showDialog(const char *licensetext) {
+  L_(ltrace) << "Entering LicenseDialog::showDialog";
   //  std::string license = licensetext;
   //  encodeLicenseText(license);
   std::string command = zenitypath;
@@ -30,7 +34,7 @@ int LicenseDialog::showDialog(const char *licensetext) {
 }
 
 int LicenseDialog::startProcess(const char *command) {
-
+  L_(ltrace) << "Entering LicenseDialog::startProcess";
   pipe = popen(command, "r");
   if (!pipe) {
     return 256;
@@ -40,12 +44,14 @@ int LicenseDialog::startProcess(const char *command) {
 }
 
 void LicenseDialog::closeProcess() {
+  L_(ltrace) << "Entering LicenseDialog::closeProcess";
   if (pipe)
     pclose(pipe);
   pipe = nullptr;
 }
 
 void LicenseDialog::encodeLicenseText(std::string &data) {
+  L_(ltrace) << "Entering LicenseDialog::encodeLicenseText";
   std::string buffer;
   buffer.reserve(data.size());
   for (size_t pos = 0; pos != data.size(); ++pos) {

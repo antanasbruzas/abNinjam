@@ -13,6 +13,7 @@ include("cmake/Vst3.cmake")
 
 # Build the plugin
 add_library(${VSTPLUGIN_PRJ_NAME} MODULE
+    include/log.h
     include/plugcontroller.h
     include/plugids.h
     include/plugprocessor.h

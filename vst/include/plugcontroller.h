@@ -1,5 +1,6 @@
 #pragma once
 
+#include "log.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
 #include "vstgui/plugin-bindings/vst3editor.h"
 
@@ -47,10 +48,6 @@ public:
   //---Internal functions-------
   void addUIMessageController(UIMessageController *controller);
   void removeUIMessageController(UIMessageController *controller);
-  IController *getUIMessageController(unsigned long index);
-
-  //---from ComponentBase-----
-  tresult receiveText(const char *text) SMTG_OVERRIDE;
 
   void setMessageText(String128 text, unsigned long index);
   TChar *getMessageText(unsigned long index);

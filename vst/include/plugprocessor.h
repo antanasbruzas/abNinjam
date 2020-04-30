@@ -1,6 +1,13 @@
 #pragma once
 
+#include "connectionproperties.h"
+#include "log.h"
+#include "ninjamclient.h"
+#include "plugids.h"
+#include "pluginterfaces/vst/vsttypes.h"
 #include "public.sdk/source/vst/vstaudioeffect.h"
+
+#include <array>
 
 using namespace Steinberg;
 
@@ -25,18 +32,23 @@ public:
   tresult PLUGIN_API setState(IBStream *state) SMTG_OVERRIDE;
   tresult PLUGIN_API getState(IBStream *state) SMTG_OVERRIDE;
 
-  /** Test of a communication channel between controller and component */
-  tresult receiveText(const char *text) SMTG_OVERRIDE;
+  /** We want to receive message. */
+  tresult PLUGIN_API notify(Vst::IMessage *message) SMTG_OVERRIDE;
 
   static FUnknown *createInstance(void *) {
     return static_cast<Vst::IAudioProcessor *>(new PlugProcessor());
   }
 
 protected:
-  Vst::ParamValue mParam1 = 0;
   int16 connectParam = 0;
   int16 connectionIndicatorParam = 0;
   bool mBypass = false;
+
+private:
+  void connectToServer(int16 value, ConnectionProperties connectionProperties);
+  char *tCharToCharPtr(Steinberg::Vst::TChar *tChar);
+  NinjamClient *ninjamClient;
+  std::array<char *, 3> messageTexts = {strdup(""), strdup(""), strdup("")};
 };
 
 //------------------------------------------------------------------------

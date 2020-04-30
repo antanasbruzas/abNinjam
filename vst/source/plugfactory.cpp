@@ -1,5 +1,6 @@
 #include "public.sdk/source/main/pluginfactory.h"
 
+#include "../include/fileutil.h"
 #include "../include/plugcontroller.h" // for createInstance
 #include "../include/plugids.h"        // for uids
 #include "../include/plugprocessor.h"  // for createInstance
@@ -49,8 +50,30 @@ END_FACTORY
 
 //------------------------------------------------------------------------
 // called after library was loaded
-bool InitModule() { return true; }
+bool InitModule() {
+
+  path logPath = abNinjam::getHomePath();
+  logPath /= "abNinjam";
+  create_directory(logPath);
+  if (exists(logPath)) {
+    logPath /= "abNinjam.log";
+#ifndef NDEBUG
+    initLogger(logPath.c_str(), ldebug);
+#else
+    initLogger(logPath.c_str(), lerror);
+#endif
+    L_(ltrace) << "InitModule";
+  } else {
+    fprintf(stderr, "Cannot open log file\n");
+  }
+
+  return true;
+}
 
 //------------------------------------------------------------------------
 // called after library is unloaded
-bool DeinitModule() { return true; }
+bool DeinitModule() {
+  L_(ltrace) << "Entering DeinitModule";
+  endLogger();
+  return true;
+}

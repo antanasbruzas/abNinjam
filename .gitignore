@@ -11,3 +11,4 @@ CTestTestfile.cmake
 _deps
 build/
 connection.properties
+abNinjam.log

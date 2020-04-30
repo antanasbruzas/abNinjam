@@ -3,6 +3,7 @@
 namespace abNinjam {
 
 path getHomePath() {
+  L_(ltrace) << "Entering getHomePath";
   char *home;
 #ifdef unix
   home = getenv("HOME");

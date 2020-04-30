@@ -1,5 +1,5 @@
 #include "../include/abvst3editor.h"
-#include "../include/plugids.h"
+
 #if !defined(__APPLE__) && !defined(_WIN32)
 #include "../include/X11RunLoop.h"
 #endif
@@ -7,22 +7,15 @@
 using namespace VSTGUI;
 using namespace abNinjam;
 
-AbVST3Editor::AbVST3Editor(PlugController *editController,
+AbVST3Editor::AbVST3Editor(Steinberg::Vst::EditController *editController,
                            UTF8StringPtr templateName,
                            UTF8StringPtr xmlFileName)
     : VST3Editor(editController, templateName, xmlFileName) {
-  plugController = editController;
-}
-
-AbVST3Editor::~AbVST3Editor() {
-  IController *subController = plugController->getUIMessageController(0);
-  if (subController && subControllerTrigger) {
-    subControllerTrigger->unregisterControlListener(
-        subController->getControlListener("Connect"));
-  }
+  L_(ltrace) << "Entering AbVST3Editor::AbVST3Editor";
 }
 
 CMessageResult AbVST3Editor::notify(CBaseObject *sender, IdStringPtr message) {
+  // L_(ltrace) << "Entering AbVST3Editor::notify";
   if (message == CVSTGUITimer::kMsgTimer) {
     if (doCreateView)
       recreateView();
@@ -34,7 +27,7 @@ CMessageResult AbVST3Editor::notify(CBaseObject *sender, IdStringPtr message) {
 
 #if !defined(__APPLE__) && !defined(_WIN32)
   if (message == CVSTGUITimer::kMsgTimer) {
-    SharedPointer<VSTGUI::RunLoop> runLoop = RunLoop::get();
+    SharedPointer<RunLoop> runLoop = RunLoop::get();
     if (runLoop) {
       // note(jpc) I don't find a reliable way to check if the host
       //   notifier of X11 events is working. If there is, remove this and
@@ -47,16 +40,4 @@ CMessageResult AbVST3Editor::notify(CBaseObject *sender, IdStringPtr message) {
 #endif
 
   return result;
-}
-
-void AbVST3Editor::controlEndEdit(CControl *pControl) {
-  auto *oob = dynamic_cast<COnOffButton *>(pControl);
-  if (oob && oob->getTag() == kParamConnectId) {
-    IController *subController = plugController->getUIMessageController(0);
-    if (subController && !subControllerTrigger) {
-      subControllerTrigger = oob;
-      subControllerTrigger->registerControlListener(
-          subController->getControlListener("Connect"));
-    }
-  }
 }

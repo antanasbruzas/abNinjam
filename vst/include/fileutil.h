@@ -4,6 +4,7 @@
 #pragma once
 
 #include "../filesystem.hpp"
+#include "log.h"
 #include <string>
 
 using namespace std;

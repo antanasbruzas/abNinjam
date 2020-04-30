@@ -1,14 +1,12 @@
 #include "../include/plugcontroller.h"
 #include "../include/abuimessagecontroller.h"
 #include "../include/abvst3editor.h"
-#include "../include/plugids.h"
-
-#include "base/source/fstring.h"
 
 using namespace abNinjam;
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugController::initialize(FUnknown *context) {
+  L_(ltrace) << "Entering PlugController::initialize";
   tresult result = EditController::initialize(context);
   if (result == kResultTrue) {
     //---Create Parameters------------
@@ -39,6 +37,7 @@ IController *
 PlugController::createSubController(UTF8StringPtr name,
                                     const IUIDescription * /*description*/,
                                     VST3Editor * /*editor*/) {
+  L_(ltrace) << "Entering PlugController::createSubController";
   if (UTF8StringView(name) == "MessageController") {
     auto *controller = new UIMessageController(this);
     addUIMessageController(controller);
@@ -50,6 +49,7 @@ PlugController::createSubController(UTF8StringPtr name,
 
 //------------------------------------------------------------------------
 IPlugView *PLUGIN_API PlugController::createView(const char *name) {
+  L_(ltrace) << "Entering PlugController::createView";
   // someone wants my editor
   if (name && strcmp(name, "editor") == 0) {
     auto *view = new AbVST3Editor(this, "view", "plug.uidesc");
@@ -60,6 +60,7 @@ IPlugView *PLUGIN_API PlugController::createView(const char *name) {
 
 //------------------------------------------------------------------------
 tresult PLUGIN_API PlugController::setComponentState(IBStream *state) {
+  L_(ltrace) << "Entering PlugController::setComponentState";
   // we receive the current state of the component (processor part)
   // we read our parameters and bypass value...
   if (!state)
@@ -89,12 +90,14 @@ tresult PLUGIN_API PlugController::setComponentState(IBStream *state) {
 
 //------------------------------------------------------------------------
 void PlugController::addUIMessageController(UIMessageController *controller) {
+  L_(ltrace) << "Entering PlugController::addUIMessageController";
   uiMessageControllers.push_back(controller);
 }
 
 //------------------------------------------------------------------------
 void PlugController::removeUIMessageController(
     UIMessageController *controller) {
+  L_(ltrace) << "Entering PlugController::removeUIMessageController";
   UIMessageControllerList::const_iterator it = std::find(
       uiMessageControllers.begin(), uiMessageControllers.end(), controller);
   if (it != uiMessageControllers.end())
@@ -102,37 +105,50 @@ void PlugController::removeUIMessageController(
 }
 
 //------------------------------------------------------------------------
-IController *PlugController::getUIMessageController(unsigned long index) {
-  if (uiMessageControllers.size() > index) {
-    return uiMessageControllers.at(index);
+void PlugController::setMessageText(String128 text, unsigned long index) {
+  L_(ltrace) << "Entering PlugController::setMessageText";
+  if (messageTexts.size() > index) {
+    Steinberg::String tmp(text);
+    tmp.copyTo16(messageTexts[index], 0, 127);
+
+    const char *id;
+    switch (index) {
+    case 0:
+      id = "host";
+      break;
+    case 1:
+      id = "user";
+      break;
+    case 2:
+      id = "pass";
+      break;
+    default:
+      id = nullptr;
+      break;
+    }
+    if (id != nullptr) {
+      //---send a message
+      if (IPtr<IMessage> message = allocateMessage()) {
+        message->setMessageID("TextMessage");
+        message->getAttributes()->setString(id, text);
+        sendMessage(message);
+      }
+    }
+  }
+}
+
+//------------------------------------------------------------------------
+TChar *PlugController::getMessageText(unsigned long index) {
+  L_(ltrace) << "Entering PlugController::getMessageText";
+  if (messageTexts.size() > index) {
+    return messageTexts.at(index);
   }
   return nullptr;
 }
 
 //------------------------------------------------------------------------
-tresult PlugController::receiveText(const char *text) {
-  // received from Component
-  if (text) {
-    fprintf(stderr, "[PlugController] received: ");
-    fprintf(stderr, "%s", text);
-    fprintf(stderr, "\n");
-  }
-  return kResultOk;
-}
-
-//------------------------------------------------------------------------
-void PlugController::setMessageText(String128 text, unsigned long index) {
-  Steinberg::String tmp(text);
-  tmp.copyTo16(messageTexts[index], 0, 127);
-}
-
-//------------------------------------------------------------------------
-TChar *PlugController::getMessageText(unsigned long index) {
-  return messageTexts[index];
-}
-
-//------------------------------------------------------------------------
 tresult PLUGIN_API PlugController::setState(IBStream *state) {
+  L_(ltrace) << "Entering PlugController::setState";
   IBStreamer streamer(state, kLittleEndian);
 
   int8 byteOrder;
@@ -158,6 +174,7 @@ tresult PLUGIN_API PlugController::setState(IBStream *state) {
 
 //------------------------------------------------------------------------
 tresult PLUGIN_API PlugController::getState(IBStream *state) {
+  L_(ltrace) << "Entering PlugController::getState";
   // here we can save UI settings for example
 
   // as we save a Unicode string, we must know the byteorder when setState is

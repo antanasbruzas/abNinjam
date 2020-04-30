@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "log.h"
+
 namespace abNinjam {
 
 bool isEmpty(char *c);

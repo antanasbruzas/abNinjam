@@ -5,11 +5,16 @@
 
 using namespace abNinjam;
 
-ConnectionProperties::ConnectionProperties() {}
+ConnectionProperties::ConnectionProperties() {
+  L_(ltrace) << "Entering ConnectionProperties::ConnectionProperties";
+}
 
-ConnectionProperties::~ConnectionProperties() {}
+ConnectionProperties::~ConnectionProperties() {
+  L_(ltrace) << "Entering ConnectionProperties::~ConnectionProperties";
+}
 
 void ConnectionProperties::readFromFile(path path) {
+  L_(ltrace) << "Entering ConnectionProperties::readFromFile";
   ifstream ifs(path);
   if (ifs.good()) {
     string line;

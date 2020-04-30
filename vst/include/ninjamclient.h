@@ -5,7 +5,9 @@
 
 #include "../../../../external/ninjam/ninjam/njclient.h"
 #include "connectionproperties.h"
-#include <pthread.h>
+#include "log.h"
+#include <mutex>
+#include <thread>
 
 namespace abNinjam {
 
@@ -18,11 +20,13 @@ public:
   void disconnect();
   auto &gsNjClient() { return njClient; }
   auto &gsStopConnectionThread() { return stopConnectionThread; }
+  auto &gsMtx() { return mtx; }
 
 private:
-  pthread_t connectionThread;
+  thread *connectionThread;
   NJClient *njClient;
   bool stopConnectionThread;
+  mutex mtx;
 };
 
 } // namespace abNinjam
