@@ -114,7 +114,15 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
     return kResultOk;
   }
 
+  // float **inbuf, int innch,
+  // float **outbuf, int outnch, int len,
+  // int srate
+
   if (data.numSamples > 0) {
+    ninjamClient->audiostreamOnSamples(
+        data.inputs->channelBuffers32, data.inputs->numChannels,
+        data.outputs->channelBuffers32, data.outputs->numChannels,
+        data.numSamples, processSetup.sampleRate);
     // Process Algorithm
     // Ex: algo.process (data.inputs[0].channelBuffers32,
     // data.outputs[0].channelBuffers32, data.numSamples);

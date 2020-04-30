@@ -18,6 +18,8 @@ public:
   ~NinjamClient();
   int connect(ConnectionProperties connectionProperties);
   void disconnect();
+  void audiostreamOnSamples(float **inbuf, int innch, float **outbuf,
+                            int outnch, int len, int srate);
   auto &gsNjClient() { return njClient; }
   auto &gsStopConnectionThread() { return stopConnectionThread; }
   auto &gsMtx() { return mtx; }
@@ -27,6 +29,7 @@ private:
   NJClient *njClient;
   bool stopConnectionThread;
   mutex mtx;
+  bool connected = false;
 };
 
 } // namespace abNinjam

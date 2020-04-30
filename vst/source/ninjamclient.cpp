@@ -111,7 +111,6 @@ int NinjamClient::connect(ConnectionProperties connectionProperties) {
                       connectionProperties.gsPassword());
   }
 
-  bool connected = false;
   while (njClient->GetStatus() >= 0) {
     if (njClient->Run()) {
       if (njClient->GetStatus() == 0) {
@@ -147,5 +146,21 @@ void NinjamClient::disconnect() {
   }
   if (njClient) {
     njClient->Disconnect();
+  }
+}
+
+void NinjamClient::audiostreamOnSamples(float **inbuf, int innch,
+                                        float **outbuf, int outnch, int len,
+                                        int srate) {
+  // TODO: clear buffers
+  //  if (!g_audio_enable)
+  //  {
+  //    int x;
+  //    // clear all output buffers
+  //    for (x = 0; x < outnch; x ++) memset(outbuf[x],0,sizeof(float)*len);
+  //    return;
+  //  }
+  if (connected) {
+    njClient->AudioProc(inbuf, innch, outbuf, outnch, len, srate);
   }
 }
