@@ -51,10 +51,12 @@ PlugController::createSubController(UTF8StringPtr name,
 IPlugView *PLUGIN_API PlugController::createView(const char *name) {
   L_(ltrace) << "Entering PlugController::createView";
   // someone wants my editor
+#ifndef WITHOUT_GUI
   if (name && strcmp(name, "editor") == 0) {
     auto *view = new AbVST3Editor(this, "view", "plug.uidesc");
     return view;
   }
+#endif
   return nullptr;
 }
 

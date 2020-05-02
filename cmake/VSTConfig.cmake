@@ -22,6 +22,12 @@ if (NOT ${VSTPLUGIN_INSTALL_DIR} STREQUAL "")
     endif()
 endif()
 
+option (WITHOUT_GUI "Disable VST GUI [default: OFF]" OFF)
+if (WITHOUT_GUI)
+   add_definitions(-DWITHOUT_GUI=${WITHOUT_GUI})
+   message(STATUS "WITHOUT_GUI: ${WITHOUT_GUI}")
+endif()
+
 message(STATUS "System architecture: ${CMAKE_SYSTEM_PROCESSOR}")
 
 # --- VST3 Bundle architecture ---
