@@ -9,7 +9,7 @@ namespace VSTGUI {
 
 RunLoop::RunLoop(Steinberg::FUnknown *runLoop) : runLoop(runLoop) {}
 
-RunLoop::~RunLoop() {}
+RunLoop::~RunLoop() { cleanupDeadHandlers(); }
 
 SharedPointer<RunLoop> RunLoop::get() {
   return X11::RunLoop::get().cast<VSTGUI::RunLoop>();
