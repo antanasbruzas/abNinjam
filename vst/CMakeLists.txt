@@ -70,14 +70,20 @@ target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../ext
 # Create the bundle (see "VST 3 Locations / Format")
 execute_process (
     COMMAND "${CMAKE_COMMAND}" -E make_directory "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
-file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/plug.uidesc"
-    DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
 
-file(GLOB ABNINJAM_RESOURCE_PNG
-  "${CMAKE_CURRENT_SOURCE_DIR}/resource/*.png"
-)
-file(COPY ${ABNINJAM_RESOURCE_PNG}
-    DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+if (CMAKE_BUILD_TYPE MATCHES "Debug")
+    file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/plug.uidesc"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/")
+    file(GLOB ABNINJAM_RESOURCE_PNG
+      "${CMAKE_CURRENT_SOURCE_DIR}/resource/*.png"
+    )
+    file(COPY ${ABNINJAM_RESOURCE_PNG}
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+else()
+    file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/plug-base64.uidesc"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(RENAME "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/plug-base64.uidesc" "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/plug.uidesc")
+endif()
 
 set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/${VST3_PACKAGE_ARCHITECTURE}-linux")

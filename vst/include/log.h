@@ -45,7 +45,7 @@ template <typename T> Log<T>::~Log() {
 }
 
 template <typename T> TLogLevel &Log<T>::ReportingLevel() {
-  static TLogLevel reportingLevel = ltrace;
+  static TLogLevel reportingLevel = lerror;
   return reportingLevel;
 }
 

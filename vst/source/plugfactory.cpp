@@ -51,22 +51,18 @@ END_FACTORY
 //------------------------------------------------------------------------
 // called after library was loaded
 bool InitModule() {
-
+#ifndef NDEBUG
   path logPath = abNinjam::getHomePath();
   logPath /= "abNinjam";
   create_directory(logPath);
   if (exists(logPath)) {
     logPath /= "abNinjam.log";
-#ifndef NDEBUG
     initLogger(logPath.c_str(), ldebug);
-#else
-    initLogger(logPath.c_str(), lerror);
-#endif
     L_(ltrace) << "InitModule";
   } else {
     fprintf(stderr, "Cannot open log file\n");
   }
-
+#endif
   return true;
 }
 
