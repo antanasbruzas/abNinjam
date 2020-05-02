@@ -52,6 +52,9 @@ public:
   void setMessageText(String128 text, unsigned long index);
   TChar *getMessageText(unsigned long index);
 
+  //---from ComponentBase-----
+  tresult receiveText(const char *text) SMTG_OVERRIDE;
+
 private:
   using UIMessageControllerList = std::vector<UIMessageController *>;
   UIMessageControllerList uiMessageControllers;

@@ -23,13 +23,13 @@ public:
   auto &gsNjClient() { return njClient; }
   auto &gsStopConnectionThread() { return stopConnectionThread; }
   auto &gsMtx() { return mtx; }
+  bool connected = false;
 
 private:
   thread *connectionThread;
   NJClient *njClient;
   bool stopConnectionThread;
   mutex mtx;
-  bool connected = false;
 };
 
 } // namespace abNinjam

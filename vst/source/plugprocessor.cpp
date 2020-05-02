@@ -90,6 +90,12 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
             connectionProperties.gsUsername() = messageTexts.at(1);
             connectionProperties.gsPassword() = messageTexts.at(2);
             connectToServer(connectParam, connectionProperties);
+
+            if (ninjamClient->connected) {
+              sendTextMessage("Connected");
+            } else {
+              sendTextMessage("Disconnected");
+            }
           }
           break;
         case AbNinjamParams::kParamConnectionIndicatorId:

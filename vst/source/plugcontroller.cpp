@@ -193,3 +193,18 @@ tresult PLUGIN_API PlugController::getState(IBStream *state) {
 
   return kResultTrue;
 }
+
+//------------------------------------------------------------------------
+tresult PlugController::receiveText(const char *text) {
+  L_(ltrace) << "Entering PlugController::receiveText";
+  // received from Component
+  if (text) {
+    L_(ldebug) << "[PlugController] received: " << text;
+    if (strncmp(text, "Connected", 1) == 0) {
+      setParamNormalized(AbNinjamParams::kParamConnectionIndicatorId, 1);
+    } else if (strncmp(text, "Disconnected", 1) == 0) {
+      setParamNormalized(AbNinjamParams::kParamConnectionIndicatorId, 0);
+    }
+  }
+  return kResultOk;
+}

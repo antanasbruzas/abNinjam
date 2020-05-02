@@ -147,6 +147,7 @@ void NinjamClient::disconnect() {
   if (njClient) {
     njClient->Disconnect();
   }
+  connected = false;
 }
 
 void NinjamClient::audiostreamOnSamples(float **inbuf, int innch,
