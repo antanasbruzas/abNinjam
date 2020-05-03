@@ -1,6 +1,7 @@
 #pragma once
 
 #include "log.h"
+#include "metronomevolumeparameter.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
 #include "vstgui/plugin-bindings/vst3editor.h"
 
@@ -51,9 +52,6 @@ public:
 
   void setMessageText(String128 text, unsigned long index);
   TChar *getMessageText(unsigned long index);
-
-  //---from ComponentBase-----
-  tresult receiveText(const char *text) SMTG_OVERRIDE;
 
 private:
   using UIMessageControllerList = std::vector<UIMessageController *>;

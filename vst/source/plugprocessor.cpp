@@ -7,14 +7,14 @@
 using namespace abNinjam;
 //-----------------------------------------------------------------------------
 PlugProcessor::PlugProcessor() {
-  L_(ltrace) << "Entering PlugProcessor::PlugProcessor";
+  L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::PlugProcessor";
   // register its editor class
   setControllerClass(abNinjamControllerUID);
 }
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::initialize(FUnknown *context) {
-  L_(ltrace) << "Entering PlugProcessor::initialize";
+  L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::initialize";
   //---always initialize the parent-------
   tresult result = AudioEffect::initialize(context);
   if (result != kResultTrue)
@@ -34,7 +34,7 @@ tresult PLUGIN_API PlugProcessor::initialize(FUnknown *context) {
 tresult PLUGIN_API PlugProcessor::setBusArrangements(
     Vst::SpeakerArrangement *inputs, int32 numIns,
     Vst::SpeakerArrangement *outputs, int32 numOuts) {
-  L_(ltrace) << "Entering PlugProcessor::setBusArrangements";
+  L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::setBusArrangements";
   // we only support one in and output bus and these buses must have the same
   // number of channels
   if (numIns == 1 && numOuts == 1 && inputs[0] == outputs[0]) {
@@ -45,7 +45,7 @@ tresult PLUGIN_API PlugProcessor::setBusArrangements(
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::setupProcessing(Vst::ProcessSetup &setup) {
-  L_(ltrace) << "Entering PlugProcessor::setupProcessing";
+  L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::setupProcessing";
   // here you get, with setup, information about:
   // sampleRate, processMode, maximum number of samples per audio block
   return AudioEffect::setupProcessing(setup);
@@ -53,7 +53,7 @@ tresult PLUGIN_API PlugProcessor::setupProcessing(Vst::ProcessSetup &setup) {
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
-  L_(ltrace) << "Entering PlugProcessor::setActive";
+  L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::setActive";
   if (state) // Initialize
   {
     // Allocate Memory Here
@@ -63,12 +63,17 @@ tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
     // Free Memory if still allocated
     // Ex: if(algo.isCreated ()) { algo.destroy (); }
   }
+
+  // reset the indicator value
+  connectedOld = false;
+
   return AudioEffect::setActive(state);
 }
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
-  // L_(ltrace) << "Entering PlugProcessor::process";
+
+  // L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::process";
   //--- Read inputs parameter changes-----------
   if (data.inputParameterChanges) {
     int32 numParamsChanged = data.inputParameterChanges->getParameterCount();
@@ -90,18 +95,15 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
             connectionProperties.gsUsername() = messageTexts.at(1);
             connectionProperties.gsPassword() = messageTexts.at(2);
             connectToServer(connectParam, connectionProperties);
-
-            if (ninjamClient->connected) {
-              sendTextMessage("Connected");
-            } else {
-              sendTextMessage("Disconnected");
-            }
           }
           break;
-        case AbNinjamParams::kParamConnectionIndicatorId:
+        case AbNinjamParams::kParamMetronomeVolId:
           if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
-              kResultTrue)
-            connectionIndicatorParam = value > 0 ? 1 : 0;
+              kResultTrue) {
+            metronomeVolumeParam = value;
+            ninjamClient->gsNjClient()->config_metronome =
+                static_cast<float>(metronomeVolumeParam);
+          }
           break;
         case AbNinjamParams::kBypassId:
           if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
@@ -128,17 +130,36 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
     ninjamClient->audiostreamOnSamples(
         data.inputs->channelBuffers32, data.inputs->numChannels,
         data.outputs->channelBuffers32, data.outputs->numChannels,
-        data.numSamples, processSetup.sampleRate);
+        data.numSamples, static_cast<int>(processSetup.sampleRate));
     // Process Algorithm
     // Ex: algo.process (data.inputs[0].channelBuffers32,
     // data.outputs[0].channelBuffers32, data.numSamples);
   }
+
+  //--- Write outputs parameter changes-----------
+  Steinberg::Vst::IParameterChanges *outParamChanges =
+      data.outputParameterChanges;
+  // a new value of VuMeter will be send to the host
+  // (the host will send it back in sync to our controller for updating our
+  // editor)
+  if (outParamChanges && connectedOld != ninjamClient->connected) {
+    int32 index = 0;
+    Steinberg::Vst::IParamValueQueue *paramQueue =
+        outParamChanges->addParameterData(
+            AbNinjamParams::kParamConnectionIndicatorId, index);
+    if (paramQueue) {
+      int32 index2 = 0;
+      paramQueue->addPoint(0, ninjamClient->connected, index2);
+    }
+  }
+  connectedOld = ninjamClient->connected;
+
   return kResultOk;
 }
 
 //------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::setState(IBStream *state) {
-  L_(ltrace) << "Entering PlugProcessor::setState";
+  L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::setState";
   if (!state)
     return kResultFalse;
 
@@ -154,12 +175,17 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream *state) {
   if (streamer.readInt32(savedConnectionIndicatorParam) == false)
     return kResultFalse;
 
+  double savedMetronomeVolumeParam = 0;
+  if (streamer.readDouble(savedMetronomeVolumeParam) == false)
+    return kResultFalse;
+
   int32 savedBypass = 0;
   if (streamer.readInt32(savedBypass) == false)
     return kResultFalse;
 
   connectParam = savedConnectParam > 0 ? 1 : 0;
   connectionIndicatorParam = savedConnectionIndicatorParam > 0 ? 1 : 0;
+  metronomeVolumeParam = savedMetronomeVolumeParam;
   mBypass = savedBypass > 0;
 
   return kResultOk;
@@ -167,14 +193,16 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream *state) {
 
 //------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::getState(IBStream *state) {
-  L_(ltrace) << "Entering PlugProcessor::getState";
+  L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::getState";
   // here we need to save the model (preset or project)
 
   int32 toSaveConnectParam = connectParam;
   int32 toSaveConnectionIndicatorParam = connectionIndicatorParam;
+  double toSaveMetronomeVolumeParam = metronomeVolumeParam;
   int32 toSaveBypass = mBypass ? 1 : 0;
 
   IBStreamer streamer(state, kLittleEndian);
+  streamer.writeDouble(toSaveMetronomeVolumeParam);
   streamer.writeInt32(toSaveConnectParam);
   streamer.writeInt32(toSaveConnectionIndicatorParam);
   streamer.writeInt32(toSaveBypass);
@@ -184,7 +212,7 @@ tresult PLUGIN_API PlugProcessor::getState(IBStream *state) {
 
 //------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::notify(Vst::IMessage *message) {
-  L_(ltrace) << "Entering PlugProcessor::notify";
+  L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::notify";
   if (!message)
     return kInvalidArgument;
 
@@ -211,7 +239,7 @@ tresult PLUGIN_API PlugProcessor::notify(Vst::IMessage *message) {
 }
 
 char *PlugProcessor::tCharToCharPtr(Steinberg::Vst::TChar *tChar) {
-  L_(ltrace) << "Entering PlugProcessor::tCharToCharPtr";
+  L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::tCharToCharPtr";
   Steinberg::String str(tChar);
   str.toMultiByte(kCP_Utf8);
   if (str.text8()) {
@@ -222,17 +250,17 @@ char *PlugProcessor::tCharToCharPtr(Steinberg::Vst::TChar *tChar) {
 
 void PlugProcessor::connectToServer(int16 value,
                                     ConnectionProperties connectionProperties) {
-  L_(ltrace) << "Entering PlugProcessor::connectToServer";
+  L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::connectToServer";
 
   if (value > 0) {
-    L_(ldebug) << "Connect initiated";
+    L_(ldebug) << "[PlugProcessor] Connect initiated";
     int status = ninjamClient->connect(connectionProperties);
     if (status != 0) {
       value = 0;
     }
-    L_(ldebug) << "NinjamClient status: " << status;
+    L_(ldebug) << "[PlugProcessor] NinjamClient status: " << status;
   } else {
-    L_(ldebug) << "Disconnect initiated";
+    L_(ldebug) << "[PlugProcessor] Disconnect initiated";
     if (ninjamClient) {
       ninjamClient->disconnect();
     }

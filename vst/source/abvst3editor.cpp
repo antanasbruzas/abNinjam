@@ -11,11 +11,11 @@ AbVST3Editor::AbVST3Editor(Steinberg::Vst::EditController *editController,
                            UTF8StringPtr templateName,
                            UTF8StringPtr xmlFileName)
     : VST3Editor(editController, templateName, xmlFileName) {
-  L_(ltrace) << "Entering AbVST3Editor::AbVST3Editor";
+  L_(ltrace) << "[AbVST3Editor] Entering AbVST3Editor::AbVST3Editor";
 }
 
 CMessageResult AbVST3Editor::notify(CBaseObject *sender, IdStringPtr message) {
-  // L_(ltrace) << "Entering AbVST3Editor::notify";
+  // L_(ltrace) << "[AbVST3Editor] Entering AbVST3Editor::notify";
   if (message == CVSTGUITimer::kMsgTimer) {
     if (doCreateView)
       recreateView();

@@ -6,20 +6,23 @@ using namespace abNinjam;
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugController::initialize(FUnknown *context) {
-  L_(ltrace) << "Entering PlugController::initialize";
+  L_(ltrace) << "[PlugController] Entering PlugController::initialize";
   tresult result = EditController::initialize(context);
   if (result == kResultTrue) {
     //---Create Parameters------------
+    //---Metronome volume parameter--
+    auto *metronomeVolumeParam = new MetronomeVolumeParameter(
+        ParameterInfo::kCanAutomate, AbNinjamParams::kParamMetronomeVolId);
+    parameters.addParameter(metronomeVolumeParam);
+
     parameters.addParameter(STR16("Bypass"), nullptr, 1, 0,
                             ParameterInfo::kCanAutomate |
                                 ParameterInfo::kIsBypass,
                             AbNinjamParams::kBypassId);
-
     parameters.addParameter(STR16("Connect to server"), STR16("On/Off"), 1, 0,
                             ParameterInfo::kCanAutomate,
                             AbNinjamParams::kParamConnectId, 0,
                             STR16("Connect"));
-
     parameters.addParameter(
         STR16("Connection indicator"), STR16("Connected/Disconnected"), 1, 0,
         ParameterInfo::kIsReadOnly, AbNinjamParams::kParamConnectionIndicatorId,
@@ -37,7 +40,7 @@ IController *
 PlugController::createSubController(UTF8StringPtr name,
                                     const IUIDescription * /*description*/,
                                     VST3Editor * /*editor*/) {
-  L_(ltrace) << "Entering PlugController::createSubController";
+  L_(ltrace) << "[PlugController] Entering PlugController::createSubController";
   if (UTF8StringView(name) == "MessageController") {
     auto *controller = new UIMessageController(this);
     addUIMessageController(controller);
@@ -49,7 +52,7 @@ PlugController::createSubController(UTF8StringPtr name,
 
 //------------------------------------------------------------------------
 IPlugView *PLUGIN_API PlugController::createView(const char *name) {
-  L_(ltrace) << "Entering PlugController::createView";
+  L_(ltrace) << "[PlugController] Entering PlugController::createView";
   // someone wants my editor
 #ifndef WITHOUT_GUI
   if (name && strcmp(name, "editor") == 0) {
@@ -62,13 +65,19 @@ IPlugView *PLUGIN_API PlugController::createView(const char *name) {
 
 //------------------------------------------------------------------------
 tresult PLUGIN_API PlugController::setComponentState(IBStream *state) {
-  L_(ltrace) << "Entering PlugController::setComponentState";
+  L_(ltrace) << "[PlugController] Entering PlugController::setComponentState";
   // we receive the current state of the component (processor part)
   // we read our parameters and bypass value...
   if (!state)
     return kResultFalse;
 
   IBStreamer streamer(state, kLittleEndian);
+
+  double metronomeVolumeState = 0;
+  if (streamer.readDouble(metronomeVolumeState) == false)
+    return kResultFalse;
+  setParamNormalized(AbNinjamParams::kParamMetronomeVolId,
+                     metronomeVolumeState);
 
   int8 connectState = 0;
   if (streamer.readInt8(connectState) == false)
@@ -92,14 +101,16 @@ tresult PLUGIN_API PlugController::setComponentState(IBStream *state) {
 
 //------------------------------------------------------------------------
 void PlugController::addUIMessageController(UIMessageController *controller) {
-  L_(ltrace) << "Entering PlugController::addUIMessageController";
+  L_(ltrace)
+      << "[PlugController] Entering PlugController::addUIMessageController";
   uiMessageControllers.push_back(controller);
 }
 
 //------------------------------------------------------------------------
 void PlugController::removeUIMessageController(
     UIMessageController *controller) {
-  L_(ltrace) << "Entering PlugController::removeUIMessageController";
+  L_(ltrace)
+      << "[PlugController] Entering PlugController::removeUIMessageController";
   UIMessageControllerList::const_iterator it = std::find(
       uiMessageControllers.begin(), uiMessageControllers.end(), controller);
   if (it != uiMessageControllers.end())
@@ -108,7 +119,7 @@ void PlugController::removeUIMessageController(
 
 //------------------------------------------------------------------------
 void PlugController::setMessageText(String128 text, unsigned long index) {
-  L_(ltrace) << "Entering PlugController::setMessageText";
+  L_(ltrace) << "[PlugController] Entering PlugController::setMessageText";
   if (messageTexts.size() > index) {
     Steinberg::String tmp(text);
     tmp.copyTo16(messageTexts[index], 0, 127);
@@ -141,7 +152,7 @@ void PlugController::setMessageText(String128 text, unsigned long index) {
 
 //------------------------------------------------------------------------
 TChar *PlugController::getMessageText(unsigned long index) {
-  L_(ltrace) << "Entering PlugController::getMessageText";
+  L_(ltrace) << "[PlugController] Entering PlugController::getMessageText";
   if (messageTexts.size() > index) {
     return messageTexts.at(index);
   }
@@ -150,7 +161,7 @@ TChar *PlugController::getMessageText(unsigned long index) {
 
 //------------------------------------------------------------------------
 tresult PLUGIN_API PlugController::setState(IBStream *state) {
-  L_(ltrace) << "Entering PlugController::setState";
+  L_(ltrace) << "[PlugController] Entering PlugController::setState";
   IBStreamer streamer(state, kLittleEndian);
 
   int8 byteOrder;
@@ -176,7 +187,7 @@ tresult PLUGIN_API PlugController::setState(IBStream *state) {
 
 //------------------------------------------------------------------------
 tresult PLUGIN_API PlugController::getState(IBStream *state) {
-  L_(ltrace) << "Entering PlugController::getState";
+  L_(ltrace) << "[PlugController] Entering PlugController::getState";
   // here we can save UI settings for example
 
   // as we save a Unicode string, we must know the byteorder when setState is
@@ -194,19 +205,4 @@ tresult PLUGIN_API PlugController::getState(IBStream *state) {
   }
 
   return kResultTrue;
-}
-
-//------------------------------------------------------------------------
-tresult PlugController::receiveText(const char *text) {
-  L_(ltrace) << "Entering PlugController::receiveText";
-  // received from Component
-  if (text) {
-    L_(ldebug) << "[PlugController] received: " << text;
-    if (strncmp(text, "Connected", 1) == 0) {
-      setParamNormalized(AbNinjamParams::kParamConnectionIndicatorId, 1);
-    } else if (strncmp(text, "Disconnected", 1) == 0) {
-      setParamNormalized(AbNinjamParams::kParamConnectionIndicatorId, 0);
-    }
-  }
-  return kResultOk;
 }

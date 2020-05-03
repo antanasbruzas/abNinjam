@@ -4,6 +4,7 @@
 #include "log.h"
 #include "ninjamclient.h"
 #include "plugids.h"
+#include "pluginterfaces/vst/ivstparameterchanges.h"
 #include "pluginterfaces/vst/vsttypes.h"
 #include "public.sdk/source/vst/vstaudioeffect.h"
 
@@ -42,6 +43,7 @@ public:
 protected:
   int16 connectParam = 0;
   int16 connectionIndicatorParam = 0;
+  Vst::ParamValue metronomeVolumeParam = 0.5;
   bool mBypass = false;
 
 private:
@@ -49,6 +51,7 @@ private:
   char *tCharToCharPtr(Steinberg::Vst::TChar *tChar);
   NinjamClient *ninjamClient;
   std::array<char *, 3> messageTexts = {strdup(""), strdup(""), strdup("")};
+  bool connectedOld;
 };
 
 //------------------------------------------------------------------------

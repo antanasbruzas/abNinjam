@@ -5,16 +5,16 @@ using namespace abNinjam;
 static constexpr auto zenitypath = "/usr/bin/zenity";
 
 LicenseDialog::LicenseDialog() {
-  L_(ltrace) << "Entering LicenseDialog::LicenseDialog";
+  L_(ltrace) << "[LicenseDialog] Entering LicenseDialog::LicenseDialog";
 }
 
 LicenseDialog::~LicenseDialog() {
-  L_(ltrace) << "Entering LicenseDialog::~LicenseDialog";
+  L_(ltrace) << "[LicenseDialog] Entering LicenseDialog::~LicenseDialog";
   closeProcess();
 }
 
 int LicenseDialog::showDialog(const char *licensetext) {
-  L_(ltrace) << "Entering LicenseDialog::showDialog";
+  L_(ltrace) << "[LicenseDialog] Entering LicenseDialog::showDialog";
   //  std::string license = licensetext;
   //  encodeLicenseText(license);
   std::string command = zenitypath;
@@ -34,7 +34,7 @@ int LicenseDialog::showDialog(const char *licensetext) {
 }
 
 int LicenseDialog::startProcess(const char *command) {
-  L_(ltrace) << "Entering LicenseDialog::startProcess";
+  L_(ltrace) << "[LicenseDialog] Entering LicenseDialog::startProcess";
   pipe = popen(command, "r");
   if (!pipe) {
     return 256;
@@ -44,14 +44,14 @@ int LicenseDialog::startProcess(const char *command) {
 }
 
 void LicenseDialog::closeProcess() {
-  L_(ltrace) << "Entering LicenseDialog::closeProcess";
+  L_(ltrace) << "[LicenseDialog] Entering LicenseDialog::closeProcess";
   if (pipe)
     pclose(pipe);
   pipe = nullptr;
 }
 
 void LicenseDialog::encodeLicenseText(std::string &data) {
-  L_(ltrace) << "Entering LicenseDialog::encodeLicenseText";
+  L_(ltrace) << "[LicenseDialog] Entering LicenseDialog::encodeLicenseText";
   std::string buffer;
   buffer.reserve(data.size());
   for (size_t pos = 0; pos != data.size(); ++pos) {

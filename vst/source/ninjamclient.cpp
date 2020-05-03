@@ -30,7 +30,7 @@ void chatmsg_cb(void *userData, NJClient *inst, const char **parms,
 }
 
 NinjamClient::NinjamClient() {
-  L_(ltrace) << "Entering NinjamClient::NinjamClient";
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::NinjamClient";
   njClient = new NJClient;
   njClient->config_savelocalaudio = 1;
   njClient->LicenseAgreementCallback = licensecallback;
@@ -41,7 +41,7 @@ NinjamClient::NinjamClient() {
 }
 
 NinjamClient::~NinjamClient() {
-  L_(ltrace) << "Entering NinjamClient::~NinjamClient";
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::~NinjamClient";
   disconnect();
 }
 
@@ -77,7 +77,7 @@ void keepConnectionThread(NinjamClient *ninjamClient) {
 }
 
 int NinjamClient::connect(ConnectionProperties connectionProperties) {
-  L_(ltrace) << "Entering NinjamClient::connect";
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::connect";
   path propertiesPath = getHomePath();
 
   ostringstream oss;
@@ -87,7 +87,7 @@ int NinjamClient::connect(ConnectionProperties connectionProperties) {
     L_(ldebug) << "Configuration file provided: " << propertiesPath;
     connectionProperties.readFromFile(propertiesPath);
   } else {
-    L_(ldebug) << "Configuration file not provided.";
+    L_(ldebug) << "[NinjamClient] Configuration file not provided.";
   }
 
   if (isEmpty(connectionProperties.gsHost())) {
@@ -101,8 +101,8 @@ int NinjamClient::connect(ConnectionProperties connectionProperties) {
   agree = 1;
   autoAgree = connectionProperties.gsLicenseAutoAgree();
 
-  L_(ltrace) << "Status: " << njClient->GetStatus();
-  L_(ltrace) << "IsAudioRunning: " << njClient->IsAudioRunning();
+  L_(ltrace) << "[NinjamClient] Status: " << njClient->GetStatus();
+  L_(ltrace) << "[NinjamClient] IsAudioRunning: " << njClient->IsAudioRunning();
 
   // TODO: check if "if" condition is needed here
   if (njClient->GetStatus() != 0 && njClient->IsAudioRunning() != 1) {
@@ -128,13 +128,15 @@ int NinjamClient::connect(ConnectionProperties connectionProperties) {
     return 0;
   }
   if (agree == 256) {
+    L_(lwarning) << "[NinjamClient] License not accepted. Not Connected.";
     return -2;
   }
+  L_(lerror) << "[NinjamClient] Connection error";
   return -3;
 }
 
 void NinjamClient::disconnect() {
-  L_(ltrace) << "Entering NinjamClient::disconnect";
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::disconnect";
   stopConnectionThread = true;
   if (connectionThread) {
     if (connectionThread->joinable()) {
@@ -153,14 +155,13 @@ void NinjamClient::disconnect() {
 void NinjamClient::audiostreamOnSamples(float **inbuf, int innch,
                                         float **outbuf, int outnch, int len,
                                         int srate) {
-  // TODO: clear buffers
-  //  if (!g_audio_enable)
-  //  {
-  //    int x;
-  //    // clear all output buffers
-  //    for (x = 0; x < outnch; x ++) memset(outbuf[x],0,sizeof(float)*len);
-  //    return;
-  //  }
+  if (!connected) {
+    int x;
+    // clear all output buffers
+    for (x = 0; x < outnch; x++)
+      memset(outbuf[x], 0, sizeof(float) * static_cast<unsigned long>(len));
+    return;
+  }
   if (connected) {
     njClient->AudioProc(inbuf, innch, outbuf, outnch, len, srate);
   }
