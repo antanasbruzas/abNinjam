@@ -20,13 +20,12 @@ jobs:
       run:  |
         if [ "$RUNNER_OS" == "Linux" ]; then
               sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev
-        elif [ "$RUNNER_OS" == "Windows ]; then
+        elif [ "$RUNNER_OS" == "Windows" ]; then
               dir
-         else
+        else
               echo "$RUNNER_OS not supported"
               exit 1
-         fi
-      shell: bash
+        fi
     - name: initialize
       run: git submodule update --init
     - name: configure
