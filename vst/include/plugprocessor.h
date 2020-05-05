@@ -1,6 +1,7 @@
 #pragma once
 
 #include "connectionproperties.h"
+#include "hostcontroller.h"
 #include "log.h"
 #include "ninjamclient.h"
 #include "plugids.h"
@@ -52,6 +53,9 @@ private:
   NinjamClient *ninjamClient;
   std::array<char *, 3> messageTexts = {strdup(""), strdup(""), strdup("")};
   bool connectedOld;
+  String128 hostProductString;
+  HostController *hostController;
+  bool synced = false;
 };
 
 //------------------------------------------------------------------------

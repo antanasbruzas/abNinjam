@@ -24,6 +24,7 @@ public:
   auto &gsStopConnectionThread() { return stopConnectionThread; }
   auto &gsMtx() { return mtx; }
   bool connected = false;
+  void clearAllOutputBuffers(float **outbuf, int outnch, int len);
 
 private:
   thread *connectionThread;

@@ -156,13 +156,17 @@ void NinjamClient::audiostreamOnSamples(float **inbuf, int innch,
                                         float **outbuf, int outnch, int len,
                                         int srate) {
   if (!connected) {
-    int x;
-    // clear all output buffers
-    for (x = 0; x < outnch; x++)
-      memset(outbuf[x], 0, sizeof(float) * static_cast<unsigned long>(len));
-    return;
+    clearAllOutputBuffers(outbuf, outnch, len);
   }
   if (connected) {
     njClient->AudioProc(inbuf, innch, outbuf, outnch, len, srate);
   }
+}
+
+void NinjamClient::clearAllOutputBuffers(float **outbuf, int outnch, int len) {
+  int x;
+  // clear all output buffers
+  for (x = 0; x < outnch; x++)
+    memset(outbuf[x], 0, sizeof(float) * static_cast<unsigned long>(len));
+  return;
 }

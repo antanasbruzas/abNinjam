@@ -27,6 +27,7 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     include/connectionproperties.h
     include/licensedialog.h
     include/metronomevolumeparameter.h
+    include/hostcontroller.h
     source/plugfactory.cpp
     source/plugcontroller.cpp
     source/plugprocessor.cpp
@@ -37,7 +38,8 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     source/stringutil.cpp
     source/connectionproperties.cpp
     source/licensedialog.cpp
-    source/metronomevolumeparameter.cpp)
+    source/metronomevolumeparameter.cpp
+    source/hostcontroller.cpp)
 
 target_include_directories(${VSTPLUGIN_PRJ_NAME}
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")

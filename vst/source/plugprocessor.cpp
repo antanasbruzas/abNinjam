@@ -10,6 +10,7 @@ PlugProcessor::PlugProcessor() {
   L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::PlugProcessor";
   // register its editor class
   setControllerClass(abNinjamControllerUID);
+  hostController = new HostController();
 }
 
 //-----------------------------------------------------------------------------
@@ -26,6 +27,13 @@ tresult PLUGIN_API PlugProcessor::initialize(FUnknown *context) {
   addAudioOutput(STR16("AudioOutput"), Vst::SpeakerArr::kStereo);
 
   ninjamClient = new NinjamClient();
+
+  FUnknownPtr<Vst::IHostApplication> hostApplication(context);
+  if (hostApplication) {
+    hostApplication->getName(hostProductString);
+    L_(ldebug) << "[PlugProcessor] hostProductString: "
+               << tCharToCharPtr(hostProductString);
+  }
 
   return kResultTrue;
 }
@@ -74,6 +82,8 @@ tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
 
   // L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::process";
+
+  ConnectionProperties connectionProperties;
   //--- Read inputs parameter changes-----------
   if (data.inputParameterChanges) {
     int32 numParamsChanged = data.inputParameterChanges->getParameterCount();
@@ -90,7 +100,6 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
           if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
               kResultTrue) {
             connectParam = value > 0 ? 1 : 0;
-            ConnectionProperties connectionProperties;
             connectionProperties.gsHost() = messageTexts.at(0);
             connectionProperties.gsUsername() = messageTexts.at(1);
             connectionProperties.gsPassword() = messageTexts.at(2);
@@ -122,18 +131,66 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
     return kResultOk;
   }
 
-  // float **inbuf, int innch,
-  // float **outbuf, int outnch, int len,
-  // int srate
-
   if (data.numSamples > 0) {
-    ninjamClient->audiostreamOnSamples(
-        data.inputs->channelBuffers32, data.inputs->numChannels,
-        data.outputs->channelBuffers32, data.outputs->numChannels,
-        data.numSamples, static_cast<int>(processSetup.sampleRate));
-    // Process Algorithm
-    // Ex: algo.process (data.inputs[0].channelBuffers32,
-    // data.outputs[0].channelBuffers32, data.numSamples);
+    long intervalPosition = 0;
+    if (ninjamClient->connected) {
+      if (hostController->hostIsPlaying(data.processContext)) {
+        if (!hostController->hostPlayingInLastBuffer) {
+          L_(ldebug) << "[PlugProcessor] hostPlayingInLastBuffer: "
+                     << hostController->hostPlayingInLastBuffer;
+          synced = false;
+        }
+        if (!synced) {
+          int pos, samplesInInterval;
+          ninjamClient->gsNjClient()->GetPosition(&pos, &samplesInInterval);
+
+          if (samplesInInterval > 1000) {
+            int startPosition =
+                static_cast<int>(hostController->getStartPositionForHostSync(
+                    data.processContext));
+            if (startPosition >= 0) {
+              intervalPosition = startPosition % samplesInInterval;
+            } else {
+              intervalPosition =
+                  samplesInInterval - abs(startPosition % samplesInInterval);
+            }
+
+            if (abs(intervalPosition - pos) < data.numSamples) {
+              synced = true;
+            }
+          }
+        }
+
+        if (synced) {
+          ninjamClient->audiostreamOnSamples(
+              data.inputs->channelBuffers32, data.inputs->numChannels,
+              data.outputs->channelBuffers32, data.outputs->numChannels,
+              data.numSamples, static_cast<int>(processSetup.sampleRate));
+        } else {
+          ninjamClient->clearAllOutputBuffers(data.outputs->channelBuffers32,
+                                              data.outputs->numChannels,
+                                              data.numSamples);
+        }
+
+      } else {
+        // Connected but not synced to host
+        ninjamClient->audiostreamOnSamples(
+            data.inputs->channelBuffers32, data.inputs->numChannels,
+            data.outputs->channelBuffers32, data.outputs->numChannels,
+            data.numSamples, static_cast<int>(processSetup.sampleRate));
+        synced = false;
+      }
+
+    } else {
+      // Not connected
+      ninjamClient->clearAllOutputBuffers(data.outputs->channelBuffers32,
+                                          data.outputs->numChannels,
+                                          data.numSamples);
+      synced = false;
+    }
+
+    hostController->hostPlayingInLastBuffer =
+        hostController->hostIsPlaying(data.processContext);
   }
 
   //--- Write outputs parameter changes-----------
