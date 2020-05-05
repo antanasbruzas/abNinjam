@@ -26,6 +26,7 @@ jobs:
               echo "$RUNNER_OS not supported"
               exit 1
         fi
+      shell: bash
     - name: initialize
       run: git submodule update --init
     - name: configure
