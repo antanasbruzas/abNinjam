@@ -28,10 +28,14 @@ jobs:
               git clone https://github.com/xiph/ogg.git
               cd ogg
               cmake .
+              cmake --build .
+              cmake --build . --target install
               cd ..
               git clone https://github.com/xiph/vorbis.git
               cd vorbis
               cmake .
+              cmake --build .
+              cmake --build . --target install
         else
               echo "$RUNNER_OS not supported"
               exit 1
