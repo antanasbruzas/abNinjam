@@ -31,7 +31,7 @@ public:
   void setMessageText(String128 msgText, unsigned long index) {
     if (!textEdits[index])
       return;
-    String str(msgText);
+    Steinberg::String str(msgText);
     str.toMultiByte(kCP_Utf8);
     textEdits[index]->setText(str.text8());
   }
@@ -64,7 +64,7 @@ private:
           textEdits[i]->registerViewListener(this);
 
           // initialize content
-          String str(plugController->getMessageText(i));
+          Steinberg::String str(plugController->getMessageText(i));
           str.toMultiByte(kCP_Utf8);
           if (str.text8()) {
             textEdits[i]->setText(str.text8());
@@ -97,7 +97,7 @@ private:
           // save the last content of the text edit view
           const UTF8String &text = textEdits[i]->getText();
           String128 messageText;
-          String str;
+          Steinberg::String str;
           str.fromUTF8(text.data());
           str.copyTo(messageText, 0, 128);
           plugController->setMessageText(messageText, i);
