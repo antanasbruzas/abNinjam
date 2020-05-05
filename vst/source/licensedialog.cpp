@@ -35,18 +35,32 @@ int LicenseDialog::showDialog(const char *licensetext) {
 
 int LicenseDialog::startProcess(const char *command) {
   L_(ltrace) << "[LicenseDialog] Entering LicenseDialog::startProcess";
+#ifdef _WIN32
+  pipe = _popen(command, "r");
+#else
   pipe = popen(command, "r");
+#endif
   if (!pipe) {
     return 256;
   }
+#ifdef _WIN32
+  int stat = _pclose(pipe);
+#else
   int stat = pclose(pipe);
+#endif
   return stat;
 }
 
 void LicenseDialog::closeProcess() {
   L_(ltrace) << "[LicenseDialog] Entering LicenseDialog::closeProcess";
-  if (pipe)
+  if (pipe) {
     pclose(pipe);
+#ifdef _WIN32
+    _pclose(pipe);
+#else
+    pclose(pipe);
+#endif
+  }
   pipe = nullptr;
 }
 
