@@ -18,9 +18,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: dependencies
       run:  |
-        if [ matrix.os == 'ubuntu-latest' ]; then
-              sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev
-        elif [ matrix.os == 'windows-latest' ]; then
+        if [ "$RUNNER_OS" == "Linux" ]; then
+              apt install important_linux_software
+        elif [ "$RUNNER_OS" == "Windows" ]; then
               dir
         else
               echo "$RUNNER_OS not supported"
