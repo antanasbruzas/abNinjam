@@ -8,21 +8,10 @@ on:
 
 jobs:
   build:
-    name: ${ { matrix.config.name } }
-    runs-on: ${ { matrix.config.os } }
-    
+    runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
       matrix:
-        config:
-        - {
-            name: "Ubuntu Latest GCC",
-            os: ubuntu-latest
-          }
-        - {
-            name: "Windows Latest MSVC",
-            os: windows-latest
-          }
+        os: [ubuntu-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v2
