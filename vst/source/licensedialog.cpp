@@ -54,7 +54,6 @@ int LicenseDialog::startProcess(const char *command) {
 void LicenseDialog::closeProcess() {
   L_(ltrace) << "[LicenseDialog] Entering LicenseDialog::closeProcess";
   if (pipe) {
-    pclose(pipe);
 #ifdef _WIN32
     _pclose(pipe);
 #else
