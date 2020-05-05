@@ -17,7 +17,15 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: dependencies
-      run: sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev
+      run:   |
+         if [ "$RUNNER_OS" == "Linux" ]; then
+              sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev
+         elif [ "$RUNNER_OS" == "Windows ]; then
+              dir
+         else
+              echo "$RUNNER_OS not supported"
+              exit 1
+         fi
     - name: initialize
       run: git submodule update --init
     - name: configure
