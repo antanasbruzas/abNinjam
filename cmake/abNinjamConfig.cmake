@@ -18,6 +18,8 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         add_compile_options(-msse2)
     endif()
     find_package(PkgConfig REQUIRED)
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    add_compile_options(/Zc:__cplusplus)
 endif()
 
 # Default build type set as Release
