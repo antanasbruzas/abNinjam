@@ -8,6 +8,10 @@ using namespace abNinjam;
 ConnectionProperties::ConnectionProperties() {
   L_(ltrace) << "[ConnectionProperties] Entering "
                 "ConnectionProperties::ConnectionProperties";
+  host = nullptr;
+  username = nullptr;
+  password = nullptr;
+  licenseAutoAgree = false;
 }
 
 ConnectionProperties::~ConnectionProperties() {

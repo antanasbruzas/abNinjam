@@ -28,6 +28,8 @@ tresult PLUGIN_API PlugController::initialize(FUnknown *context) {
         ParameterInfo::kIsReadOnly, AbNinjamParams::kParamConnectionIndicatorId,
         0, STR16("Connection"));
 
+    notificationLabel = nullptr;
+
     //---Custom state init------------
     // Steinberg::String defaultPort("2049");
     // defaultPort.copyTo16(messageTexts[3], 0, 127);
@@ -205,4 +207,36 @@ tresult PLUGIN_API PlugController::getState(IBStream *state) {
   }
 
   return kResultTrue;
+}
+
+//------------------------------------------------------------------------
+tresult PlugController::receiveText(const char *text) {
+  L_(ltrace) << "[PlugController] Entering PlugController::receiveText";
+  // received from Component
+  if (text) {
+    L_(ldebug) << "[PlugController] received: " << text;
+  }
+  if (notificationLabel)
+    notificationLabel->setText(text);
+  return kResultOk;
+}
+
+//------------------------------------------------------------------------
+CView *PlugController::createCustomView(UTF8StringPtr name,
+                                        const UIAttributes &attributes,
+                                        const IUIDescription *description,
+                                        VST3Editor *editor) {
+  L_(ltrace) << "[PlugController] Entering PlugController::createCustomView";
+  if (name && strcmp(name, "NotificationText") == 0) {
+    CRect size;
+    notificationLabel = new CTextLabel(size);
+    return notificationLabel;
+  }
+  return nullptr;
+}
+
+//------------------------------------------------------------------------
+void PlugController::willClose(VST3Editor *editor) {
+  L_(ltrace) << "[PlugController] Entering PlugController::willClose";
+  notificationLabel = nullptr;
 }

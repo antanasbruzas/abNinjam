@@ -56,6 +56,9 @@ private:
   String128 hostProductString;
   HostController *hostController;
   bool synced = false;
+  bool bpmNotification = false;
+  bool clearNotification = true;
+  bool notificationCleared = false;
 };
 
 //------------------------------------------------------------------------

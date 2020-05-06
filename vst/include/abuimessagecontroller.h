@@ -16,7 +16,7 @@ template <typename ControllerType>
 class AbUIMessageController : public VSTGUI::IController,
                               public VSTGUI::ViewListenerAdapter {
 public:
-  AbUIMessageController(ControllerType *plugController)
+  explicit AbUIMessageController(ControllerType *plugController)
       : plugController(plugController), textEdits() {}
   ~AbUIMessageController() override {
 

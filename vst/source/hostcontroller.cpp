@@ -2,7 +2,7 @@
 
 using namespace abNinjam;
 
-HostController::HostController() {}
+HostController::HostController() { hostPlayingInLastBuffer = false; }
 
 double HostController::getStartPositionForHostSync(
     ProcessContext *processContext) const {

@@ -11,6 +11,8 @@ PlugProcessor::PlugProcessor() {
   // register its editor class
   setControllerClass(abNinjamControllerUID);
   hostController = new HostController();
+  ninjamClient = new NinjamClient();
+  connectedOld = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -25,8 +27,6 @@ tresult PLUGIN_API PlugProcessor::initialize(FUnknown *context) {
   // we want a stereo Input and a Stereo Output
   addAudioInput(STR16("AudioInput"), Vst::SpeakerArr::kStereo);
   addAudioOutput(STR16("AudioOutput"), Vst::SpeakerArr::kStereo);
-
-  ninjamClient = new NinjamClient();
 
   FUnknownPtr<Vst::IHostApplication> hostApplication(context);
   if (hostApplication) {
@@ -82,8 +82,6 @@ tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
 
   // L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::process";
-
-  ConnectionProperties connectionProperties;
   //--- Read inputs parameter changes-----------
   if (data.inputParameterChanges) {
     int32 numParamsChanged = data.inputParameterChanges->getParameterCount();
@@ -100,6 +98,7 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
           if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
               kResultTrue) {
             connectParam = value > 0 ? 1 : 0;
+            ConnectionProperties connectionProperties;
             connectionProperties.gsHost() = messageTexts.at(0);
             connectionProperties.gsUsername() = messageTexts.at(1);
             connectionProperties.gsPassword() = messageTexts.at(2);
@@ -132,7 +131,6 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
   }
 
   if (data.numSamples > 0) {
-    long intervalPosition = 0;
     if (ninjamClient->connected) {
       if (hostController->hostIsPlaying(data.processContext)) {
         if (!hostController->hostPlayingInLastBuffer) {
@@ -143,11 +141,11 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
         if (!synced) {
           int pos, samplesInInterval;
           ninjamClient->gsNjClient()->GetPosition(&pos, &samplesInInterval);
-
           if (samplesInInterval > 1000) {
             int startPosition =
                 static_cast<int>(hostController->getStartPositionForHostSync(
                     data.processContext));
+            long intervalPosition = 0;
             if (startPosition >= 0) {
               intervalPosition = startPosition % samplesInInterval;
             } else {
@@ -158,6 +156,12 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
             if (abs(intervalPosition - pos) < data.numSamples) {
               synced = true;
             }
+          } else {
+            L_(ldebug) << "[PlugProcessor] audiostreamForSync";
+            ninjamClient->audiostreamForSync(
+                data.inputs->channelBuffers32, data.inputs->numChannels,
+                data.outputs->channelBuffers32, data.outputs->numChannels,
+                data.numSamples, static_cast<int>(processSetup.sampleRate));
           }
         }
 
@@ -166,10 +170,31 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
               data.inputs->channelBuffers32, data.inputs->numChannels,
               data.outputs->channelBuffers32, data.outputs->numChannels,
               data.numSamples, static_cast<int>(processSetup.sampleRate));
+
+          if (!bpmNotification) {
+            float ninjamBpm = ninjamClient->gsNjClient()->GetActualBPM();
+            if (abs(static_cast<double>(ninjamBpm) -
+                    data.processContext->tempo) >
+                numeric_limits<double>::epsilon()) {
+              L_(linfo) << "[PlugProcessor] "
+                           "NINJAM BPM: "
+                        << ninjamBpm << ", "
+                        << tCharToCharPtr(hostProductString)
+                        << " BPM: " << data.processContext->tempo;
+              bpmNotification = true;
+              string notification("Ninjam BPM: " +
+                                  to_string(static_cast<int>(ninjamBpm)));
+              this->sendTextMessage(notification.c_str());
+              clearNotification = false;
+              notificationCleared = false;
+            }
+          }
         } else {
-          ninjamClient->clearAllOutputBuffers(data.outputs->channelBuffers32,
-                                              data.outputs->numChannels,
-                                              data.numSamples);
+          ninjamClient->clearBuffers(data.outputs->channelBuffers32,
+                                     data.outputs->numChannels,
+                                     data.numSamples);
+          bpmNotification = false;
+          clearNotification = true;
         }
 
       } else {
@@ -179,14 +204,20 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
             data.outputs->channelBuffers32, data.outputs->numChannels,
             data.numSamples, static_cast<int>(processSetup.sampleRate));
         synced = false;
+        clearNotification = true;
       }
 
     } else {
       // Not connected
-      ninjamClient->clearAllOutputBuffers(data.outputs->channelBuffers32,
-                                          data.outputs->numChannels,
-                                          data.numSamples);
+      ninjamClient->clearBuffers(data.outputs->channelBuffers32,
+                                 data.outputs->numChannels, data.numSamples);
       synced = false;
+      clearNotification = true;
+    }
+
+    if (clearNotification && !notificationCleared) {
+      this->sendTextMessage("");
+      notificationCleared = true;
     }
 
     hostController->hostPlayingInLastBuffer =
@@ -312,9 +343,6 @@ void PlugProcessor::connectToServer(int16 value,
   if (value > 0) {
     L_(ldebug) << "[PlugProcessor] Connect initiated";
     int status = ninjamClient->connect(connectionProperties);
-    if (status != 0) {
-      value = 0;
-    }
     L_(ldebug) << "[PlugProcessor] NinjamClient status: " << status;
   } else {
     L_(ldebug) << "[PlugProcessor] Disconnect initiated";

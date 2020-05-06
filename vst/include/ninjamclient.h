@@ -20,15 +20,17 @@ public:
   void disconnect();
   void audiostreamOnSamples(float **inbuf, int innch, float **outbuf,
                             int outnch, int len, int srate);
+  void audiostreamForSync(float **inbuf, int innch, float **outbuf, int outnch,
+                          int len, int srate);
   auto &gsNjClient() { return njClient; }
   auto &gsStopConnectionThread() { return stopConnectionThread; }
   auto &gsMtx() { return mtx; }
   bool connected = false;
-  void clearAllOutputBuffers(float **outbuf, int outnch, int len);
+  void clearBuffers(float **buf, int nch, int len);
 
 private:
   thread *connectionThread;
-  NJClient *njClient;
+  NJClient *njClient = new NJClient;
   bool stopConnectionThread;
   mutex mtx;
 };

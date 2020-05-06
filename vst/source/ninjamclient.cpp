@@ -31,13 +31,14 @@ void chatmsg_cb(void *userData, NJClient *inst, const char **parms,
 
 NinjamClient::NinjamClient() {
   L_(ltrace) << "[NinjamClient] Entering NinjamClient::NinjamClient";
-  njClient = new NJClient;
   njClient->config_savelocalaudio = 1;
   njClient->LicenseAgreementCallback = licensecallback;
   njClient->ChatMessage_Callback = chatmsg_cb;
   njClient->SetLocalChannelInfo(0, "channel0", true, 0, false, 0, true, true);
   njClient->SetLocalChannelMonitoring(0, false, 0.0f, false, 0.0f, false, false,
                                       false, false);
+  connectionThread = nullptr;
+  stopConnectionThread = true;
 }
 
 NinjamClient::~NinjamClient() {
@@ -71,9 +72,6 @@ void keepConnectionThread(NinjamClient *ninjamClient) {
       }
     }
   }
-  connected = false;
-
-  // return nullptr;
 }
 
 int NinjamClient::connect(ConnectionProperties connectionProperties) {
@@ -156,17 +154,28 @@ void NinjamClient::audiostreamOnSamples(float **inbuf, int innch,
                                         float **outbuf, int outnch, int len,
                                         int srate) {
   if (!connected) {
-    clearAllOutputBuffers(outbuf, outnch, len);
+    // clear all output buffers
+    clearBuffers(outbuf, outnch, len);
   }
   if (connected) {
     njClient->AudioProc(inbuf, innch, outbuf, outnch, len, srate);
   }
 }
 
-void NinjamClient::clearAllOutputBuffers(float **outbuf, int outnch, int len) {
+void NinjamClient::audiostreamForSync(float **inbuf, int innch, float **outbuf,
+                                      int outnch, int len, int srate) {
+  clearBuffers(outbuf, outnch, len);
+  if (connected) {
+    clearBuffers(inbuf, innch, len);
+    njClient->AudioProc(inbuf, innch, outbuf, outnch, len, srate);
+    clearBuffers(outbuf, outnch, len);
+    clearBuffers(inbuf, innch, len);
+  }
+}
+
+void NinjamClient::clearBuffers(float **buf, int nch, int len) {
   int x;
-  // clear all output buffers
-  for (x = 0; x < outnch; x++)
-    memset(outbuf[x], 0, sizeof(float) * static_cast<unsigned long>(len));
+  for (x = 0; x < nch; x++)
+    memset(buf[x], 0, sizeof(float) * static_cast<unsigned long>(len));
   return;
 }

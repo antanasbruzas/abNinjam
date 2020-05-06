@@ -4,7 +4,7 @@ namespace abNinjam {
 
 path getHomePath() {
   L_(ltrace) << "Entering getHomePath";
-  char *home;
+  char *home = nullptr;
 #ifdef unix
   home = getenv("HOME");
 #elif defined(_WIN32)
