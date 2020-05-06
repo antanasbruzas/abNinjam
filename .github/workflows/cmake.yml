@@ -33,7 +33,7 @@ jobs:
               cd ..
               git clone https://github.com/xiph/vorbis.git
               cd vorbis
-              cmake -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/" .
+              cmake -DBUILD_SHARED_LIBS=1 -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/" .
               cmake --build .
               cmake --build . --target install
         else
@@ -48,7 +48,7 @@ jobs:
               cmake .
         elif [ "$RUNNER_OS" == "Windows" ]; then
               dir
-              cmake -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/" -DVORBIS_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBIS_LIBRARY="C:/Program Files (x86)/vorbis/lib/" -DVORBISENC_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBISENC_LIBRARY="C:/Program Files (x86)/vorbis/lib/" .
+              cmake -DBUILD_SHARED_LIBS=1 -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/" -DVORBIS_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBIS_LIBRARY="C:/Program Files (x86)/vorbis/lib/" -DVORBISENC_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBISENC_LIBRARY="C:/Program Files (x86)/vorbis/lib/" .
         else
               echo "$RUNNER_OS not supported"
               exit 1
