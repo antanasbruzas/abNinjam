@@ -33,7 +33,7 @@ jobs:
               cd ..
               git clone https://github.com/xiph/vorbis.git
               cd vorbis
-              cmake .
+              cmake -DBUILD_SHARED_LIBS=1 .
               cmake --build .
               cmake --build . --target install
         else
