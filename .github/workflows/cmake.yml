@@ -27,13 +27,13 @@ jobs:
         elif [ "$RUNNER_OS" == "Windows" ]; then
               git clone https://github.com/xiph/ogg.git
               cd ogg
-              cmake -DBUILD_SHARED_LIBS=1 .
+              cmake .
               cmake --build .
               cmake --build . --target install
               cd ..
               git clone https://github.com/xiph/vorbis.git
               cd vorbis
-              cmake -DBUILD_SHARED_LIBS=1 .
+              cmake -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg" .
               cmake --build .
               cmake --build . --target install
         else
