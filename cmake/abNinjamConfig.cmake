@@ -20,8 +20,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     find_package(PkgConfig REQUIRED)
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(CMAKE_CXX_STANDARD 17)
-    add_compile_options(/Zc:__cplusplus)
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_property(CXX_STANDARD_REQUIRED ON)
 endif()
 
 # Default build type set as Release
