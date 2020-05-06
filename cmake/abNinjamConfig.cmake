@@ -17,6 +17,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     if (CMAKE_SYSTEM_PROCESSOR MATCHES "^(i.86|x86_64)$")
         add_compile_options(-msse2)
     endif()
+    find_package(PkgConfig REQUIRED)
 endif()
 
 # Default build type set as Release
@@ -39,5 +40,4 @@ Compiler CXX min size flags:   ${CMAKE_CXX_FLAGS_MINSIZEREL}
 ")
 endfunction()
 
-find_package(PkgConfig REQUIRED)
 find_package(Threads REQUIRED)
