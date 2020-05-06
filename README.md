@@ -19,7 +19,7 @@
 `cmake --build . --target uninstall`
 
 ## Usage
-Plugin can be used with GUI or specifiyng parameters in `~/abNinjam/connection.properties` file. Available options: 
+Plugin can be used with GUI or specifying parameters in `~/abNinjam/connection.properties` file. Available options: 
 - `host=192.168.0.145`
 - `user=antanas`
 - `pass=supersecret`
