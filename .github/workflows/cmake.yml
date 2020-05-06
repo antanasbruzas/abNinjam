@@ -33,7 +33,7 @@ jobs:
               cd ..
               git clone https://github.com/xiph/vorbis.git
               cd vorbis
-              cmake -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg" -DOGG_LIBRARY="C:/Program Files (x86)/libogg" .
+              cmake -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/include" .
               cmake --build .
               cmake --build . --target install
         else
