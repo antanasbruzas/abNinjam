@@ -47,8 +47,8 @@ jobs:
         if [ "$RUNNER_OS" == "Linux" ]; then
               cmake .
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              dir "C:/Program Files (x86)"
-              cmake -DVORBISENC_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBISENC_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbisenc.lib" .
+              dir
+              cmake -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/" -DVORBISENC_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBISENC_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbisenc.lib" .
         else
               echo "$RUNNER_OS not supported"
               exit 1
