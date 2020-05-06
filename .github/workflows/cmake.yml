@@ -43,7 +43,15 @@ jobs:
     - name: initialize
       run: git submodule update --init
     - name: configure
-      run: cmake .
+      run:  |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+              cmake .
+        elif [ "$RUNNER_OS" == "Windows" ]; then
+              cmake -DVORBISENC_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBISENC_LIBRARY="C:/Program Files (x86)/vorbis/lib/" .
+        else
+              echo "$RUNNER_OS not supported"
+              exit 1
+        fi
     - name: build
       run: cmake --build .
     - name: install
