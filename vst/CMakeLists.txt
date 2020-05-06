@@ -56,10 +56,13 @@ find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(VorbisEnc REQUIRED)
 
+pkg_check_modules(OGG ogg>=1.3.3)
 pkg_check_modules(VORBIS vorbis>=1.3.3)
 pkg_check_modules(VORBISENC vorbisenc>=1.3.3)
+target_include_directories("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${OGG_INCLUDE_DIRS})
 target_include_directories("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBIS_INCLUDE_DIRS})
 target_include_directories("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBISENC_INCLUDE_DIRS})
+target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${OGG_LIBRARIES})
 target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBIS_LIBRARIES})
 target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBISENC_LIBRARIES})
 
