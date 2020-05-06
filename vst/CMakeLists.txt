@@ -51,6 +51,9 @@ plugin_add_vst3sdk(${VSTPLUGIN_PRJ_NAME})
 plugin_add_vstgui(${VSTPLUGIN_PRJ_NAME})
 
 # Add ninjam -------
+# Find vorbisenc dependency
+find_package(vorbisenc REQUIRED)
+
 pkg_check_modules(VORBIS vorbis>=1.3.3)
 pkg_check_modules(VORBISENC vorbisenc>=1.3.3)
 target_include_directories("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBIS_INCLUDE_DIRS})
