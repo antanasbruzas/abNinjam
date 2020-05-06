@@ -52,7 +52,7 @@ plugin_add_vstgui(${VSTPLUGIN_PRJ_NAME})
 
 # Add ninjam -------
 # Find vorbisenc dependency
-#find_package(Ogg REQUIRED)
+find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(VorbisEnc REQUIRED)
 
