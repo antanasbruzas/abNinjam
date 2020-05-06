@@ -27,7 +27,7 @@ jobs:
         elif [ "$RUNNER_OS" == "Windows" ]; then
               git clone https://github.com/xiph/ogg.git
               cd ogg
-              cmake .
+              cmake -DBUILD_SHARED_LIBS=1 .
               cmake --build .
               cmake --build . --target install
               cd ..
