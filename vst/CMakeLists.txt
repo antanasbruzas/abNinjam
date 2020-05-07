@@ -97,9 +97,13 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 # Installation
-#if (NOT MSVC)
+if (MSVC)
+    install (DIRECTORY "${PROJECT_BINARY_DIR}\\${VSTPLUGIN_BUNDLE_NAME}"
+        DESTINATION "${VSTPLUGIN_INSTALL_DIR}"
+        COMPONENT "vst")
+else()
     install (DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}"
         DESTINATION "${VSTPLUGIN_INSTALL_DIR}"
         COMPONENT "vst")
-#endif()
+endif()
 
