@@ -46,8 +46,10 @@ jobs:
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
               cmake .
+              export artifact=/home/runner/.vst3/
         elif [ "$RUNNER_OS" == "Windows" ]; then
               cmake -DCMAKE_BUILD_TYPE=Release -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/ogg.lib" -DVORBIS_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBIS_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbis.lib" -DVORBISENC_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBISENC_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbisenc.lib" .
+              setx artifact "C:\Program Files\Common Files\VST3"
         else
               echo "$RUNNER_OS not supported"
               exit 1
@@ -59,4 +61,4 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: ${{ matrix.os }}
-        path: .vst3/
+        path: ${{ env.artifact }}
