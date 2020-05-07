@@ -37,3 +37,4 @@ function(plugin_add_njclient NAME)
     target_link_libraries("${NAME}" PRIVATE ${VORBISENC_LIBRARIES}
     )
 endfunction()
+
