@@ -48,7 +48,13 @@ NinjamClient::~NinjamClient() {
 
 void keepConnectionThread(NinjamClient *ninjamClient) {
   L_(ltrace) << "Entering keepConnectionThread";
+  // TODO: use scoped_lock for all environments when becomes available
+#ifdef unix
   scoped_lock<mutex> lock(ninjamClient->gsMtx());
+#elif defined(_WIN32)
+  lock_guard<mutex> lock(ninjamClient->gsMtx());
+#endif
+
   ninjamClient->gsStopConnectionThread() = false;
   NJClient *g_client = ninjamClient->gsNjClient();
   bool connected = false;
