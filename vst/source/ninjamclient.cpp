@@ -62,8 +62,32 @@ void keepConnectionThread(NinjamClient *ninjamClient) {
          ninjamClient->gsStopConnectionThread() == false) {
     if (g_client->Run()) {
       // Sleep to prevent 100% CPU usage
+#ifdef unix
       struct timespec ts = {0, 1000 * 1000};
       nanosleep(&ts, nullptr);
+#elif defined(_WIN32)
+      HANDLE hTimer = NULL;
+      LARGE_INTEGER liDueTime;
+
+      liDueTime.QuadPart = -10000LL;
+      // Create an unnamed waitable timer.
+      hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
+      if (NULL == hTimer) {
+        L_(ltrace) << "CreateWaitableTimer failed";
+      } else {
+        // Set a timer to wait for 1 ms.
+        if (!SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, 0)) {
+          L_(ltrace) << "SetWaitableTimer failed";
+        } else {
+          if (WaitForSingleObject(hTimer, INFINITE) != WAIT_OBJECT_0) {
+            L_(ltrace) << "WaitForSingleObject failed";
+          } else {
+            L_(ltrace) << "Timer was signaled.";
+          }
+        }
+      }
+#endif
+
       if (g_client->GetStatus() == 0) {
         if (!connected) {
           L_(ldebug) << "status: " << g_client->GetStatus();
