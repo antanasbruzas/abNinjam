@@ -23,8 +23,10 @@ function(plugin_add_njclient NAME)
         "${NJCLIENT_BASEDIR}/WDL/jnetlib/util.cpp")
 
     target_include_directories("${NAME}" PRIVATE "${NJCLIENT_BASEDIR}")
+    target_include_directories("${NAME}" PRIVATE "${OGG_INCLUDE_DIRS}")
+    target_include_directories("${NAME}" PRIVATE "${VORBIS_INCLUDE_DIRS}")
+    target_include_directories("${NAME}" PRIVATE "${VORBISENC_INCLUDE_DIRS}")
     target_link_libraries("${NAME}" PRIVATE ${OGG_LIBRARIES})
     target_link_libraries("${NAME}" PRIVATE ${VORBIS_LIBRARIES})
     target_link_libraries("${NAME}" PRIVATE ${VORBISENC_LIBRARIES})
 endfunction()
-
