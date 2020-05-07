@@ -56,7 +56,7 @@ find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(VorbisEnc REQUIRED)
 
-pkg_check_modules(OGG ogg>=1.3.3)
+pkg_check_modules(OGG ogg>=1.3.0)
 pkg_check_modules(VORBIS vorbis>=1.3.3)
 pkg_check_modules(VORBISENC vorbisenc>=1.3.3)
 target_include_directories("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${OGG_INCLUDE_DIRS})
@@ -75,6 +75,7 @@ target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../ext
 target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/asyncdns.cpp")
 target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/connection.cpp")
 target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/util.cpp")
+LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/../external/ninjam)
 
 # Add ninjam end ---
 
