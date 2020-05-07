@@ -16,3 +16,4 @@ abNinjam.log
 *.vcxproj
 *.vcxproj.filters
 *.sln
+.vs/
