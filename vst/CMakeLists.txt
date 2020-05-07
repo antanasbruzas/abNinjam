@@ -2,6 +2,7 @@ set (VSTPLUGIN_PRJ_NAME "${PROJECT_NAME}_vst3")
 set (VSTPLUGIN_BUNDLE_NAME "${PROJECT_NAME}.vst3")
 
 set (VST3SDK_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/external/VST_SDK/VST3_SDK")
+set (NJCLIENT_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam")
 
 # VST plugin specific settings
 include (VSTConfig)
@@ -10,6 +11,9 @@ configure_file (VstPluginDefs.h.in "${CMAKE_CURRENT_BINARY_DIR}/VstPluginDefs.h"
 
 # Build VST3 SDK
 include("cmake/Vst3.cmake")
+
+# Build NJClient
+include("../cmake/NJClient.cmake")
 
 # Build the plugin
 add_library(${VSTPLUGIN_PRJ_NAME} MODULE
@@ -49,39 +53,7 @@ set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
 
 plugin_add_vst3sdk(${VSTPLUGIN_PRJ_NAME})
 plugin_add_vstgui(${VSTPLUGIN_PRJ_NAME})
-
-# Add ninjam -------
-# Find vorbisenc dependency
-find_package(Ogg REQUIRED)
-find_package(Vorbis REQUIRED)
-find_package(VorbisEnc REQUIRED)
-
-pkg_check_modules(OGG ogg>=1.3.0)
-pkg_check_modules(VORBIS vorbis>=1.3.3)
-pkg_check_modules(VORBISENC vorbisenc>=1.3.3)
-target_include_directories("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${OGG_INCLUDE_DIRS})
-target_include_directories("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBIS_INCLUDE_DIRS})
-target_include_directories("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBISENC_INCLUDE_DIRS})
-target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${OGG_LIBRARIES})
-target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBIS_LIBRARIES})
-target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBISENC_LIBRARIES})
-
-# Build NINJAM
-add_library(NINJAM STATIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/njclient.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/netmsg.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/mpb.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/rng.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/sha.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/asyncdns.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/connection.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/util.cpp)
-target_include_directories(NINJAM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/)	
-target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE NINJAM)
-
-
-# Add ninjam end ---
-
+plugin_add_njclient(${VSTPLUGIN_PRJ_NAME})
 
 # Create the bundle (see "VST 3 Locations / Format")
 execute_process (
@@ -101,8 +73,14 @@ else()
     file(RENAME "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/plug-base64.uidesc" "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/plug.uidesc")
 endif()
 
-set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
+if(WIN32)
+    set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/${VST3_PACKAGE_ARCHITECTURE}-win")
+else()
+    set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/${VST3_PACKAGE_ARCHITECTURE}-linux")
+endif()
+
 
 # Do not show warnings thrown by sdk
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
