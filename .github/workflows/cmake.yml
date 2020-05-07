@@ -58,14 +58,22 @@ jobs:
     - name: install
       run: cmake --build . --target install
     - uses: actions/upload-artifact@v1
-      with: |
-        if [ "$RUNNER_OS" == "Linux" ]; then
-          name: abNinjam-linux
-          path: /home/runner/.vst3/
-        elif [ "$RUNNER_OS" == "Windows" ]; then
-          name: abNinjam-windows
-          path: C:\Program Files\Common Files\VST3
-        else
-          echo "$RUNNER_OS not supported"
-          exit 1
-        fi
+      with:
+        name: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+              abNinjam-linux
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+              abNinjam-windows
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
+        path: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+              /home/runner/.vst3/
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+              C:\Program Files\Common Files\VST3
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
