@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: dependencies
-      run:  |
+      run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
               sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev
         elif [ "$RUNNER_OS" == "Windows" ]; then
@@ -43,7 +43,7 @@ jobs:
     - name: initialize
       run: git submodule update --init
     - name: configure
-      run:  |
+      run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
               cmake .
         elif [ "$RUNNER_OS" == "Windows" ]; then
@@ -59,5 +59,21 @@ jobs:
       run: cmake --build . --target install
     - uses: actions/upload-artifact@v1
       with:
-        name: abNinjam
-        path: /home/runner/.vst3/
+        name: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+              abNinjam-linux
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+              abNinjam-windows
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
+        path: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+              /home/runner/.vst3/
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+              C:\Program Files\Common Files\VST3
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
+          fi
