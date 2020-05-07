@@ -66,16 +66,19 @@ target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${OGG_LIBRARIES})
 target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBIS_LIBRARIES})
 target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBISENC_LIBRARIES})
 
-target_include_directories(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/njclient.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/netmsg.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/mpb.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/rng.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/sha.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/asyncdns.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/connection.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/util.cpp")
-LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/../external/ninjam)
+# Build NINJAM
+add_library(NINJAM STATIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/njclient.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/netmsg.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/mpb.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/rng.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/sha.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/asyncdns.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/connection.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/util.cpp)
+target_include_directories(NINJAM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/)	
+target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE NINJAM)
+
 
 # Add ninjam end ---
 
