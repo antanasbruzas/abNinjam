@@ -7,6 +7,8 @@
 #include <sstream>
 #include <stdio.h>
 #include <string>
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include "../filesystem.hpp"
 
 inline std::string NowTime();
 enum TLogLevel { lerror, lwarning, linfo, ldebug, ltrace };
@@ -163,7 +165,8 @@ inline std::string NowTime() {
 
 #endif // WIN32
 
-inline void initLogger(const char *file, TLogLevel level) {
+inline void initLogger(const std::filesystem::path::value_type *file,
+                       TLogLevel level) {
   FILELog::ReportingLevel() = level;
   FILE *log_fd = fopen(file, "w");
   Output2FILE::Stream() = log_fd;

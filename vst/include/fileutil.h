@@ -4,24 +4,16 @@
 #pragma once
 
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include "../filesystem.hpp"
 #include "log.h"
-#include <experimental/filesystem>
 #include <string>
 
 using namespace std;
-using namespace std::experimental::filesystem;
+using namespace std::filesystem;
 
 namespace abNinjam {
 
 path getHomePath();
-
-inline char separator() {
-#ifdef _WIN32
-  return '\\';
-#else
-  return '/';
-#endif
-}
 
 } // namespace abNinjam
 
