@@ -42,23 +42,30 @@ jobs:
         fi
     - name: initialize
       run: git submodule update --init
-    - if: ${{ matrix.os == 'ubuntu-latest' }}
-      name: configure
-      run: cmake .
-    - if: ${{ matrix.os == 'windows-latest' }}
-      name: configure
-      run: cmake -DCMAKE_BUILD_TYPE=Release -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/ogg.lib" -DVORBIS_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBIS_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbis.lib" -DVORBISENC_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBISENC_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbisenc.lib" .
+    - name: configure
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+              cmake .
+        elif [ "$RUNNER_OS" == "Windows" ]; then
+              cmake -DCMAKE_BUILD_TYPE=Release -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/ogg.lib" -DVORBIS_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBIS_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbis.lib" -DVORBISENC_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBISENC_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbisenc.lib" .
+              setx artifact "C:\Program Files\Common Files\VST3"
+        else
+              echo "$RUNNER_OS not supported"
+              exit 1
+        fi
     - name: build
       run: cmake --build .
     - name: install
       run: cmake --build . --target install
     - if: ${{ matrix.os == 'ubuntu-latest' }}
+      name: upload-artifact-linux
       uses: actions/upload-artifact@v2
       with:
         name: abNinjam-${{ matrix.os }}
         path: ~/.vst3
     - if: ${{ matrix.os == 'windows-latest' }}
-      uses: actions/upload-artifact@v2   
+      name: upload-artifact-windows
+      uses: actions/upload-artifact@v2
       with:
         name: abNinjam-${{ matrix.os }}
         path: C:\Program Files\Common Files\VST3 
