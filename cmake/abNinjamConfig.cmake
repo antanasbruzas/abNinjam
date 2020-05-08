@@ -29,7 +29,7 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
     endif()
     message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 else()
-    message("Generated with config types: ${CMAKE_CONFIGURATION_TYPES}")
+    message(STATUS "Generated with config types: ${CMAKE_CONFIGURATION_TYPES}")
 endif()
 
 # Show build information
