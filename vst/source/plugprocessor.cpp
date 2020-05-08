@@ -255,6 +255,10 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream *state) {
 
   IBStreamer streamer(state, kLittleEndian);
 
+  int32 savedBypass = 0;
+  if (streamer.readInt32(savedBypass) == false)
+    return kResultFalse;
+
   int32 savedConnectParam = 0;
   if (streamer.readInt32(savedConnectParam) == false)
     return kResultFalse;
@@ -267,14 +271,10 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream *state) {
   if (streamer.readDouble(savedMetronomeVolumeParam) == false)
     return kResultFalse;
 
-  int32 savedBypass = 0;
-  if (streamer.readInt32(savedBypass) == false)
-    return kResultFalse;
-
+  mBypass = savedBypass > 0;
   connectParam = savedConnectParam > 0 ? 1 : 0;
   connectionIndicatorParam = savedConnectionIndicatorParam > 0 ? 1 : 0;
   metronomeVolumeParam = savedMetronomeVolumeParam;
-  mBypass = savedBypass > 0;
 
   return kResultOk;
 }
@@ -284,16 +284,16 @@ tresult PLUGIN_API PlugProcessor::getState(IBStream *state) {
   L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::getState";
   // here we need to save the model (preset or project)
 
+  int32 toSaveBypass = mBypass ? 1 : 0;
   int32 toSaveConnectParam = connectParam;
   int32 toSaveConnectionIndicatorParam = connectionIndicatorParam;
   double toSaveMetronomeVolumeParam = metronomeVolumeParam;
-  int32 toSaveBypass = mBypass ? 1 : 0;
 
   IBStreamer streamer(state, kLittleEndian);
-  streamer.writeDouble(toSaveMetronomeVolumeParam);
+  streamer.writeInt32(toSaveBypass);
   streamer.writeInt32(toSaveConnectParam);
   streamer.writeInt32(toSaveConnectionIndicatorParam);
-  streamer.writeInt32(toSaveBypass);
+  streamer.writeDouble(toSaveMetronomeVolumeParam);
 
   return kResultOk;
 }
