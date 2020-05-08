@@ -57,10 +57,8 @@ jobs:
       run: cmake --build .
     - name: install
       run: cmake --build . --target install
-    - if: matrix.os == 'ubuntu-latest'
-      env:
-        artifact: /home/runner/.vst3
     - uses: actions/upload-artifact@v2
+      if: ${{ matrix.os == 'ubuntu-latest' }}
       with:
-        name: ${{ matrix.os }}
-        path: ${{ env.artifact }}
+        name: abNinjam-${{ matrix.os }}
+        path: ~/.vst3
