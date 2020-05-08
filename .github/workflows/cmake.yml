@@ -46,7 +46,6 @@ jobs:
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
               cmake .
-              export artifact=/home/runner/.vst3/
         elif [ "$RUNNER_OS" == "Windows" ]; then
               cmake -DCMAKE_BUILD_TYPE=Release -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/ogg.lib" -DVORBIS_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBIS_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbis.lib" -DVORBISENC_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBISENC_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbisenc.lib" .
               setx artifact "C:\Program Files\Common Files\VST3"
@@ -58,6 +57,9 @@ jobs:
       run: cmake --build .
     - name: install
       run: cmake --build . --target install
+    - if: matrix.os == 'ubuntu-latest'
+        env:
+          artifact: /home/runner/.vst3
     - uses: actions/upload-artifact@v2
       with:
         name: ${{ matrix.os }}
