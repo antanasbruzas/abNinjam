@@ -44,6 +44,7 @@ jobs:
       run: git submodule update --init
     - name: configure
       run: |
+        cmake --version
         if [ "$RUNNER_OS" == "Linux" ]; then
               cmake .
         elif [ "$RUNNER_OS" == "Windows" ]; then
