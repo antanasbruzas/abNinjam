@@ -57,15 +57,38 @@ plugin_add_njclient(${VSTPLUGIN_PRJ_NAME})
 
 # Create the bundle (see "VST 3 Locations / Format")
 execute_process (
-    COMMAND "${CMAKE_COMMAND}" -E make_directory "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/Snapshots")
+file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/24F26E6CAA204EB08188B6790CABA3AA_snapshot.png"
+    DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/Snapshots/")
+file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/24F26E6CAA204EB08188B6790CABA3AA_snapshot_2.0x.png"
+    DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/Snapshots/")
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/plug.uidesc"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/")
-    file(GLOB ABNINJAM_RESOURCE_PNG
-      "${CMAKE_CURRENT_SOURCE_DIR}/resource/*.png"
-    )
-    file(COPY ${ABNINJAM_RESOURCE_PNG}
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/animation_knob.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/animation_knob_2x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/animation_knob_3x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/background.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/background_2x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/background_3x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/light.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/light_2x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/light_3x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/onoff_button.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/onoff_button_2x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/onoff_button_3x.png"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
 else()
     file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/plug-base64.uidesc"
@@ -75,7 +98,16 @@ endif()
 
 if(WIN32)
     set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
+        SUFFIX ".vst3"
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/${VST3_PACKAGE_ARCHITECTURE}-win")
+    foreach(config ${CMAKE_CONFIGURATION_TYPES})
+        string(TOUPPER "${config}" config)
+        set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
+            "LIBRARY_OUTPUT_DIRECTORY_${config}" "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/${VST3_PACKAGE_ARCHITECTURE}-win")
+    endforeach()
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/win/Plugin.ico"
+        "${CMAKE_CURRENT_SOURCE_DIR}/win/desktop.ini"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}")
 else()
     set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/${VST3_PACKAGE_ARCHITECTURE}-linux")
