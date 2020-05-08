@@ -58,8 +58,8 @@ jobs:
     - name: install
       run: cmake --build . --target install
     - if: matrix.os == 'ubuntu-latest'
-        env:
-          artifact: /home/runner/.vst3
+      env:
+        artifact: /home/runner/.vst3
     - uses: actions/upload-artifact@v2
       with:
         name: ${{ matrix.os }}
