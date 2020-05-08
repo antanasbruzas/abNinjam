@@ -42,13 +42,12 @@ jobs:
         fi
     - name: initialize
       run: git submodule update --init
+    - if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: cmake .
     - name: configure
       run: |
-        if [ "$RUNNER_OS" == "Linux" ]; then
-              cmake .
-        elif [ "$RUNNER_OS" == "Windows" ]; then
+        if [ "$RUNNER_OS" == "Windows" ]; then
               cmake -DCMAKE_BUILD_TYPE=Release -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/ogg.lib" -DVORBIS_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBIS_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbis.lib" -DVORBISENC_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBISENC_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbisenc.lib" .
-              setx artifact "C:\Program Files\Common Files\VST3"
         else
               echo "$RUNNER_OS not supported"
               exit 1
@@ -62,3 +61,8 @@ jobs:
       with:
         name: abNinjam-${{ matrix.os }}
         path: ~/.vst3
+    - uses: actions/upload-artifact@v2
+      if: ${{ matrix.os == 'windows-latest' }}
+      with:
+        name: abNinjam-${{ matrix.os }}
+        path: C:\Program Files\Common Files\VST3 
