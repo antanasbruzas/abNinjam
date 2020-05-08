@@ -45,6 +45,10 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     source/metronomevolumeparameter.cpp
     source/hostcontroller.cpp)
 
+if(WIN32)
+    target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE vst3.def)
+endif()
+
 target_include_directories(${VSTPLUGIN_PRJ_NAME}
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
