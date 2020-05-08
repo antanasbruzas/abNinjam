@@ -47,14 +47,13 @@ jobs:
         if [ "$RUNNER_OS" == "Linux" ]; then
               cmake .
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              cmake -DCMAKE_BUILD_TYPE=Release -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/ogg.lib" -DVORBIS_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBIS_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbis.lib" -DVORBISENC_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBISENC_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbisenc.lib" .
-              setx artifact "C:\Program Files\Common Files\VST3"
+              cmake -DCMAKE_CONFIGURATION_TYPES="Release" -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/ogg.lib" -DVORBIS_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBIS_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbis.lib" -DVORBISENC_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBISENC_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbisenc.lib" .
         else
               echo "$RUNNER_OS not supported"
               exit 1
         fi
     - name: build
-      run: cmake --build .
+      run: cmake --build . --config Release
     - name: install
       run: cmake --build . --target install
     - if: ${{ matrix.os == 'ubuntu-latest' }}
