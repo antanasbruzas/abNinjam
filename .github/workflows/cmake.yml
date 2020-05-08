@@ -55,7 +55,7 @@ jobs:
     - name: build
       run: cmake --build . --config Release
     - name: install
-      run: cmake --build . --target install
+      run: cmake --build . --target install --config Release
     - if: ${{ matrix.os == 'ubuntu-latest' }}
       name: upload-artifact-linux
       uses: actions/upload-artifact@v2

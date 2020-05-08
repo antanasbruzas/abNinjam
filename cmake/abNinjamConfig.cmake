@@ -22,13 +22,14 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
 endif()
 
-
 # Default build type set as Release
 if(NOT CMAKE_CONFIGURATION_TYPES)
     if(NOT CMAKE_BUILD_TYPE)
         set(CMAKE_BUILD_TYPE Release)
     endif()
     message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+else()
+    message("Generated with config types: ${CMAKE_CONFIGURATION_TYPES}")
 endif()
 
 # Show build information
