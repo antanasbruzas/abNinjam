@@ -19,7 +19,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     endif()
     find_package(PkgConfig REQUIRED)
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>>")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:>")
 endif()
 
 
