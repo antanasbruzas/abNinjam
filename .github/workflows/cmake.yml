@@ -25,17 +25,7 @@ jobs:
         if [ "$RUNNER_OS" == "Linux" ]; then
               sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              git clone https://github.com/xiph/ogg.git
-              cd ogg
-              cmake -DBUILD_SHARED_LIBS=1 .
-              cmake --build .
-              cmake --build . --target install
-              cd ..
-              git clone https://github.com/xiph/vorbis.git
-              cd vorbis
-              cmake -DBUILD_SHARED_LIBS=1 -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/ogg.lib" .
-              cmake --build .
-              cmake --build . --target install
+              vcpkg install libvorbis:x64-windows
         else
               echo "$RUNNER_OS not supported"
               exit 1
