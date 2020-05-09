@@ -1,7 +1,7 @@
 # Add ninjam -------
 # Find vorbisenc dependency
 if(WIN32)
-    find_package(Ogg REQUIRED)
+    #find_package(Ogg REQUIRED)
     find_package(Vorbis REQUIRED)
     find_package(VorbisEnc REQUIRED)
 else()
