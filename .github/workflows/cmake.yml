@@ -26,6 +26,7 @@ jobs:
               sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev
         elif [ "$RUNNER_OS" == "Windows" ]; then
               vcpkg install libvorbis:x64-windows
+              vcpkg integrate install
         else
               echo "$RUNNER_OS not supported"
               exit 1
