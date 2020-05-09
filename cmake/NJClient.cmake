@@ -35,6 +35,6 @@ function(plugin_add_njclient NAME)
     #target_link_libraries("${NAME}" PRIVATE ${OGG_LIBRARIES})
     #target_link_libraries("${NAME}" PRIVATE ${VORBIS_LIBRARIES})
     #target_link_libraries("${NAME}" PRIVATE ${VORBISENC_LIBRARIES})
-    target_link_libraries("${NAME}" PRIVATE Vorbis::vorbis Vorbis::vorbisenc)
+    target_link_libraries("${NAME}" PRIVATE vorbisenc)
 endfunction()
 
