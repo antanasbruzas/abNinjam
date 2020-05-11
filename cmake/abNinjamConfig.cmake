@@ -22,6 +22,14 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
 endif()
 
+# If we build with Clang, optionally use libc++. Enabled by default on Apple OS.
+cmake_dependent_option(USE_LIBCPP "Use libc++ with clang" "${APPLE}"
+    "CMAKE_CXX_COMPILER_ID MATCHES Clang" OFF)
+if (USE_LIBCPP)
+    add_compile_options(-stdlib=libc++)
+    add_link_options(-stdlib=libc++)
+endif()
+
 # Default build type set as Release
 if(NOT CMAKE_CONFIGURATION_TYPES)
     if(NOT CMAKE_BUILD_TYPE)
@@ -37,6 +45,7 @@ function (show_build_info)
     message (STATUS "
 Project name:                  ${PROJECT_NAME}
 Build processor:               ${CMAKE_SYSTEM_PROCESSOR}
+Use clang libc++:              ${USE_LIBCPP}
 
 Compiler CXX debug flags:      ${CMAKE_CXX_FLAGS_DEBUG}
 Compiler CXX release flags:    ${CMAKE_CXX_FLAGS_RELEASE}

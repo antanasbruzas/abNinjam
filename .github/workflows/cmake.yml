@@ -32,7 +32,7 @@ jobs:
               brew install pkg-config
         else
               echo "$RUNNER_OS not supported"
-              exit 1
+              exit 221
         fi
     - name: initialize
       run: git submodule update --init
@@ -47,7 +47,7 @@ jobs:
               cmake -GXcode .
         else
               echo "$RUNNER_OS not supported"
-              exit 1
+              exit 222
         fi
     - name: build
       run: cmake --build . --config Release
@@ -63,20 +63,23 @@ jobs:
             brew list
         else
             echo "$RUNNER_OS not supported"
-            exit 1
+            exit 223
         fi
     - name: test
       run: |
         cd ~ && git clone --recursive https://github.com/steinbergmedia/vst3sdk.git && cd vst3sdk && mkdir build && cd build && cmake -DSMTG_ADD_VSTGUI=OFF -DSMTG_ADD_VST3_PLUGINS_SAMPLES=OFF -DCMAKE_BUILD_TYPE=Release .. && cmake --build . --config Release
         if [ "$RUNNER_OS" == "Linux" ]; then
-              ./bin/Release/validator -e ~/.vst3/abNinjam.vst3 | grep "0 tests failed" || exit 1
+	      ./bin/Release/validator -e ~/.vst3/abNinjam.vst3
+              ./bin/Release/validator -e ~/.vst3/abNinjam.vst3 | grep "0 tests failed" || exit 224
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              ./bin/Release/validator.exe -e "C:/Program Files/Common Files/VST3/abNinjam.vst3" | grep "0 tests failed" || exit 1
+              ./bin/Release/validator.exe -e "C:/Program Files/Common Files/VST3/abNinjam.vst3"
+              ./bin/Release/validator.exe -e "C:/Program Files/Common Files/VST3/abNinjam.vst3" | grep "0 tests failed" || exit 225
         elif [ "$RUNNER_OS" == "macOS" ]; then
-              ./bin/Release/validator -e ~/.vst3/abNinjam.vst3 | grep "0 tests failed" || exit 1
+              ./bin/Release/validator -e ~/.vst3/abNinjam.vst3 | grep "0 tests failed"
+              ./bin/Release/validator -e ~/.vst3/abNinjam.vst3 | grep "0 tests failed" || exit 226
         else
               echo "$RUNNER_OS not supported"
-              exit 1
+              exit 227
         fi
     - if: ${{ matrix.os == 'ubuntu-latest' }}
       name: upload-artifact-linux
