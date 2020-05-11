@@ -340,27 +340,25 @@ void PlugProcessor::connectToServer(int16 value,
                                     ConnectionProperties connectionProperties) {
   L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::connectToServer";
 
-  NinjamClientStatus status = disconnected;
-
   if (value > 0) {
     L_(ldebug) << "[PlugProcessor] Connect initiated";
-    status = ninjamClient->connect(connectionProperties);
+    NinjamClientStatus status = ninjamClient->connect(connectionProperties);
+
+    L_(ldebug) << "[PlugProcessor] NinjamClient status: " << status;
+    if (ninjamClientStatus != status) {
+      //---send a message
+      if (IPtr<IMessage> message = allocateMessage()) {
+        message->setMessageID("StatusMessage");
+        message->getAttributes()->setInt("ninjamClientStatus", status);
+        sendMessage(message);
+      }
+      ninjamClientStatus = status;
+    }
   } else {
     L_(ldebug) << "[PlugProcessor] Disconnect initiated";
     if (ninjamClient) {
       ninjamClient->disconnect();
     }
-  }
-
-  L_(ldebug) << "[PlugProcessor] NinjamClient status: " << status;
-  if (ninjamClientStatus != status) {
-    //---send a message
-    if (IPtr<IMessage> message = allocateMessage()) {
-      message->setMessageID("StatusMessage");
-      message->getAttributes()->setInt("ninjamClientStatus", status);
-      sendMessage(message);
-    }
-    ninjamClientStatus = status;
   }
 }
 
