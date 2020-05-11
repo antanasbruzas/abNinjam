@@ -64,7 +64,7 @@ jobs:
         if [ "$RUNNER_OS" == "Linux" ]; then
               ./bin/Release/validator -e ~/.vst3/abNinjam.vst3 | grep "0 tests failed" || exit 1
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              ./bin/Release/validator -e C:/Program Files/Common Files/VST3/abNinjam.vst3 | grep "0 tests failed" || exit 1
+              ./bin/Release/validator.exe -e "C:/Program Files/Common Files/VST3/abNinjam.vst3" | grep "0 tests failed" || exit 1
         else
               echo "$RUNNER_OS not supported"
               exit 1
