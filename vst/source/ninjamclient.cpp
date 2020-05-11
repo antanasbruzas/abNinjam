@@ -120,7 +120,7 @@ NinjamClient::connect(ConnectionProperties connectionProperties) {
   }
 
   if (isEmpty(connectionProperties.gsHost())) {
-    return NinjamClientStatus::licenseNotAccepted;
+    return serverNotProvided;
   }
 
   if (isEmpty(connectionProperties.gsUsername())) {
@@ -154,14 +154,14 @@ NinjamClient::connect(ConnectionProperties connectionProperties) {
     if (connectionThread) {
       connectionThread->detach();
     }
-    return NinjamClientStatus::ok;
+    return ok;
   }
   if (agree == 256) {
     L_(lwarning) << "[NinjamClient] License not accepted. Not Connected.";
-    return NinjamClientStatus::licenseNotAccepted;
+    return licenseNotAccepted;
   }
   L_(lerror) << "[NinjamClient] Connection error";
-  return NinjamClientStatus::connectionError;
+  return connectionError;
 }
 
 void NinjamClient::disconnect() {

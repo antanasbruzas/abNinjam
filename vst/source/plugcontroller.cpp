@@ -237,6 +237,7 @@ tresult PLUGIN_API PlugController::notify(Vst::IMessage *message) {
       if (notificationLabel) {
         switch (status) {
         case ok:
+        case disconnected:
           notificationLabel->setText("");
           break;
         case serverNotProvided:
