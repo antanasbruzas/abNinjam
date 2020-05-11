@@ -1,3 +1,5 @@
+include(CMakeDependentOption)
+
 set(CMAKE_CXX_STANDARD 20 CACHE STRING "C++ standard to be used")
 set(CMAKE_C_STANDARD 11 CACHE STRING "C standard to be used")
 
