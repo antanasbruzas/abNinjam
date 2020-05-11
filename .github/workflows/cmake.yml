@@ -44,7 +44,7 @@ jobs:
         elif [ "$RUNNER_OS" == "Windows" ]; then
               cmake -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
         elif [ "$RUNNER_OS" == "macOS" ]; then
-              cmake .
+              cmake -GXcode .
         else
               echo "$RUNNER_OS not supported"
               exit 1

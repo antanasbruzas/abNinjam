@@ -136,12 +136,16 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         "-Wno-extra"
         "-Wno-multichar"
         "-Wno-reorder"
-        "-Wno-class-memaccess"
         "-Wno-ignored-qualifiers"
         "-Wno-unknown-pragmas"
         "-Wno-unused-function"
         "-Wno-unused-parameter"
         "-Wno-unused-variable")
+endif()
+
+if (UNIX AND NOT APPLE)
+    target_compile_options(${VSTPLUGIN_PRJ_NAME} PRIVATE
+        "-Wno-class-memaccess")
     target_link_libraries(${VSTPLUGIN_PRJ_NAME} PRIVATE stdc++fs)
 endif()
 
