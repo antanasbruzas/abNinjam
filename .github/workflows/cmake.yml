@@ -48,23 +48,13 @@ jobs:
       run: cmake --build . --config Release
     - name: install
       run: cmake --build . --target install --config Release
-    - name: test-dependencies
-      run: |
-        if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get install cmake gcc "libstdc++6" libx11-xcb-dev libxcb-util-dev libxcb-cursor-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libfontconfig1-dev libcairo2-dev libgtkmm-3.0-dev libsqlite3-dev libxcb-keysyms1-dev
-        elif [ "$RUNNER_OS" == "Windows" ]; then
-            vcpkg list
-        else
-              echo "$RUNNER_OS not supported"
-              exit 1
-        fi
     - name: test
       run: |
-        cd ~ && git clone --recursive https://github.com/steinbergmedia/vst3sdk.git && cd vst3sdk && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . --config Release
+        cd ~ && git clone --recursive https://github.com/steinbergmedia/vst3sdk.git && cd vst3sdk && mkdir build && cd build && cmake -DSMTG_ADD_VSTGUI=OFF -DSMTG_ADD_VST3_PLUGINS_SAMPLES=OFF -DCMAKE_BUILD_TYPE=Release .. && cmake --build . --config Release
         if [ "$RUNNER_OS" == "Linux" ]; then
-              ./bin/Release/validator -e ~/.vst3/abNinjam.vst3
+              ./bin/Release/validator -e ~/.vst3/abNinjam.vst3 | grep "0 tests failed" || exit 1
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              ./bin/Release/validator -e C:/Program Files/Common Files/VST3/abNinjam.vst3
+              ./bin/Release/validator -e C:/Program Files/Common Files/VST3/abNinjam.vst3 | grep "0 tests failed" || exit 1
         else
               echo "$RUNNER_OS not supported"
               exit 1
