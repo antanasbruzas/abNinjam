@@ -27,6 +27,8 @@ jobs:
         elif [ "$RUNNER_OS" == "Windows" ]; then
               vcpkg install libvorbis:x64-windows-static
               vcpkg integrate install
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+              brew install libvorbis
         else
               echo "$RUNNER_OS not supported"
               exit 1
@@ -40,6 +42,8 @@ jobs:
               cmake .
         elif [ "$RUNNER_OS" == "Windows" ]; then
               cmake -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+              cmake .
         else
               echo "$RUNNER_OS not supported"
               exit 1
@@ -54,6 +58,8 @@ jobs:
             sudo apt-get install libgtkmm-3.0-dev
         elif [ "$RUNNER_OS" == "Windows" ]; then
             vcpkg list
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+            brew list
         else
             echo "$RUNNER_OS not supported"
             exit 1
@@ -65,6 +71,8 @@ jobs:
               ./bin/Release/validator -e ~/.vst3/abNinjam.vst3 | grep "0 tests failed" || exit 1
         elif [ "$RUNNER_OS" == "Windows" ]; then
               ./bin/Release/validator.exe -e "C:/Program Files/Common Files/VST3/abNinjam.vst3" | grep "0 tests failed" || exit 1
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+              ./bin/Release/validator -e ~/.vst3/abNinjam.vst3 | grep "0 tests failed" || exit 1
         else
               echo "$RUNNER_OS not supported"
               exit 1
@@ -80,4 +88,10 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: abNinjam-${{ matrix.os }}
-        path: C:\Program Files\Common Files\VST3 
+        path: C:\Program Files\Common Files\VST3
+    - if: ${{ matrix.os == 'macOS-latest' }}
+      name: upload-artifact-mac
+      uses: actions/upload-artifact@v2
+      with:
+        name: abNinjam-${{ matrix.os }}
+        path: ~/.vst3
