@@ -48,6 +48,16 @@ jobs:
       run: cmake --build . --config Release
     - name: install
       run: cmake --build . --target install --config Release
+    - name: test-dependencies
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+              sudo apt-get install cmake gcc "libstdc++6" libx11-xcb-dev libxcb-util-dev libxcb-cursor-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libfontconfig1-dev libcairo2-dev libgtkmm-3.0-dev libsqlite3-dev libxcb-keysyms1-dev
+        elif [ "$RUNNER_OS" == "Windows" ]; then
+            vcpkg list
+        else
+              echo "$RUNNER_OS not supported"
+              exit 1
+        fi
     - name: test
       run: |
         cd ~ && git clone --recursive https://github.com/steinbergmedia/vst3sdk.git && cd vst3sdk && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . --config Release
