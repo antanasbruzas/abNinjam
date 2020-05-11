@@ -29,6 +29,7 @@ jobs:
               vcpkg integrate install
         elif [ "$RUNNER_OS" == "macOS" ]; then
               brew install libvorbis
+              brew install pkg-config
         else
               echo "$RUNNER_OS not supported"
               exit 1
