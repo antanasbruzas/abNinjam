@@ -130,7 +130,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         "-Wno-unused-function"
         "-Wno-unused-parameter"
         "-Wno-unused-variable")
-    target_link_libraries(${VSTPLUGIN_PRJ_NAME} stdc++fs)
+    target_link_libraries(${VSTPLUGIN_PRJ_NAME} PRIVATE stdc++fs)
 endif()
 
 
