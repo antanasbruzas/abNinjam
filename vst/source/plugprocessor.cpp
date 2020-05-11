@@ -353,11 +353,14 @@ void PlugProcessor::connectToServer(int16 value,
   }
 
   L_(ldebug) << "[PlugProcessor] NinjamClient status: " << status;
-  //---send a message
-  if (IPtr<IMessage> message = allocateMessage()) {
-    message->setMessageID("StatusMessage");
-    message->getAttributes()->setInt("ninjamClientStatus", status);
-    sendMessage(message);
+  if (ninjamClientStatus != status) {
+    //---send a message
+    if (IPtr<IMessage> message = allocateMessage()) {
+      message->setMessageID("StatusMessage");
+      message->getAttributes()->setInt("ninjamClientStatus", status);
+      sendMessage(message);
+    }
+    ninjamClientStatus = status;
   }
 }
 

@@ -51,6 +51,7 @@ private:
   void connectToServer(int16 value, ConnectionProperties connectionProperties);
   char *tCharToCharPtr(Steinberg::Vst::TChar *tChar);
   NinjamClient *ninjamClient;
+
   std::array<char *, 3> messageTexts = {strdup(""), strdup(""), strdup("")};
   bool connectedOld;
   String128 hostProductString;
@@ -59,6 +60,7 @@ private:
   bool bpmNotification = false;
   bool clearNotification = true;
   bool notificationCleared = false;
+  NinjamClientStatus ninjamClientStatus = disconnected;
 };
 
 //------------------------------------------------------------------------
