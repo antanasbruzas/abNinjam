@@ -1,14 +1,14 @@
 # Add ninjam -------
 # Find vorbisenc dependency
-if(WIN32)
+#if(WIN32)
     find_package(Ogg CONFIG REQUIRED)
     find_package(Vorbis CONFIG REQUIRED)
     #find_package(VorbisEnc REQUIRED)
-else()
+#else()
     pkg_check_modules(OGG ogg>=1.3.0)
     pkg_check_modules(VORBIS vorbis>=1.3.3)
     pkg_check_modules(VORBISENC vorbisenc>=1.3.3)
-endif()
+#endif()
 
 # --- NJClient ---
 function(plugin_add_njclient NAME)
