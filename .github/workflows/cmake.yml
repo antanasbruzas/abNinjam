@@ -30,6 +30,7 @@ jobs:
         elif [ "$RUNNER_OS" == "macOS" ]; then
               brew install pkg-config
               brew install libvorbis
+              brew info libvorbis
         else
               echo "$RUNNER_OS not supported"
               exit 221
