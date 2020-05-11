@@ -50,7 +50,7 @@ jobs:
       run: cmake --build . --target install --config Release
     - name: test
       run: |
-        cd ~ && git clone --recursive https://github.com/steinbergmedia/vst3sdk.git && cd vst3sdk && cmake -DCMAKE_BUILD_TYPE=Release . && cmake --build . --config Release
+        cd ~ && git clone --recursive https://github.com/steinbergmedia/vst3sdk.git && cd vst3sdk && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . --config Release
         if [ "$RUNNER_OS" == "Linux" ]; then
               ./bin/Release/validator -e ~/.vst3/abNinjam.vst3
         elif [ "$RUNNER_OS" == "Windows" ]; then
