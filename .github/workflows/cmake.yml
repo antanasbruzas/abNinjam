@@ -25,7 +25,7 @@ jobs:
         if [ "$RUNNER_OS" == "Linux" ]; then
               sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              vcpkg install libvorbis:x64-windows
+              vcpkg install libvorbis:x64-windows-static
               vcpkg integrate install
         else
               echo "$RUNNER_OS not supported"
@@ -39,7 +39,7 @@ jobs:
         if [ "$RUNNER_OS" == "Linux" ]; then
               cmake .
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              cmake -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_CONFIGURATION_TYPES="Release" .
+              cmake -DCMAKE_CONFIGURATION_TYPES="Release" -DCMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
         else
               echo "$RUNNER_OS not supported"
               exit 1
