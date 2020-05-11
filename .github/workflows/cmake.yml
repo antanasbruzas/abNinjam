@@ -39,7 +39,7 @@ jobs:
         if [ "$RUNNER_OS" == "Linux" ]; then
               cmake .
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              cmake -DCMAKE_CONFIGURATION_TYPES="Release" -DCMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
+              cmake -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
         else
               echo "$RUNNER_OS not supported"
               exit 1
@@ -48,6 +48,17 @@ jobs:
       run: cmake --build . --config Release
     - name: install
       run: cmake --build . --target install --config Release
+    - name: test
+      run: |
+        cd ~ && git clone --recursive https://github.com/steinbergmedia/vst3sdk.git && cd vst3sdk && cmake -DCMAKE_BUILD_TYPE=Release . && cmake --build . --config Release
+        if [ "$RUNNER_OS" == "Linux" ]; then
+              ./bin/Release/validator -e ~/.vst3/abNinjam.vst3
+        elif [ "$RUNNER_OS" == "Windows" ]; then
+              ./bin/Release/validator -e C:/Program Files/Common Files/VST3/abNinjam.vst3
+        else
+              echo "$RUNNER_OS not supported"
+              exit 1
+        fi
     - if: ${{ matrix.os == 'ubuntu-latest' }}
       name: upload-artifact-linux
       uses: actions/upload-artifact@v2
