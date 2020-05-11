@@ -17,6 +17,9 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     if (CMAKE_SYSTEM_PROCESSOR MATCHES "^(i.86|x86_64)$")
         add_compile_options(-msse2)
     endif()
+    find_package(PkgConfig REQUIRED)
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
 endif()
 
 # Default build type set as Release
@@ -25,6 +28,8 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
         set(CMAKE_BUILD_TYPE Release)
     endif()
     message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+else()
+    message(STATUS "Generated with config types: ${CMAKE_CONFIGURATION_TYPES}")
 endif()
 
 # Show build information
@@ -39,5 +44,4 @@ Compiler CXX min size flags:   ${CMAKE_CXX_FLAGS_MINSIZEREL}
 ")
 endfunction()
 
-find_package(PkgConfig REQUIRED)
 find_package(Threads REQUIRED)

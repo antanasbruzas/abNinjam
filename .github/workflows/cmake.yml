@@ -21,21 +21,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: dependencies
-      run:  |
+      run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
               sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              git clone https://github.com/xiph/ogg.git
-              cd ogg
-              cmake .
-              cmake --build .
-              cmake --build . --target install
-              cd ..
-              git clone https://github.com/xiph/vorbis.git
-              cd vorbis
-              cmake -DOGG_INCLUDE_DIR="C:/Program Files (x86)/libogg/include/" -DOGG_LIBRARY="C:/Program Files (x86)/libogg/lib/" .
-              cmake --build .
-              cmake --build . --target install
+              vcpkg install libvorbis:x64-windows-static
+              vcpkg integrate install
         else
               echo "$RUNNER_OS not supported"
               exit 1
@@ -43,20 +34,50 @@ jobs:
     - name: initialize
       run: git submodule update --init
     - name: configure
-      run:  |
+      run: |
+        cmake --version
         if [ "$RUNNER_OS" == "Linux" ]; then
               cmake .
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              cmake -DVORBISENC_INCLUDE_DIR="C:/Program Files (x86)/vorbis/include/" -DVORBISENC_LIBRARY="C:/Program Files (x86)/vorbis/lib/vorbisenc.lib" .
+              cmake -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
         else
               echo "$RUNNER_OS not supported"
               exit 1
         fi
     - name: build
-      run: cmake --build .
+      run: cmake --build . --config Release
     - name: install
-      run: cmake --build . --target install
-    - uses: actions/upload-artifact@v1
+      run: cmake --build . --target install --config Release
+    - name: test-dependencies
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get install libgtkmm-3.0-dev
+        elif [ "$RUNNER_OS" == "Windows" ]; then
+            vcpkg list
+        else
+            echo "$RUNNER_OS not supported"
+            exit 1
+        fi
+    - name: test
+      run: |
+        cd ~ && git clone --recursive https://github.com/steinbergmedia/vst3sdk.git && cd vst3sdk && mkdir build && cd build && cmake -DSMTG_ADD_VSTGUI=OFF -DSMTG_ADD_VST3_PLUGINS_SAMPLES=OFF -DCMAKE_BUILD_TYPE=Release .. && cmake --build . --config Release
+        if [ "$RUNNER_OS" == "Linux" ]; then
+              ./bin/Release/validator -e ~/.vst3/abNinjam.vst3 | grep "0 tests failed" || exit 1
+        elif [ "$RUNNER_OS" == "Windows" ]; then
+              ./bin/Release/validator.exe -e "C:/Program Files/Common Files/VST3/abNinjam.vst3" | grep "0 tests failed" || exit 1
+        else
+              echo "$RUNNER_OS not supported"
+              exit 1
+        fi
+    - if: ${{ matrix.os == 'ubuntu-latest' }}
+      name: upload-artifact-linux
+      uses: actions/upload-artifact@v2
       with:
-        name: abNinjam
-        path: /home/runner/.vst3/
+        name: abNinjam-${{ matrix.os }}
+        path: ~/.vst3
+    - if: ${{ matrix.os == 'windows-latest' }}
+      name: upload-artifact-windows
+      uses: actions/upload-artifact@v2
+      with:
+        name: abNinjam-${{ matrix.os }}
+        path: C:\Program Files\Common Files\VST3 

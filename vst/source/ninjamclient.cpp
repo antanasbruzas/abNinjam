@@ -48,7 +48,13 @@ NinjamClient::~NinjamClient() {
 
 void keepConnectionThread(NinjamClient *ninjamClient) {
   L_(ltrace) << "Entering keepConnectionThread";
+  // TODO: use scoped_lock for all environments when becomes available
+#ifdef unix
   scoped_lock<mutex> lock(ninjamClient->gsMtx());
+#elif defined(_WIN32)
+  lock_guard<mutex> lock(ninjamClient->gsMtx());
+#endif
+
   ninjamClient->gsStopConnectionThread() = false;
   NJClient *g_client = ninjamClient->gsNjClient();
   bool connected = false;
@@ -56,8 +62,32 @@ void keepConnectionThread(NinjamClient *ninjamClient) {
          ninjamClient->gsStopConnectionThread() == false) {
     if (g_client->Run()) {
       // Sleep to prevent 100% CPU usage
+#ifdef unix
       struct timespec ts = {0, 1000 * 1000};
       nanosleep(&ts, nullptr);
+#elif defined(_WIN32)
+      HANDLE hTimer = NULL;
+      LARGE_INTEGER liDueTime;
+
+      liDueTime.QuadPart = -10000LL;
+      // Create an unnamed waitable timer.
+      hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
+      if (NULL == hTimer) {
+        L_(ltrace) << "CreateWaitableTimer failed";
+      } else {
+        // Set a timer to wait for 1 ms.
+        if (!SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, 0)) {
+          L_(ltrace) << "SetWaitableTimer failed";
+        } else {
+          if (WaitForSingleObject(hTimer, INFINITE) != WAIT_OBJECT_0) {
+            L_(ltrace) << "WaitForSingleObject failed";
+          } else {
+            L_(ltrace) << "Timer was signaled.";
+          }
+        }
+      }
+#endif
+
       if (g_client->GetStatus() == 0) {
         if (!connected) {
           L_(ldebug) << "status: " << g_client->GetStatus();
@@ -79,7 +109,7 @@ int NinjamClient::connect(ConnectionProperties connectionProperties) {
   path propertiesPath = getHomePath();
 
   ostringstream oss;
-  oss << "abNinjam" << separator() << "connection.properties";
+  oss << "abNinjam" << path::preferred_separator << "connection.properties";
   propertiesPath /= oss.str();
   if (exists(propertiesPath)) {
     L_(ldebug) << "Configuration file provided: " << propertiesPath;

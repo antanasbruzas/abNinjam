@@ -1,7 +1,7 @@
 #include "../include/connectionproperties.h"
 #include "../include/stringutil.h"
+#include <cstring>
 #include <fstream>
-#include <string.h>
 
 using namespace abNinjam;
 

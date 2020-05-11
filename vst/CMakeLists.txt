@@ -2,6 +2,7 @@ set (VSTPLUGIN_PRJ_NAME "${PROJECT_NAME}_vst3")
 set (VSTPLUGIN_BUNDLE_NAME "${PROJECT_NAME}.vst3")
 
 set (VST3SDK_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/external/VST_SDK/VST3_SDK")
+set (NJCLIENT_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam")
 
 # VST plugin specific settings
 include (VSTConfig)
@@ -10,6 +11,9 @@ configure_file (VstPluginDefs.h.in "${CMAKE_CURRENT_BINARY_DIR}/VstPluginDefs.h"
 
 # Build VST3 SDK
 include("cmake/Vst3.cmake")
+
+# Build NJClient
+include("../cmake/NJClient.cmake")
 
 # Build the plugin
 add_library(${VSTPLUGIN_PRJ_NAME} MODULE
@@ -41,6 +45,10 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     source/metronomevolumeparameter.cpp
     source/hostcontroller.cpp)
 
+if(WIN32)
+    target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE vst3.def)
+endif()
+
 target_include_directories(${VSTPLUGIN_PRJ_NAME}
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
@@ -49,42 +57,42 @@ set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
 
 plugin_add_vst3sdk(${VSTPLUGIN_PRJ_NAME})
 plugin_add_vstgui(${VSTPLUGIN_PRJ_NAME})
-
-# Add ninjam -------
-# Find vorbisenc dependency
-find_package(vorbisenc REQUIRED)
-
-pkg_check_modules(VORBIS vorbis>=1.3.3)
-pkg_check_modules(VORBISENC vorbisenc>=1.3.3)
-target_include_directories("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBIS_INCLUDE_DIRS})
-target_include_directories("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBISENC_INCLUDE_DIRS})
-target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBIS_LIBRARIES})
-target_link_libraries("${VSTPLUGIN_PRJ_NAME}" PRIVATE ${VORBISENC_LIBRARIES})
-
-target_include_directories(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/njclient.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/netmsg.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/ninjam/mpb.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/rng.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/sha.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/asyncdns.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/connection.cpp")
-target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam/WDL/jnetlib/util.cpp")
-
-# Add ninjam end ---
-
+plugin_add_njclient(${VSTPLUGIN_PRJ_NAME})
 
 # Create the bundle (see "VST 3 Locations / Format")
 execute_process (
-    COMMAND "${CMAKE_COMMAND}" -E make_directory "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/Snapshots")
+file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/24F26E6CAA204EB08188B6790CABA3AA_snapshot.png"
+    DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/Snapshots/")
+file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/24F26E6CAA204EB08188B6790CABA3AA_snapshot_2.0x.png"
+    DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/Snapshots/")
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/plug.uidesc"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/")
-    file(GLOB ABNINJAM_RESOURCE_PNG
-      "${CMAKE_CURRENT_SOURCE_DIR}/resource/*.png"
-    )
-    file(COPY ${ABNINJAM_RESOURCE_PNG}
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/animation_knob.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/animation_knob_2x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/animation_knob_3x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/background.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/background_2x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/background_3x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/light.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/light_2x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/light_3x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/onoff_button.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/onoff_button_2x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/onoff_button_3x.png"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
 else()
     file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/plug-base64.uidesc"
@@ -92,8 +100,23 @@ else()
     file(RENAME "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/plug-base64.uidesc" "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/plug.uidesc")
 endif()
 
-set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
+if(WIN32)
+    set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
+        SUFFIX ".vst3"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/${VST3_PACKAGE_ARCHITECTURE}-win")
+    foreach(config ${CMAKE_CONFIGURATION_TYPES})
+        string(TOUPPER "${config}" config)
+        set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
+            "LIBRARY_OUTPUT_DIRECTORY_${config}" "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/${VST3_PACKAGE_ARCHITECTURE}-win")
+    endforeach()
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/win/Plugin.ico"
+        "${CMAKE_CURRENT_SOURCE_DIR}/win/desktop.ini"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}")
+else()
+    set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/${VST3_PACKAGE_ARCHITECTURE}-linux")
+endif()
+
 
 # Do not show warnings thrown by sdk
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -107,12 +130,12 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         "-Wno-unused-function"
         "-Wno-unused-parameter"
         "-Wno-unused-variable")
+    target_link_libraries(${VSTPLUGIN_PRJ_NAME} PRIVATE stdc++fs)
 endif()
 
+
 # Installation
-if (NOT MSVC)
-    install (DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}"
-        DESTINATION "${VSTPLUGIN_INSTALL_DIR}"
-        COMPONENT "vst")
-endif()
+install (DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}"
+    DESTINATION "${VSTPLUGIN_INSTALL_DIR}"
+    COMPONENT "vst")
 

@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 3.14.7)
+if (WIN32)
+    cmake_minimum_required (VERSION 3.15)
+else()
+    cmake_minimum_required(VERSION 3.14.7)
+endif()
 project (abNinjam)
 set (PROJECT_DESCRIPTION "NINJAM client")
 

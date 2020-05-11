@@ -13,3 +13,7 @@ build/
 build-debug/
 connection.properties
 abNinjam.log
+*.vcxproj
+*.vcxproj.filters
+*.sln
+.vs/

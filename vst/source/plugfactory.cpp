@@ -57,7 +57,7 @@ bool InitModule() {
   create_directory(logPath);
   if (exists(logPath)) {
     logPath /= "abNinjam.log";
-    initLogger(logPath.c_str(), ldebug);
+    initLogger(logPath.string().c_str(), ldebug);
     L_(ltrace) << "InitModule";
   } else {
     fprintf(stderr, "Cannot open log file\n");
