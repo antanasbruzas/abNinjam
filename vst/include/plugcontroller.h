@@ -6,6 +6,7 @@
 #include "vstgui/lib/controls/ctextlabel.h"
 #include "vstgui/plugin-bindings/vst3editor.h"
 
+#include "ninjamclientstatus.h"
 #include <array>
 #include <vector>
 
@@ -47,6 +48,9 @@ public:
 
   //---from ComponentBase-----
   tresult receiveText(const char *text) SMTG_OVERRIDE;
+
+  /** We want to receive status message. */
+  tresult PLUGIN_API notify(Vst::IMessage *message) SMTG_OVERRIDE;
 
   //---from VST3EditorDelegate-----------
   IController *createSubController(UTF8StringPtr name,

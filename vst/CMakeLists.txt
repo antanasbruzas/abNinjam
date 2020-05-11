@@ -32,6 +32,7 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     include/licensedialog.h
     include/metronomevolumeparameter.h
     include/hostcontroller.h
+    include/ninjamclientstatus.h
     source/plugfactory.cpp
     source/plugcontroller.cpp
     source/plugprocessor.cpp

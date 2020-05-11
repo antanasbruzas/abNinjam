@@ -215,9 +215,45 @@ tresult PlugController::receiveText(const char *text) {
   if (text) {
     L_(ldebug) << "[PlugController] received: " << text;
   }
-  if (notificationLabel)
+  if (notificationLabel) {
     notificationLabel->setText(text);
+  }
   return kResultOk;
+}
+
+//------------------------------------------------------------------------
+tresult PLUGIN_API PlugController::notify(Vst::IMessage *message) {
+  L_(ltrace) << "[PlugController] Entering PlugController::notify";
+  if (!message)
+    return kInvalidArgument;
+
+  if (!strcmp(message->getMessageID(), "StatusMessage")) {
+    int64 ninjamClientStatus;
+    if (message->getAttributes()->getInt("ninjamClientStatus",
+                                         ninjamClientStatus) == kResultOk) {
+      auto status = static_cast<NinjamClientStatus>(ninjamClientStatus);
+      assert(status == ok || status == serverNotProvided ||
+             status == licenseNotAccepted || status == connectionError);
+      if (notificationLabel) {
+        switch (status) {
+        case ok:
+          notificationLabel->setText("");
+          break;
+        case serverNotProvided:
+          notificationLabel->setText("Server not provided!");
+          break;
+        case licenseNotAccepted:
+          notificationLabel->setText("License not accepted!");
+          break;
+        case connectionError:
+          notificationLabel->setText("Connection error!");
+          break;
+        }
+      }
+    }
+  }
+
+  return EditController::notify(message);
 }
 
 //------------------------------------------------------------------------

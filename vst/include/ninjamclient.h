@@ -6,17 +6,11 @@
 #include "../../../../external/ninjam/ninjam/njclient.h"
 #include "connectionproperties.h"
 #include "log.h"
+#include "ninjamclientstatus.h"
 #include <mutex>
 #include <thread>
 
 namespace abNinjam {
-
-enum NinjamClientStatus {
-  ok = 0,
-  serverNotProvided = 221,
-  licenseNotAccepted = 222,
-  connectionError = 223
-};
 
 class NinjamClient {
 
