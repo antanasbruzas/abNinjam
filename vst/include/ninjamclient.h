@@ -11,12 +11,19 @@
 
 namespace abNinjam {
 
+enum NinjamClientStatus {
+  ok = 0,
+  serverNotProvided = 221,
+  licenseNotAccepted = 222,
+  connectionError = 223
+};
+
 class NinjamClient {
 
 public:
   NinjamClient();
   ~NinjamClient();
-  int connect(ConnectionProperties connectionProperties);
+  NinjamClientStatus connect(ConnectionProperties connectionProperties);
   void disconnect();
   void audiostreamOnSamples(float **inbuf, int innch, float **outbuf,
                             int outnch, int len, int srate);

@@ -342,24 +342,24 @@ void PlugProcessor::connectToServer(int16 value,
 
   if (value > 0) {
     L_(ldebug) << "[PlugProcessor] Connect initiated";
-    int status = ninjamClient->connect(connectionProperties);
+    NinjamClientStatus status = ninjamClient->connect(connectionProperties);
+    L_(ldebug) << "[PlugProcessor] NinjamClient status: " << status;
+    assert(status == ok || status == serverNotProvided ||
+           status == licenseNotAccepted || status == connectionError);
     switch (status) {
-    case 0:
+    case ok:
       this->sendTextMessage("");
       break;
-    case -1:
+    case serverNotProvided:
       this->sendTextMessage("Server not provided!");
       break;
-    case -2:
+    case licenseNotAccepted:
       this->sendTextMessage("License not accepted!");
       break;
-    case -3:
+    case connectionError:
       this->sendTextMessage("Connection error!");
       break;
-    default:
-      this->sendTextMessage("");
     }
-    L_(ldebug) << "[PlugProcessor] NinjamClient status: " << status;
   } else {
     L_(ldebug) << "[PlugProcessor] Disconnect initiated";
     if (ninjamClient) {

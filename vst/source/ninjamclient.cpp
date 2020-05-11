@@ -104,7 +104,8 @@ void keepConnectionThread(NinjamClient *ninjamClient) {
   }
 }
 
-int NinjamClient::connect(ConnectionProperties connectionProperties) {
+NinjamClientStatus
+NinjamClient::connect(ConnectionProperties connectionProperties) {
   L_(ltrace) << "[NinjamClient] Entering NinjamClient::connect";
   path propertiesPath = getHomePath();
 
@@ -119,7 +120,7 @@ int NinjamClient::connect(ConnectionProperties connectionProperties) {
   }
 
   if (isEmpty(connectionProperties.gsHost())) {
-    return -1;
+    return NinjamClientStatus::licenseNotAccepted;
   }
 
   if (isEmpty(connectionProperties.gsUsername())) {
@@ -153,14 +154,14 @@ int NinjamClient::connect(ConnectionProperties connectionProperties) {
     if (connectionThread) {
       connectionThread->detach();
     }
-    return 0;
+    return NinjamClientStatus::ok;
   }
   if (agree == 256) {
     L_(lwarning) << "[NinjamClient] License not accepted. Not Connected.";
-    return -2;
+    return NinjamClientStatus::licenseNotAccepted;
   }
   L_(lerror) << "[NinjamClient] Connection error";
-  return -3;
+  return NinjamClientStatus::connectionError;
 }
 
 void NinjamClient::disconnect() {
