@@ -30,7 +30,6 @@ jobs:
         elif [ "$RUNNER_OS" == "macOS" ]; then
               brew install pkg-config
               brew install libvorbis
-              
         else
               echo "$RUNNER_OS not supported"
               exit 221
@@ -72,7 +71,7 @@ jobs:
         if [ "$RUNNER_OS" == "Linux" ]; then
               ./bin/Release/validator -e ~/.vst3/abNinjam.vst3 | grep "0 tests failed" || exit 224
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              ./bin/Release/validator.exe -e "C:/Program Files/Common Files/VST3/abNinjam.vst3" | grep "0 tests failed" || exit 225
+              ./bin/Release/validator.exe "C:/Program Files/Common Files/VST3/abNinjam.vst3" | grep "0 tests failed" || exit 225
         elif [ "$RUNNER_OS" == "macOS" ]; then
               ./bin/Release/validator -e /Users/runner/Library/Audio/Plug-ins/VST3/abNinjam.vst3 | grep "0 tests failed" || exit 226
         else

@@ -46,11 +46,6 @@ function(plugin_add_njclient NAME)
     target_link_libraries("${NAME}" PRIVATE ${VORBIS_LIBRARIES})
     target_link_libraries("${NAME}" PRIVATE ${VORBISENC_LIBRARIES})
     endif()
-
-    if (APPLE)
-        #target_link_libraries("${NAME}" PRIVATE ogg)
-        #target_link_libraries("${NAME}" PRIVATE Vorbis)
-    endif()
     
 endfunction()
 
