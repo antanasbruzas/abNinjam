@@ -31,7 +31,9 @@ jobs:
               brew install pkg-config
               brew install libvorbis
               brew install zenity
+              ls /usr/local/Cellar/zenity/3.32.0_1
               whereis zenity
+              zenity --version
         else
               echo "$RUNNER_OS not supported"
               exit 221
