@@ -117,6 +117,11 @@ elseif(APPLE)
     set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
         SUFFIX ""
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/MacOS")
+    foreach(config ${CMAKE_CONFIGURATION_TYPES})
+        string(TOUPPER "${config}" config)
+        set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
+            "LIBRARY_OUTPUT_DIRECTORY_${config}" "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/MacOS")
+    endforeach()
     file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/mac/PkgInfo"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents")
     set(SFIZZ_VST3_BUNDLE_EXECUTABLE "${PROJECT_NAME}")
