@@ -6,7 +6,7 @@
 
 #### Build
 - Install dependencies:
-`sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev`
+`sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev zenity`
 - Initialize submodule dependencies:
 `git submodule update --init`
 - Configure build:
@@ -27,12 +27,31 @@
 
 #### Build
 - Install dependencies:
-`vcpkg install libvorbis:x64-windows-static`
+Download `https://github.com/maravento/winzenity/raw/master/zenity.zip` and extract to `%HOMEDRIVE%\%HOMEPATH%\abNninjam\`  
+`vcpkg install libvorbis:x64-windows-static`  
 `vcpkg integrate install`
 - Initialize submodule dependencies:
 `git submodule update --init`
 - Configure build:
-`mkdir build/ && cd build/ && cmake -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=/your/toolchain/file.cmake ..`  
+`mkdir build/ && cd build/ && cmake -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=/your/toolchain/file.cmake ..`
+- To build without GUI use option `-DWITHOUT_GUI=ON`
+- Compile:
+`cmake --build . --config Release`
+
+#### Install
+`cmake --build . --target install --config Release`
+
+### MacOS
+
+#### Build
+- Install dependencies:
+`brew install pkg-config`  
+`brew install libvorbis`  
+`brew install zenity`
+- Initialize submodule dependencies:
+`git submodule update --init`
+- Configure build:
+`mkdir build/ && cd build/ && cmake -DOGG_INCLUDE_DIRS=/usr/local/Cellar/libogg/1.3.4/include -DOGG_LIBRARIES=/usr/local/Cellar/libogg/1.3.4/lib/libogg.a -DVORBIS_INCLUDE_DIRS=/usr/local/Cellar/libvorbis/1.3.6/include -DVORBIS_LIBRARIES=/usr/local/Cellar/libvorbis/1.3.6/lib/libvorbis.a -DVORBISENC_INCLUDE_DIRS=/usr/local/Cellar/libvorbis/1.3.6/include -DVORBISENC_LIBRARIES=/usr/local/Cellar/libvorbis/1.3.6/lib/libvorbisenc.a -GXcode ..`
 - To build without GUI use option `-DWITHOUT_GUI=ON`
 - Compile:
 `cmake --build . --config Release`

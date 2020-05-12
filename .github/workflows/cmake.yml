@@ -23,13 +23,15 @@ jobs:
     - name: dependencies
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev
+              sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev zenity
         elif [ "$RUNNER_OS" == "Windows" ]; then
               vcpkg install libvorbis:x64-windows-static
               vcpkg integrate install
         elif [ "$RUNNER_OS" == "macOS" ]; then
               brew install pkg-config
               brew install libvorbis
+              brew install zenity
+              whereis zenity
         else
               echo "$RUNNER_OS not supported"
               exit 221
