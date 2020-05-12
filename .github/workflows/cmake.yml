@@ -32,15 +32,15 @@ jobs:
               cd ~
               git clone https://github.com/xiph/ogg.git
               cd ogg
-              cmake -G Xcode -DBUILD_FRAMEWORK=1 .
-              cmake --build .
-              cmake --build . --target install
+              cmake -G Xcode -DCMAKE_BUILD_TYPE=Release .
+              cmake --build . --config release
+              cmake --build . --target install --config Release
               cd ~
               git clone https://github.com/xiph/vorbis.git
               cd vorbis
-              cmake -G Xcode -DBUILD_FRAMEWORK=1 .
-              cmake --build .
-              cmake --build . --target install
+              cmake -G Xcode -DCMAKE_BUILD_TYPE=Release .
+              cmake --build . --config Release
+              cmake --build . --target install --config Release
               
         else
               echo "$RUNNER_OS not supported"
