@@ -20,7 +20,7 @@ private:
   void closeProcess();
   int startProcess(const char *command);
   FILE *pipe{nullptr};
-  std::string getCommandPath();
+  std::string getCommandLocation();
 };
 
 } // namespace abNinjam
