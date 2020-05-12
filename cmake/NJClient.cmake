@@ -49,7 +49,7 @@ function(plugin_add_njclient NAME)
 
     if (APPLE)
         #target_link_libraries("${NAME}" PRIVATE ogg)
-        target_link_libraries("${NAME}" PRIVATE Vorbis)
+        #target_link_libraries("${NAME}" PRIVATE Vorbis)
     endif()
     
 endfunction()
