@@ -175,7 +175,7 @@ void NinjamClient::disconnect() {
       // delete connectionThread;
     }
   }
-  if (njClient) {
+  if (connected && njClient) {
     njClient->Disconnect();
   }
   connected = false;
