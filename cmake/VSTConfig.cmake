@@ -28,6 +28,13 @@ if (WITHOUT_GUI)
    message(STATUS "WITHOUT_GUI: ${WITHOUT_GUI}")
 endif()
 
+option (LOG_FILE "Enable logging to file [default: OFF]" OFF)
+if (LOG_FILE)
+   add_definitions(-DLOG_FILE=${LOG_FILE})
+   message(STATUS "LOG_FILE: ${LOG_FILE}")
+endif()
+
+
 message(STATUS "System architecture: ${CMAKE_SYSTEM_PROCESSOR}")
 
 # --- VST3 Bundle architecture ---
