@@ -73,6 +73,8 @@ std::string LicenseDialog::getCommandLocation() {
   if (exists(commandPath)) {
     return commandPath.string();
   }
+#elif defined(__APPLE__)
+  return "/usr/local/bin/zenity";
 #endif
   return zenitypath;
 }

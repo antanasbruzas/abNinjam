@@ -30,6 +30,7 @@ jobs:
         elif [ "$RUNNER_OS" == "macOS" ]; then
               brew install pkg-config
               brew install libvorbis
+              brew install zenity
               /usr/local/bin/zenity --version
         else
               echo "$RUNNER_OS not supported"
