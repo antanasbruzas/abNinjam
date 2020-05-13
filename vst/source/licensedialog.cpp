@@ -17,14 +17,16 @@ int LicenseDialog::showDialog(const char *licensetext) {
   L_(ltrace) << "[LicenseDialog] Entering LicenseDialog::showDialog";
   //  std::string license = licensetext;
   //  encodeLicenseText(license);
-  std::string command = zenitypath;
+  std::string command = getCommandLocation();
   command +=
       " --title=\"You must agree to this license to connect to this server\"";
   command += " --ok-label=Agree";
   command += " --cancel-label=Disagree";
   command += " --question";
   command += " --no-markup";
+#ifdef unix
   command += " --ellipsize";
+#endif
   command += " --no-wrap";
   command += " --text=\"";
   command += licensetext;
@@ -63,31 +65,18 @@ void LicenseDialog::closeProcess() {
   pipe = nullptr;
 }
 
-void LicenseDialog::encodeLicenseText(std::string &data) {
-  L_(ltrace) << "[LicenseDialog] Entering LicenseDialog::encodeLicenseText";
-  std::string buffer;
-  buffer.reserve(data.size());
-  for (size_t pos = 0; pos != data.size(); ++pos) {
-    switch (data[pos]) {
-    case '&':
-      buffer.append("&amp;");
-      break;
-    case '\"':
-      buffer.append("&quot;");
-      break;
-    case '\'':
-      buffer.append("&apos;");
-      break;
-    case '<':
-      buffer.append("&lt;");
-      break;
-    case '>':
-      buffer.append("&gt;");
-      break;
-    default:
-      buffer.append(&data[pos], 1);
-      break;
-    }
+std::string LicenseDialog::getCommandLocation() {
+  L_(ltrace) << "[LicenseDialog] Entering LicenseDialog::getCommandLocation";
+#ifdef _WIN32
+  path commandPath = getHomePath();
+  ostringstream oss;
+  oss << "abNinjam" << separator() << "zenity.exe";
+  commandPath /= oss.str();
+  if (exists(commandPath)) {
+    return commandPath.string();
   }
-  data.swap(buffer);
+#elif defined(__APPLE__)
+  return "/usr/local/bin/zenity";
+#endif
+  return zenitypath;
 }

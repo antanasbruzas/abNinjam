@@ -36,10 +36,13 @@ function(plugin_add_njclient NAME)
         target_link_libraries("${NAME}" PRIVATE Ogg::ogg)
         target_link_libraries("${NAME}" PRIVATE Vorbis::vorbis Vorbis::vorbisenc)
     else()
-    #target_link_libraries("${NAME}" PRIVATE ${OGG_LIBRARIES})
-    #target_link_libraries("${NAME}" PRIVATE ${VORBIS_LIBRARIES})
-        target_link_libraries("${NAME}" PRIVATE ${VORBISENC_LIBRARIES})
+    target_include_directories("${NAME}" PRIVATE "${OGG_INCLUDE_DIRS}")
+    target_include_directories("${NAME}" PRIVATE "${VORBIS_INCLUDE_DIRS}")
+    target_include_directories("${NAME}" PRIVATE "${VORBISENC_INCLUDE_DIRS}")
+    target_link_libraries("${NAME}" PRIVATE ${OGG_LIBRARIES})
+    target_link_libraries("${NAME}" PRIVATE ${VORBIS_LIBRARIES})
+    target_link_libraries("${NAME}" PRIVATE ${VORBISENC_LIBRARIES})
     endif()
-    
+
 endfunction()
 

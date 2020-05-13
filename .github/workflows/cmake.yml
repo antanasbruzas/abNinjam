@@ -16,20 +16,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
     - uses: actions/checkout@v2
     - name: dependencies
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev
+              sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev zenity
         elif [ "$RUNNER_OS" == "Windows" ]; then
               vcpkg install libvorbis:x64-windows-static
               vcpkg integrate install
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+              brew install pkg-config
+              brew install libvorbis
+              brew install zenity
+              /usr/local/bin/zenity --version
         else
               echo "$RUNNER_OS not supported"
-              exit 1
+              exit 221
         fi
     - name: initialize
       run: git submodule update --init
@@ -40,34 +45,42 @@ jobs:
               cmake .
         elif [ "$RUNNER_OS" == "Windows" ]; then
               cmake -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+              cmake -DOGG_INCLUDE_DIRS=/usr/local/Cellar/libogg/1.3.4/include -DOGG_LIBRARIES=/usr/local/Cellar/libogg/1.3.4/lib/libogg.a -DVORBIS_INCLUDE_DIRS=/usr/local/Cellar/libvorbis/1.3.6/include -DVORBIS_LIBRARIES=/usr/local/Cellar/libvorbis/1.3.6/lib/libvorbis.a -DVORBISENC_INCLUDE_DIRS=/usr/local/Cellar/libvorbis/1.3.6/include -DVORBISENC_LIBRARIES=/usr/local/Cellar/libvorbis/1.3.6/lib/libvorbisenc.a -GXcode .
         else
               echo "$RUNNER_OS not supported"
-              exit 1
+              exit 222
         fi
     - name: build
       run: cmake --build . --config Release
     - name: install
       run: cmake --build . --target install --config Release
-    - name: test-dependencies
+    - if: github.ref == 'refs/heads/master'
+      name: test-dependencies
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
             sudo apt-get install libgtkmm-3.0-dev
         elif [ "$RUNNER_OS" == "Windows" ]; then
             vcpkg list
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+            brew list
         else
             echo "$RUNNER_OS not supported"
-            exit 1
+            exit 223
         fi
-    - name: test
+    - if: github.ref == 'refs/heads/master'
+      name: test
       run: |
         cd ~ && git clone --recursive https://github.com/steinbergmedia/vst3sdk.git && cd vst3sdk && mkdir build && cd build && cmake -DSMTG_ADD_VSTGUI=OFF -DSMTG_ADD_VST3_PLUGINS_SAMPLES=OFF -DCMAKE_BUILD_TYPE=Release .. && cmake --build . --config Release
         if [ "$RUNNER_OS" == "Linux" ]; then
-              ./bin/Release/validator -e ~/.vst3/abNinjam.vst3 | grep "0 tests failed" || exit 1
+              ./bin/Release/validator -e ~/.vst3/abNinjam.vst3 | grep "0 tests failed" || exit 224
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              ./bin/Release/validator.exe -e "C:/Program Files/Common Files/VST3/abNinjam.vst3" | grep "0 tests failed" || exit 1
+              ./bin/Release/validator.exe "C:/Program Files/Common Files/VST3/abNinjam.vst3" | grep "0 tests failed" || exit 225
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+              ./bin/Release/validator /Users/runner/Library/Audio/Plug-ins/VST3/abNinjam.vst3 | grep "0 tests failed" || exit 226
         else
               echo "$RUNNER_OS not supported"
-              exit 1
+              exit 227
         fi
     - if: ${{ matrix.os == 'ubuntu-latest' }}
       name: upload-artifact-linux
@@ -80,4 +93,11 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: abNinjam-${{ matrix.os }}
-        path: C:\Program Files\Common Files\VST3 
+        path: C:\Program Files\Common Files\VST3
+    - if: ${{ matrix.os == 'macOS-latest' }}
+      name: upload-artifact-mac
+      uses: actions/upload-artifact@v2
+      with:
+        name: abNinjam-${{ matrix.os }}
+        path: /Users/runner/Library/Audio/Plug-ins/VST3
+

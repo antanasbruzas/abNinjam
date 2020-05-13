@@ -32,6 +32,7 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     include/licensedialog.h
     include/metronomevolumeparameter.h
     include/hostcontroller.h
+    include/ninjamclientstatus.h
     source/plugfactory.cpp
     source/plugcontroller.cpp
     source/plugprocessor.cpp
@@ -112,6 +113,23 @@ if(WIN32)
     file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/win/Plugin.ico"
         "${CMAKE_CURRENT_SOURCE_DIR}/win/desktop.ini"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}")
+elseif(APPLE)
+    set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
+        SUFFIX ""
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/MacOS")
+    foreach(config ${CMAKE_CONFIGURATION_TYPES})
+        string(TOUPPER "${config}" config)
+        set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
+            "LIBRARY_OUTPUT_DIRECTORY_${config}" "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/MacOS")
+    endforeach()
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/mac/PkgInfo"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents")
+    set(SFIZZ_VST3_BUNDLE_EXECUTABLE "${PROJECT_NAME}")
+    set(SFIZZ_VST3_BUNDLE_VERSION "${PROJECT_VERSION}")
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist"
+        "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Info.plist" @ONLY)
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/mac/Plugin.icns"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
 else()
     set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/${VST3_PACKAGE_ARCHITECTURE}-linux")
@@ -124,12 +142,16 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         "-Wno-extra"
         "-Wno-multichar"
         "-Wno-reorder"
-        "-Wno-class-memaccess"
         "-Wno-ignored-qualifiers"
         "-Wno-unknown-pragmas"
         "-Wno-unused-function"
         "-Wno-unused-parameter"
         "-Wno-unused-variable")
+endif()
+
+if (UNIX AND NOT APPLE)
+    target_compile_options(${VSTPLUGIN_PRJ_NAME} PRIVATE
+        "-Wno-class-memaccess")
     target_link_libraries(${VSTPLUGIN_PRJ_NAME} PRIVATE stdc++fs)
 endif()
 

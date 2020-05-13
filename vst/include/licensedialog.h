@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "fileutil.h"
 #include "log.h"
 #include <stdio.h>
 #include <string>
@@ -19,7 +20,7 @@ private:
   void closeProcess();
   int startProcess(const char *command);
   FILE *pipe{nullptr};
-  void encodeLicenseText(std::string &text);
+  std::string getCommandLocation();
 };
 
 } // namespace abNinjam

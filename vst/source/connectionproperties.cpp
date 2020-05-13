@@ -11,7 +11,8 @@ ConnectionProperties::ConnectionProperties() {
   host = nullptr;
   username = nullptr;
   password = nullptr;
-  licenseAutoAgree = false;
+  autoLicenseAgree = false;
+  autoRemoteVolume = true;
 }
 
 ConnectionProperties::~ConnectionProperties() {
@@ -41,9 +42,13 @@ void ConnectionProperties::readFromFile(path path) {
           this->password = strdup(line.substr(5, line.length()).c_str());
         }
       }
-      if (line.rfind("licenseAutoAgree", 0) == 0) {
+      if (line.rfind("autoLicenseAgree", 0) == 0) {
         istringstream(line.substr(17, line.length())) >> boolalpha >>
-            this->licenseAutoAgree;
+            this->autoLicenseAgree;
+      }
+      if (line.rfind("autoRemoteVolume", 0) == 0) {
+        istringstream(line.substr(17, line.length())) >> boolalpha >>
+            this->autoRemoteVolume;
       }
     }
   }

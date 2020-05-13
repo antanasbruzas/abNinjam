@@ -93,6 +93,14 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
         int32 sampleOffset;
         int32 numPoints = paramQueue->getPointCount();
         switch (paramQueue->getParameterId()) {
+        case AbNinjamParams::kParamMetronomeVolId:
+          if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
+              kResultTrue) {
+            metronomeVolumeParam = value;
+            ninjamClient->gsNjClient()->config_metronome =
+                static_cast<float>(metronomeVolumeParam);
+          }
+          break;
         case AbNinjamParams::kParamConnectId:
           L_(ltrace) << "AbNinjamParams::kParamConnectId has changed";
           if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
@@ -103,14 +111,6 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
             connectionProperties.gsUsername() = messageTexts.at(1);
             connectionProperties.gsPassword() = messageTexts.at(2);
             connectToServer(connectParam, connectionProperties);
-          }
-          break;
-        case AbNinjamParams::kParamMetronomeVolId:
-          if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
-              kResultTrue) {
-            metronomeVolumeParam = value;
-            ninjamClient->gsNjClient()->config_metronome =
-                static_cast<float>(metronomeVolumeParam);
           }
           break;
         case AbNinjamParams::kBypassId:
@@ -206,7 +206,8 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
         synced = false;
         clearNotification = true;
       }
-
+      // optimize channel levels
+      ninjamClient->adjustVolume();
     } else {
       // Not connected
       ninjamClient->clearBuffers(data.outputs->channelBuffers32,
@@ -255,6 +256,10 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream *state) {
 
   IBStreamer streamer(state, kLittleEndian);
 
+  double savedMetronomeVolumeParam = 0;
+  if (streamer.readDouble(savedMetronomeVolumeParam) == false)
+    return kResultFalse;
+
   int32 savedBypass = 0;
   if (streamer.readInt32(savedBypass) == false)
     return kResultFalse;
@@ -267,14 +272,10 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream *state) {
   if (streamer.readInt32(savedConnectionIndicatorParam) == false)
     return kResultFalse;
 
-  double savedMetronomeVolumeParam = 0;
-  if (streamer.readDouble(savedMetronomeVolumeParam) == false)
-    return kResultFalse;
-
+  metronomeVolumeParam = savedMetronomeVolumeParam;
   mBypass = savedBypass > 0;
   connectParam = savedConnectParam > 0 ? 1 : 0;
   connectionIndicatorParam = savedConnectionIndicatorParam > 0 ? 1 : 0;
-  metronomeVolumeParam = savedMetronomeVolumeParam;
 
   return kResultOk;
 }
@@ -284,16 +285,16 @@ tresult PLUGIN_API PlugProcessor::getState(IBStream *state) {
   L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::getState";
   // here we need to save the model (preset or project)
 
+  double toSaveMetronomeVolumeParam = metronomeVolumeParam;
   int32 toSaveBypass = mBypass ? 1 : 0;
   int32 toSaveConnectParam = connectParam;
   int32 toSaveConnectionIndicatorParam = connectionIndicatorParam;
-  double toSaveMetronomeVolumeParam = metronomeVolumeParam;
 
   IBStreamer streamer(state, kLittleEndian);
+  streamer.writeDouble(toSaveMetronomeVolumeParam);
   streamer.writeInt32(toSaveBypass);
   streamer.writeInt32(toSaveConnectParam);
   streamer.writeInt32(toSaveConnectionIndicatorParam);
-  streamer.writeDouble(toSaveMetronomeVolumeParam);
 
   return kResultOk;
 }
@@ -342,8 +343,18 @@ void PlugProcessor::connectToServer(int16 value,
 
   if (value > 0) {
     L_(ldebug) << "[PlugProcessor] Connect initiated";
-    int status = ninjamClient->connect(connectionProperties);
+    NinjamClientStatus status = ninjamClient->connect(connectionProperties);
+
     L_(ldebug) << "[PlugProcessor] NinjamClient status: " << status;
+    if (ninjamClientStatus != status) {
+      //---send a message
+      if (IPtr<IMessage> message = allocateMessage()) {
+        message->setMessageID("StatusMessage");
+        message->getAttributes()->setInt("ninjamClientStatus", status);
+        sendMessage(message);
+      }
+      ninjamClientStatus = status;
+    }
   } else {
     L_(ldebug) << "[PlugProcessor] Disconnect initiated";
     if (ninjamClient) {

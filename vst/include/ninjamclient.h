@@ -6,8 +6,11 @@
 #include "../../../../external/ninjam/ninjam/njclient.h"
 #include "connectionproperties.h"
 #include "log.h"
+#include "ninjamclientstatus.h"
 #include <mutex>
 #include <thread>
+
+#define ADJUST_VOLUME 10
 
 namespace abNinjam {
 
@@ -16,7 +19,7 @@ class NinjamClient {
 public:
   NinjamClient();
   ~NinjamClient();
-  int connect(ConnectionProperties connectionProperties);
+  NinjamClientStatus connect(ConnectionProperties connectionProperties);
   void disconnect();
   void audiostreamOnSamples(float **inbuf, int innch, float **outbuf,
                             int outnch, int len, int srate);
@@ -27,11 +30,12 @@ public:
   auto &gsMtx() { return mtx; }
   bool connected = false;
   void clearBuffers(float **buf, int nch, int len);
+  void adjustVolume();
 
 private:
   thread *connectionThread;
   NJClient *njClient = new NJClient;
-  bool stopConnectionThread;
+  bool stopConnectionThread, autoRemoteVolume;
   mutex mtx;
 };
 

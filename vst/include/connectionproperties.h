@@ -22,12 +22,13 @@ public:
   auto &gsHost() { return host; }
   auto &gsUsername() { return username; }
   auto &gsPassword() { return password; }
-  auto &gsLicenseAutoAgree() { return licenseAutoAgree; }
+  auto &gsAutoLicenseAgree() { return autoLicenseAgree; }
+  auto &gsAutoRemoteVolume() { return autoRemoteVolume; }
   void readFromFile(path path);
 
 private:
   char *host, *username, *password;
-  bool licenseAutoAgree;
+  bool autoLicenseAgree, autoRemoteVolume;
 };
 
 } // namespace abNinjam
