@@ -110,7 +110,8 @@ NinjamClient::connect(ConnectionProperties connectionProperties) {
   path propertiesPath = getHomePath();
 
   ostringstream oss;
-  oss << "abNinjam" << path::preferred_separator << "connection.properties";
+  oss << "abNinjam" << to_string(path::preferred_separator)
+      << "connection.properties";
   propertiesPath /= oss.str();
   if (exists(propertiesPath)) {
     L_(ldebug) << "Configuration file provided: " << propertiesPath;

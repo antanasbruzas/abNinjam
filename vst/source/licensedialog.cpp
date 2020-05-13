@@ -68,7 +68,7 @@ std::string LicenseDialog::getCommandLocation() {
 #ifdef _WIN32
   path commandPath = getHomePath();
   ostringstream oss;
-  oss << "abNinjam" << path::preferred_separator << "zenity.exe";
+  oss << "abNinjam" << to_string(path::preferred_separator) << "zenity.exe";
   commandPath /= oss.str();
   if (exists(commandPath)) {
     return commandPath.string();
