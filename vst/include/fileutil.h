@@ -17,6 +17,16 @@ namespace abNinjam {
 
 path getHomePath();
 
+inline char separator() {
+#ifdef _WIN32
+  char s;
+  wctomb_s(nullptr, &s, sizeof(char), path::preferred_separator);
+  return s;
+#else
+  return path::preferred_separator;
+#endif
+}
+
 } // namespace abNinjam
 
 #endif // FILEUTIL_H
