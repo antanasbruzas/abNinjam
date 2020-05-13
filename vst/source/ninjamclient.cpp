@@ -184,6 +184,7 @@ void NinjamClient::disconnect() {
 void NinjamClient::audiostreamOnSamples(float **inbuf, int innch,
                                         float **outbuf, int outnch, int len,
                                         int srate) {
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::audiostreamOnSamples";
   if (!connected) {
     // clear all output buffers
     clearBuffers(outbuf, outnch, len);
@@ -195,6 +196,7 @@ void NinjamClient::audiostreamOnSamples(float **inbuf, int innch,
 
 void NinjamClient::audiostreamForSync(float **inbuf, int innch, float **outbuf,
                                       int outnch, int len, int srate) {
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::audiostreamForSync";
   clearBuffers(outbuf, outnch, len);
   if (connected) {
     clearBuffers(inbuf, innch, len);
@@ -205,8 +207,50 @@ void NinjamClient::audiostreamForSync(float **inbuf, int innch, float **outbuf,
 }
 
 void NinjamClient::clearBuffers(float **buf, int nch, int len) {
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::clearBuffers";
   int x;
   for (x = 0; x < nch; x++)
     memset(buf[x], 0, sizeof(float) * static_cast<unsigned long>(len));
   return;
+}
+
+void NinjamClient::adjustVolume() {
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::adjustVolume";
+  if (njClient->HasUserInfoChanged()) {
+    int totalRemoteChannels = 0;
+    float adjustedVolume = 1.f;
+    int mostUserChannels = 0;
+    int numUsers = njClient->GetNumUsers();
+    L_(ldebug) << "numUsers: " << numUsers;
+    if (numUsers < ADJUST_VOLUME) {
+      for (int useridx = 0; useridx < numUsers; useridx++) {
+        for (int channelidx = 0; channelidx < MAX_USER_CHANNELS; channelidx++) {
+          if (njClient->EnumUserChannels(useridx, channelidx) > -1) {
+            totalRemoteChannels++;
+            if (channelidx > mostUserChannels) {
+              mostUserChannels = channelidx;
+            }
+          } else {
+            break;
+          }
+        }
+      }
+      L_(ldebug) << "[PlugProcessor] totalRemoteChannels: "
+                 << totalRemoteChannels;
+      if (totalRemoteChannels > 0) {
+        adjustedVolume = adjustedVolume / totalRemoteChannels;
+        L_(ldebug) << "[PlugProcessor] adjustedVolume: " << adjustedVolume;
+        for (int useridx = 0; useridx < numUsers; useridx++) {
+          for (int channelidx = 0; channelidx <= mostUserChannels;
+               channelidx++) {
+            njClient->SetUserChannelState(useridx, channelidx, false, false,
+                                          true, adjustedVolume, false, 0.f,
+                                          false, false, false, false);
+          }
+          L_(ltrace) << "[PlugProcessor] Channels volume updated for useridx: "
+                     << useridx;
+        }
+      }
+    }
+  }
 }

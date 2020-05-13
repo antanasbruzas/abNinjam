@@ -10,6 +10,8 @@
 #include <mutex>
 #include <thread>
 
+#define ADJUST_VOLUME 10
+
 namespace abNinjam {
 
 class NinjamClient {
@@ -28,6 +30,7 @@ public:
   auto &gsMtx() { return mtx; }
   bool connected = false;
   void clearBuffers(float **buf, int nch, int len);
+  void adjustVolume();
 
 private:
   thread *connectionThread;

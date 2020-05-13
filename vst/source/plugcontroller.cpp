@@ -10,6 +10,10 @@ tresult PLUGIN_API PlugController::initialize(FUnknown *context) {
   tresult result = EditController::initialize(context);
   if (result == kResultTrue) {
     //---Create Parameters------------
+    //---Metronome volume parameter--
+    auto *metronomeVolumeParam = new MetronomeVolumeParameter(
+        ParameterInfo::kCanAutomate, AbNinjamParams::kParamMetronomeVolId);
+    parameters.addParameter(metronomeVolumeParam);
     parameters.addParameter(STR16("Bypass"), nullptr, 1, 0,
                             ParameterInfo::kCanAutomate |
                                 ParameterInfo::kIsBypass,
@@ -22,10 +26,6 @@ tresult PLUGIN_API PlugController::initialize(FUnknown *context) {
         STR16("Connection indicator"), STR16("Connected/Disconnected"), 1, 0,
         ParameterInfo::kIsReadOnly, AbNinjamParams::kParamConnectionIndicatorId,
         0, STR16("Connection"));
-    //---Metronome volume parameter--
-    auto *metronomeVolumeParam = new MetronomeVolumeParameter(
-        ParameterInfo::kCanAutomate, AbNinjamParams::kParamMetronomeVolId);
-    parameters.addParameter(metronomeVolumeParam);
 
     notificationLabel = nullptr;
 
@@ -74,6 +74,11 @@ tresult PLUGIN_API PlugController::setComponentState(IBStream *state) {
 
   IBStreamer streamer(state, kLittleEndian);
 
+  double metronomeVolumeState = 0;
+  if (streamer.readDouble(metronomeVolumeState) == false)
+    return kResultFalse;
+  setParamNormalized(AbNinjamParams::kParamMetronomeVolId,
+                     metronomeVolumeState);
   // read the bypass
   int32 bypassState;
   if (streamer.readInt32(bypassState) == false)
@@ -90,12 +95,6 @@ tresult PLUGIN_API PlugController::setComponentState(IBStream *state) {
     return kResultFalse;
   setParamNormalized(AbNinjamParams::kParamConnectionIndicatorId,
                      connectionIndicatorState);
-
-  double metronomeVolumeState = 0;
-  if (streamer.readDouble(metronomeVolumeState) == false)
-    return kResultFalse;
-  setParamNormalized(AbNinjamParams::kParamMetronomeVolId,
-                     metronomeVolumeState);
 
   return kResultOk;
 }
