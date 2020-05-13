@@ -207,7 +207,7 @@ void NinjamClient::audiostreamForSync(float **inbuf, int innch, float **outbuf,
 }
 
 void NinjamClient::clearBuffers(float **buf, int nch, int len) {
-  L_(ltrace) << "[NinjamClient] Entering NinjamClient::clearBuffers";
+  // L_(ltrace) << "[NinjamClient] Entering NinjamClient::clearBuffers";
   int x;
   for (x = 0; x < nch; x++)
     memset(buf[x], 0, sizeof(float) * static_cast<unsigned long>(len));

@@ -24,7 +24,9 @@ int LicenseDialog::showDialog(const char *licensetext) {
   command += " --cancel-label=Disagree";
   command += " --question";
   command += " --no-markup";
+#ifdef unix
   command += " --ellipsize";
+#endif
   command += " --no-wrap";
   command += " --text=\"";
   command += licensetext;
