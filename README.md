@@ -64,6 +64,8 @@ Plugin can be used with GUI or specifying parameters in `~/abNinjam/connection.p
 - `host=192.168.0.145`
 - `user=antanas`
 - `pass=supersecret`
-- `licenseAutoAgree=true`
+- `autoLicenseAgree=true`
+- `autoRemoteVolume=true`
 
-licenseAutoAgree property is used to automatically agree to the license provided by the server (for example if you use your own server and know the license)
+autoLicenseAgree property is used to automatically agree to the license provided by the server (for example if you use your own server and know the license) (default: false).  
+autoRemoteVolume is set for adjusting remote channel volume by distributing it and protecting from clipping (default: true).

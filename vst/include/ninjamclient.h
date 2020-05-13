@@ -35,7 +35,7 @@ public:
 private:
   thread *connectionThread;
   NJClient *njClient = new NJClient;
-  bool stopConnectionThread;
+  bool stopConnectionThread, autoRemoteVolume;
   mutex mtx;
 };
 

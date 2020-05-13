@@ -128,7 +128,8 @@ NinjamClient::connect(ConnectionProperties connectionProperties) {
   }
 
   agree = 1;
-  autoAgree = connectionProperties.gsLicenseAutoAgree();
+  autoAgree = connectionProperties.gsAutoLicenseAgree();
+  autoRemoteVolume = connectionProperties.gsAutoRemoteVolume();
 
   L_(ltrace) << "[NinjamClient] Status: " << njClient->GetStatus();
   L_(ltrace) << "[NinjamClient] IsAudioRunning: " << njClient->IsAudioRunning();
@@ -216,7 +217,7 @@ void NinjamClient::clearBuffers(float **buf, int nch, int len) {
 
 void NinjamClient::adjustVolume() {
   L_(ltrace) << "[NinjamClient] Entering NinjamClient::adjustVolume";
-  if (njClient->HasUserInfoChanged()) {
+  if (autoRemoteVolume && njClient->HasUserInfoChanged()) {
     int totalRemoteChannels = 0;
     float adjustedVolume = 1.f;
     int mostUserChannels = 0;
