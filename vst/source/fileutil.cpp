@@ -8,10 +8,12 @@ path getHomePath() {
 #ifdef unix
   home = getenv("HOME");
 #elif defined(_WIN32)
-  home = getenv("HOMEDRIVE");
-  const char *homepath = getenv("HOMEPATH");
-  home = static_cast<char *>(malloc(strlen(home) + strlen(homepath) + 1));
-  strcat(home, homepath);
+  size_t len;
+  _dupenv_s(&home, &len, "HOMEDRIVE");
+  string homeString(home);
+  _dupenv_s(&home, &len, "HOMEPATH");
+  homeString.append(home);
+  home = &homeString[0];
 #endif
   return home;
 }
