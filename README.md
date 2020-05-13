@@ -13,6 +13,7 @@
 `mkdir build/ && cd build/ && cmake ..`
 - To set custom installation directory use `mkdir build/ && cd build/ && cmake -DVSTPLUGIN_INSTALL_DIR:PATH=/your/custom/path ..` instead
 - To build without GUI use option `-DWITHOUT_GUI=ON`
+- To build with logging to file use option `-DLOG_FILE=ON`
 - Compile:  
 `cmake --build .`
 
@@ -35,6 +36,7 @@ Download `https://github.com/maravento/winzenity/raw/master/zenity.zip` and extr
 - Configure build:  
 `mkdir build/ && cd build/ && cmake -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=/your/toolchain/file.cmake ..`
 - To build without GUI use option `-DWITHOUT_GUI=ON`
+- To build with logging to file use option `-DLOG_FILE=ON`
 - Compile:  
 `cmake --build . --config Release`
 
@@ -53,6 +55,7 @@ Download `https://github.com/maravento/winzenity/raw/master/zenity.zip` and extr
 - Configure build:  
 `mkdir build/ && cd build/ && cmake -DOGG_INCLUDE_DIRS=/usr/local/Cellar/libogg/1.3.4/include -DOGG_LIBRARIES=/usr/local/Cellar/libogg/1.3.4/lib/libogg.a -DVORBIS_INCLUDE_DIRS=/usr/local/Cellar/libvorbis/1.3.6/include -DVORBIS_LIBRARIES=/usr/local/Cellar/libvorbis/1.3.6/lib/libvorbis.a -DVORBISENC_INCLUDE_DIRS=/usr/local/Cellar/libvorbis/1.3.6/include -DVORBISENC_LIBRARIES=/usr/local/Cellar/libvorbis/1.3.6/lib/libvorbisenc.a -GXcode ..`
 - To build without GUI use option `-DWITHOUT_GUI=ON`
+- To build with logging to file use option `-DLOG_FILE=ON`
 - Compile:  
 `cmake --build . --config Release`
 
