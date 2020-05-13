@@ -185,7 +185,7 @@ void NinjamClient::disconnect() {
 void NinjamClient::audiostreamOnSamples(float **inbuf, int innch,
                                         float **outbuf, int outnch, int len,
                                         int srate) {
-  L_(ltrace) << "[NinjamClient] Entering NinjamClient::audiostreamOnSamples";
+  // L_(ltrace) << "[NinjamClient] Entering NinjamClient::audiostreamOnSamples";
   if (!connected) {
     // clear all output buffers
     clearBuffers(outbuf, outnch, len);

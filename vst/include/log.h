@@ -138,8 +138,7 @@ inline std::string NowTime() {
 
   char result[100] = {0};
   static DWORD first = GetTickCount();
-  std::sprintf(result, "%s.%03ld", buffer,
-               (long)(GetTickCount() - first) % 1000);
+  sprintf_s(result, "%s.%03ld", buffer, (long)(GetTickCount() - first) % 1000);
   return result;
 }
 
@@ -165,7 +164,12 @@ inline std::string NowTime() {
 
 inline void initLogger(const char *file, TLogLevel level) {
   FILELog::ReportingLevel() = level;
-  FILE *log_fd = fopen(file, "w");
+  FILE *log_fd;
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+  fopen_s(&log_fd, file, "w");
+#else
+  log_fd = fopen(file, "w");
+#endif
   Output2FILE::Stream() = log_fd;
 }
 
