@@ -164,12 +164,7 @@ inline std::string NowTime() {
 
 inline void initLogger(const char *file, TLogLevel level) {
   FILELog::ReportingLevel() = level;
-  FILE *log_fd;
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-  fopen_s(&log_fd, file, "w");
-#else
-  log_fd = fopen(file, "w");
-#endif
+  FILE *log_fd = fopen(file, "w");
   Output2FILE::Stream() = log_fd;
 }
 
