@@ -1,6 +1,6 @@
 #include "../include/licensedialog.h"
 
-using namespace abNinjam;
+using namespace AbNinjam::Common;
 
 static constexpr auto zenitypath = "/usr/bin/zenity";
 

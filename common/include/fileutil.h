@@ -7,13 +7,13 @@
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
 #endif
 #include "../filesystem.hpp"
-#include "log.h"
 #include <string>
 
 using namespace std;
 using namespace std::filesystem;
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Common {
 
 path getHomePath();
 
@@ -27,6 +27,7 @@ inline char separator() {
 #endif
 }
 
-} // namespace abNinjam
+} // namespace Common
+} // namespace AbNinjam
 
 #endif // FILEUTIL_H

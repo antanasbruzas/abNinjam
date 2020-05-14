@@ -4,7 +4,9 @@
 #include "pluginterfaces/base/ibstream.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 
-using namespace abNinjam;
+using namespace AbNinjam;
+using namespace Vst3;
+
 //-----------------------------------------------------------------------------
 PlugProcessor::PlugProcessor() {
   L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::PlugProcessor";

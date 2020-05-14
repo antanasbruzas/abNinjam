@@ -1,9 +1,9 @@
 #include "../include/fileutil.h"
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Common {
 
 path getHomePath() {
-  L_(ltrace) << "Entering getHomePath";
   char *home = nullptr;
 #ifdef unix
   home = getenv("HOME");
@@ -18,4 +18,5 @@ path getHomePath() {
   return home;
 }
 
-} // namespace abNinjam
+} // namespace Common
+} // namespace AbNinjam

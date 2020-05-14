@@ -1,6 +1,7 @@
 #include "../include/hostcontroller.h"
 
-using namespace abNinjam;
+using namespace AbNinjam;
+using namespace Vst3;
 
 HostController::HostController() { hostPlayingInLastBuffer = false; }
 

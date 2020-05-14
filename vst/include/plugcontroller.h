@@ -1,19 +1,19 @@
 #pragma once
 
-#include "log.h"
+#include "common.h"
 #include "metronomevolumeparameter.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
 #include "vstgui/lib/controls/ctextlabel.h"
 #include "vstgui/plugin-bindings/vst3editor.h"
 
-#include "ninjamclientstatus.h"
 #include <array>
 #include <vector>
 
 using namespace Steinberg;
 using namespace Vst;
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Vst3 {
 
 template <typename T> class AbUIMessageController;
 
@@ -76,4 +76,5 @@ private:
 };
 
 //------------------------------------------------------------------------
-} // namespace abNinjam
+} // namespace Vst3
+} // namespace AbNinjam

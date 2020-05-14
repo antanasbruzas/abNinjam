@@ -2,7 +2,9 @@
 #include "../include/abuimessagecontroller.h"
 #include "../include/abvst3editor.h"
 
-using namespace abNinjam;
+using namespace AbNinjam;
+using namespace Vst3;
+using namespace Common;
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugController::initialize(FUnknown *context) {

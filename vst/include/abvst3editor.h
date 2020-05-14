@@ -15,7 +15,8 @@ class RunLoop;
 
 using namespace VSTGUI;
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Vst3 {
 
 class AbVST3Editor : public VST3Editor {
 public:
@@ -24,6 +25,7 @@ public:
   CMessageResult notify(CBaseObject *sender, IdStringPtr message) override;
 };
 
-} // namespace abNinjam
+} // namespace Vst3
+} // namespace AbNinjam
 
 #endif // ABVST3EDITOR_H
