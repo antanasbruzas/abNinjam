@@ -121,8 +121,10 @@ else()
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/${VST3_PACKAGE_ARCHITECTURE}-linux")
 endif()
 
+if (NOT APPLE)
 file(COPY "gpl-3.0.txt"
     DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}")
+endif()
 
 # Do not show warnings thrown by sdk
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
