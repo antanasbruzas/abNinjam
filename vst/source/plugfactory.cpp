@@ -1,9 +1,5 @@
 #include "public.sdk/source/main/pluginfactory.h"
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
-#endif
-
 #include "../include/plugcontroller.h" // for createInstance
 #include "../include/plugids.h"        // for uids
 #include "../include/plugprocessor.h"  // for createInstance
