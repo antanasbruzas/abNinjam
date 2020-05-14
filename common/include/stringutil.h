@@ -5,10 +5,12 @@
 
 #include "log.h"
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Common {
 
 bool isEmpty(char *c);
 
-} // namespace abNinjam
+}
+} // namespace AbNinjam
 
 #endif // STRINGUTIL_H

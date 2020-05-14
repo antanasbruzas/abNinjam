@@ -1,6 +1,7 @@
 #include "../include/stringutil.h"
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Common {
 
 bool isEmpty(char *c) {
   L_(ltrace) << "Entering isEmpty";
@@ -10,4 +11,5 @@ bool isEmpty(char *c) {
   return false;
 }
 
-} // namespace abNinjam
+} // namespace Common
+} // namespace AbNinjam

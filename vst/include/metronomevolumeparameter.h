@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/source/fstring.h"
-#include "log.h"
+#include "common.h"
 #include "pluginterfaces/base/ustring.h"
 #include "public.sdk/source/vst/vstparameters.h"
 
@@ -13,7 +13,8 @@
 using namespace Steinberg;
 using namespace Vst;
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Vst3 {
 
 class MetronomeVolumeParameter : public Parameter {
 public:
@@ -24,6 +25,7 @@ public:
                   ParamValue &normValue) const SMTG_OVERRIDE;
 };
 
-} // namespace abNinjam
+} // namespace Vst3
+} // namespace AbNinjam
 
 #endif // METRONOMEVOLUMEPARAMETER_H

@@ -7,6 +7,11 @@ if(NOT TARGET uninstall)
     add_custom_target(uninstall
         COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/MakeUninstall.cmake)
 
+    if (ABNINJAM_LV2 AND LV2PLUGIN_INSTALL_DIR)
+        add_custom_command(TARGET uninstall
+            COMMAND rm -rv "${LV2PLUGIN_INSTALL_DIR}/${PROJECT_NAME}.lv2")
+    endif()
+
     if (ABNINJAM_VST AND VSTPLUGIN_INSTALL_DIR)
         add_custom_command(TARGET uninstall
             COMMAND rm -rv "${VSTPLUGIN_INSTALL_DIR}/${PROJECT_NAME}.vst3")

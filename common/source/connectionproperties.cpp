@@ -3,7 +3,7 @@
 #include <cstring>
 #include <fstream>
 
-using namespace abNinjam;
+using namespace AbNinjam::Common;
 
 ConnectionProperties::ConnectionProperties() {
   L_(ltrace) << "[ConnectionProperties] Entering "

@@ -1,0 +1,13 @@
+The `abNinjam` LV2 plugin is able to be built statically against all its components,
+which is a desirable property for audio plugin hosts. These components include
+`ninjam` from Justin Frankel and Cockos Inc (https://github.com/justinfrankel/ninjam).
+`ninjam` is distributed under the terms of the GPL v2. As such,
+statically-linked LV2 version of `abNinjam` are to be distributed under the terms
+of the GPL-v2.0 license. You should be able to rebuild from source the abNinjam LV2
+plugin using any `ninjam` version you wish to use.
+
+See the file `gpl-2.0.txt` or (https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt) for more
+information about the GPL v2 license.
+
+Source code of the LV2 plugin version of `abNinjam` is distributed under the same terms as the LV2 specification, which is the ISC license. Binaries of this LV2 plugin dynamically linked against e.g. a system installation
+of `ninjam` thus have to respect the terms of the ISC license.

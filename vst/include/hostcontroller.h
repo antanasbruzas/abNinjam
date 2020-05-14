@@ -3,13 +3,15 @@
 
 #pragma once
 
-#include "log.h"
+#include "common.h"
 #include "pluginterfaces/vst/ivstprocesscontext.h"
 
 using namespace Steinberg;
 using namespace Vst;
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Vst3 {
+
 class HostController {
 public:
   HostController();
@@ -18,6 +20,7 @@ public:
   bool hostIsPlaying(ProcessContext *processContext) const;
 };
 
-} // namespace abNinjam
+} // namespace Vst3
+} // namespace AbNinjam
 
 #endif // HOSTCONTROLLER_H

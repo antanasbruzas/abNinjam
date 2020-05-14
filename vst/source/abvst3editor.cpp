@@ -5,7 +5,8 @@
 #endif
 
 using namespace VSTGUI;
-using namespace abNinjam;
+using namespace AbNinjam;
+using namespace Vst3;
 
 AbVST3Editor::AbVST3Editor(Steinberg::Vst::EditController *editController,
                            UTF8StringPtr templateName,

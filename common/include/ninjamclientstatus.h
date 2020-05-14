@@ -1,7 +1,8 @@
 #ifndef NINJAMCLIENTSTATUS_H
 #define NINJAMCLIENTSTATUS_H
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Common {
 
 enum NinjamClientStatus {
   ok = 0,
@@ -12,5 +13,6 @@ enum NinjamClientStatus {
 };
 
 }
+} // namespace AbNinjam
 
 #endif // NINJAMCLIENTSTATUS_H

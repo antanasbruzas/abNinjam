@@ -2,8 +2,6 @@ set (VSTPLUGIN_PRJ_NAME "${PROJECT_NAME}_vst3")
 set (VSTPLUGIN_BUNDLE_NAME "${PROJECT_NAME}.vst3")
 
 set (VST3SDK_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/external/VST_SDK/VST3_SDK")
-set (NJCLIENT_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/../external/ninjam")
-
 # VST plugin specific settings
 include (VSTConfig)
 
@@ -12,12 +10,8 @@ configure_file (VstPluginDefs.h.in "${CMAKE_CURRENT_BINARY_DIR}/VstPluginDefs.h"
 # Build VST3 SDK
 include("cmake/Vst3.cmake")
 
-# Build NJClient
-include("../cmake/NJClient.cmake")
-
 # Build the plugin
 add_library(${VSTPLUGIN_PRJ_NAME} MODULE
-    include/log.h
     include/plugcontroller.h
     include/plugids.h
     include/plugprocessor.h
@@ -25,24 +19,13 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     include/abvst3editor.h
     include/abuimessagecontroller.h
     include/X11RunLoop.h
-    include/ninjamclient.h
-    include/fileutil.h
-    include/stringutil.h
-    include/connectionproperties.h
-    include/licensedialog.h
     include/metronomevolumeparameter.h
     include/hostcontroller.h
-    include/ninjamclientstatus.h
     source/plugfactory.cpp
     source/plugcontroller.cpp
     source/plugprocessor.cpp
     source/abvst3editor.cpp
     source/X11RunLoop.cpp
-    source/ninjamclient.cpp
-    source/fileutil.cpp
-    source/stringutil.cpp
-    source/connectionproperties.cpp
-    source/licensedialog.cpp
     source/metronomevolumeparameter.cpp
     source/hostcontroller.cpp)
 
@@ -56,9 +39,12 @@ set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
     OUTPUT_NAME "${PROJECT_NAME}"
     PREFIX "")
 
+if (UNIX AND NOT APPLE)
+    add_dependencies(${VSTPLUGIN_PRJ_NAME} abNinjam::common)
+endif()
+plugin_add_common(${VSTPLUGIN_PRJ_NAME})
 plugin_add_vst3sdk(${VSTPLUGIN_PRJ_NAME})
 plugin_add_vstgui(${VSTPLUGIN_PRJ_NAME})
-plugin_add_njclient(${VSTPLUGIN_PRJ_NAME})
 
 # Create the bundle (see "VST 3 Locations / Format")
 execute_process (
@@ -124,8 +110,8 @@ elseif(APPLE)
     endforeach()
     file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/mac/PkgInfo"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents")
-    set(SFIZZ_VST3_BUNDLE_EXECUTABLE "${PROJECT_NAME}")
-    set(SFIZZ_VST3_BUNDLE_VERSION "${PROJECT_VERSION}")
+    set(ABNINJAM_VST3_BUNDLE_EXECUTABLE "${PROJECT_NAME}")
+    set(ABNINJAM_VST3_BUNDLE_VERSION "${PROJECT_VERSION}")
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist"
         "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Info.plist" @ONLY)
     file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/mac/Plugin.icns"
@@ -135,6 +121,13 @@ else()
         LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/${VST3_PACKAGE_ARCHITECTURE}-linux")
 endif()
 
+if (APPLE)
+file(COPY "gpl-3.0.txt"
+    DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+else()
+file(COPY "gpl-3.0.txt"
+    DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}")
+endif()
 
 # Do not show warnings thrown by sdk
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

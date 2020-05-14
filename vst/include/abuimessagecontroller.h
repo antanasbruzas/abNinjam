@@ -7,7 +7,8 @@
 using namespace Steinberg;
 using namespace Vst;
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Vst3 {
 
 //------------------------------------------------------------------------
 // AbUIMessageController
@@ -110,4 +111,5 @@ private:
 };
 
 //------------------------------------------------------------------------
-} // namespace abNinjam
+} // namespace Vst3
+} // namespace AbNinjam

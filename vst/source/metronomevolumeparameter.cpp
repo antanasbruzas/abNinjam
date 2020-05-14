@@ -1,6 +1,7 @@
 #include "../include/metronomevolumeparameter.h"
 
-using namespace abNinjam;
+using namespace AbNinjam;
+using namespace Vst3;
 
 //------------------------------------------------------------------------
 // MetronomeVolumeParameter Implementation

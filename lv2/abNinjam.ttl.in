@@ -1,0 +1,77 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#>.
+@prefix doap: <http://usefulinc.com/ns/doap#>.
+@prefix pprops: <http://lv2plug.in/ns/ext/port-props#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+
+<@LV2PLUGIN_URI@>
+  a doap:Project, lv2:Plugin, lv2:UtilityPlugin ;
+
+  doap:name "@LV2PLUGIN_NAME@" ;
+  doap:creator "@LV2PLUGIN_AUTHOR@" ;
+  doap:license <https://spdx.org/licenses/@LV2PLUGIN_SPDX_LICENSE_ID@> ;
+  doap:developer [
+    foaf:name     "@LV2PLUGIN_AUTHOR@" ;
+    foaf:homepage <@LV2PLUGIN_URI@> ;
+    foaf:mbox     <mailto:@LV2PLUGIN_EMAIL@> ;
+  ] ;
+  doap:maintainer [
+    foaf:name     "@LV2PLUGIN_AUTHOR@" ;
+    foaf:homepage <@LV2PLUGIN_URI@> ;
+    foaf:mbox     <mailto:@LV2PLUGIN_EMAIL@> ;
+  ] ;
+  rdfs:comment "@LV2PLUGIN_COMMENT@";
+
+  lv2:minorVersion @LV2PLUGIN_VERSION_MINOR@ ;
+  lv2:microVersion @LV2PLUGIN_VERSION_MICRO@ ;
+
+  lv2:port [
+	    	a lv2:AudioPort, lv2:OutputPort;
+	    	lv2:index 0;
+                lv2:symbol "outputLeft";
+                lv2:name "Output L";
+        ],
+
+        [
+                a lv2:AudioPort, lv2:OutputPort;
+                lv2:index 1;
+                lv2:symbol "outputRight";
+                lv2:name "Output R";
+        ],
+
+	[
+	    	a lv2:AudioPort, lv2:InputPort;
+                lv2:index 2;
+                lv2:symbol "inputLeft";
+                lv2:name "Input L";
+        ],
+
+        [
+                a lv2:AudioPort, lv2:InputPort;
+                lv2:index 3;
+                lv2:symbol "inputRight";
+                lv2:name "Input R";
+        ],
+
+	[
+		a lv2:ControlPort, lv2:InputPort;
+                lv2:index 4;
+	    	lv2:symbol "connect";
+	    	lv2:name "Connect";
+	    	lv2:minimum 0;
+                lv2:maximum 1;
+                lv2:default 0;
+                lv2:portProperty pprops:hasStrictBounds;
+                lv2:portProperty lv2:toggled;
+	],
+
+	[
+	    	a lv2:ControlPort, lv2:InputPort;
+                lv2:index 5;
+	    	lv2:symbol "metronomevol";
+	    	lv2:name "Metronome Volume";
+                lv2:minimum 0;
+                lv2:maximum 1;
+                lv2:default 0.5;
+                lv2:portProperty pprops:hasStrictBounds;
+	].

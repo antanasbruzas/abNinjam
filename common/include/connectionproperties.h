@@ -11,7 +11,8 @@
 using namespace std;
 using namespace std::filesystem;
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Common {
 
 class ConnectionProperties {
 public:
@@ -31,6 +32,7 @@ private:
   bool autoLicenseAgree, autoRemoteVolume;
 };
 
-} // namespace abNinjam
+} // namespace Common
+} // namespace AbNinjam
 
 #endif // CONNECTIONPROPERTIES_H

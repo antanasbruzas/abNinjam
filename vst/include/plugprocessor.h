@@ -1,9 +1,7 @@
 #pragma once
 
-#include "connectionproperties.h"
+#include "common.h"
 #include "hostcontroller.h"
-#include "log.h"
-#include "ninjamclient.h"
 #include "plugids.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 #include "pluginterfaces/vst/vsttypes.h"
@@ -12,8 +10,10 @@
 #include <array>
 
 using namespace Steinberg;
+using namespace AbNinjam::Common;
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Vst3 {
 
 //-----------------------------------------------------------------------------
 class PlugProcessor : public Vst::AudioEffect {
@@ -64,4 +64,5 @@ private:
 };
 
 //------------------------------------------------------------------------
-} // namespace abNinjam
+} // namespace Vst3
+} // namespace AbNinjam

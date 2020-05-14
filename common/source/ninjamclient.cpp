@@ -5,7 +5,7 @@
 
 #include <sstream>
 
-using namespace abNinjam;
+using namespace AbNinjam::Common;
 
 static int agree = 1;
 static bool autoAgree = false;

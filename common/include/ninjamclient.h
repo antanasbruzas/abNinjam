@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "../../../../external/ninjam/ninjam/njclient.h"
+#include "../../external/ninjam/ninjam/njclient.h"
 #include "connectionproperties.h"
 #include "log.h"
 #include "ninjamclientstatus.h"
@@ -12,7 +12,8 @@
 
 #define ADJUST_VOLUME 10
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Common {
 
 class NinjamClient {
 
@@ -39,6 +40,7 @@ private:
   mutex mtx;
 };
 
-} // namespace abNinjam
+} // namespace Common
+} // namespace AbNinjam
 
 #endif // NINJAMCLIENT_H

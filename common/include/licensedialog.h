@@ -8,7 +8,8 @@
 #include <stdio.h>
 #include <string>
 
-namespace abNinjam {
+namespace AbNinjam {
+namespace Common {
 
 class LicenseDialog {
 public:
@@ -23,6 +24,7 @@ private:
   std::string getCommandLocation();
 };
 
-} // namespace abNinjam
+} // namespace Common
+} // namespace AbNinjam
 
 #endif // LICENSEDIALOG_H
