@@ -1,4 +1,3 @@
-set (COMMON_PRJ_NAME "${PROJECT_NAME}_common")
 # Common sources
 set (COMMON_SOURCES
     "${COMMON_BASEDIR}/common.h"
@@ -16,8 +15,11 @@ set (COMMON_SOURCES
     "${COMMON_BASEDIR}/source/licensedialog.cpp")
 
 # Add common files for developing
-add_library(${COMMON_PRJ_NAME} MODULE ${COMMON_SOURCES})
-add_library (${PROJECT_NAME}::common ALIAS ${COMMON_PRJ_NAME})
+if (UNIX AND NOT APPLE)
+    set (COMMON_PRJ_NAME "${PROJECT_NAME}_common")
+    add_library(${COMMON_PRJ_NAME} MODULE ${COMMON_SOURCES})
+    add_library (${PROJECT_NAME}::common ALIAS ${COMMON_PRJ_NAME})
+endif()
 
 # --- Common ---
 function(plugin_add_common NAME)

@@ -33,7 +33,9 @@ set_target_properties (${LV2PLUGIN_PRJ_NAME} PROPERTIES PREFIX "")
 set_target_properties (${LV2PLUGIN_PRJ_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}")
 set_target_properties (${LV2PLUGIN_PRJ_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
 
-add_dependencies(${LV2PLUGIN_PRJ_NAME} abNinjam::common)
+if (UNIX AND NOT APPLE)
+    add_dependencies(${LV2PLUGIN_PRJ_NAME} abNinjam::common)
+endif()
 plugin_add_common(${LV2PLUGIN_PRJ_NAME})
 
 # Generate *.ttl files from *.in sources,
