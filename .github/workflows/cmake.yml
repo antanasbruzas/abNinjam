@@ -23,7 +23,7 @@ jobs:
     - name: dependencies
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev zenity
+              sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev zenity lv2-dev
         elif [ "$RUNNER_OS" == "Windows" ]; then
               vcpkg install libvorbis:x64-windows-static
               vcpkg integrate install
@@ -31,6 +31,7 @@ jobs:
               brew install pkg-config
               brew install libvorbis
               brew install zenity
+              brew install lv2
               /usr/local/bin/zenity --version
         else
               echo "$RUNNER_OS not supported"
@@ -83,21 +84,33 @@ jobs:
               exit 227
         fi
     - if: ${{ matrix.os == 'ubuntu-latest' }}
-      name: upload-artifact-linux
+      name: upload-artifact-linux-vst3
       uses: actions/upload-artifact@v2
       with:
-        name: abNinjam-${{ matrix.os }}
+        name: abNinjam-vst3-${{ matrix.os }}
         path: ~/.vst3
     - if: ${{ matrix.os == 'windows-latest' }}
-      name: upload-artifact-windows
+      name: upload-artifact-windows-vst3
       uses: actions/upload-artifact@v2
       with:
-        name: abNinjam-${{ matrix.os }}
+        name: abNinjam-vst3-${{ matrix.os }}
         path: C:\Program Files\Common Files\VST3
     - if: ${{ matrix.os == 'macOS-latest' }}
-      name: upload-artifact-mac
+      name: upload-artifact-mac-vst3
       uses: actions/upload-artifact@v2
       with:
-        name: abNinjam-${{ matrix.os }}
+        name: abNinjam-vst3-${{ matrix.os }}
         path: /Users/runner/Library/Audio/Plug-ins/VST3
+    - if: ${{ matrix.os == 'ubuntu-latest' }}
+      name: upload-artifact-linux-lv2
+      uses: actions/upload-artifact@v2
+      with:
+        name: abNinjam-lv2-${{ matrix.os }}
+        path: ~/.lv2
+    - if: ${{ matrix.os == 'macOS-latest' }}
+      name: upload-artifact-mac-lv2
+      uses: actions/upload-artifact@v2
+      with:
+        name: abNinjam-vst3-${{ matrix.os }}
+        path: /Users/runner/Library/Audio/Plug-ins/lv2
 

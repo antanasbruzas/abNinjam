@@ -23,7 +23,7 @@ if (ABNINJAM_VST)
     add_subdirectory (vst)
 endif()
 
-if (ABNINJAM_LV2)
+if (NOT MSVC AND ABNINJAM_LV2)
     add_subdirectory (lv2)
 endif()
 
