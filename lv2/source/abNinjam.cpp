@@ -28,7 +28,7 @@ public:
   // AbNinjamProcessor *processor;
 };
 
-static LV2_Handle instantiate(const _LV2_Descriptor *descriptor, double s_rate,
+static LV2_Handle instantiate(const LV2_Descriptor *descriptor, double s_rate,
                               const char *path,
                               const LV2_Feature *const *features) {
   AbNinjamPlugin *plugin_data = new AbNinjamPlugin;
