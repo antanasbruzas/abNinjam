@@ -17,9 +17,19 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-
+        cmake: [ '3.10.x', '3.13.x', '3.15.x', '3.17.x' ]
+        exclude:
+          - os: windows-latest
+            cmake: '3.10.x'
+          - os: windows-latest
+            cmake: '3.13.x'
     steps:
     - uses: actions/checkout@v2
+    - name: Setup cmake
+      uses: jwlawson/actions-setup-cmake@v1.0
+      with:
+        cmake-version: ${{ matrix.cmake }}
+        github-api-token: ${{ secrets.GITHUB_TOKEN }}
     - name: dependencies
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
