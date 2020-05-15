@@ -19,10 +19,12 @@ if (UNIX AND NOT APPLE)
     set (COMMON_PRJ_NAME "${PROJECT_NAME}_common")
     add_library(${COMMON_PRJ_NAME} MODULE ${COMMON_SOURCES})
     add_library (${PROJECT_NAME}::common ALIAS ${COMMON_PRJ_NAME})
-    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang" AND ${CMAKE_BUILD_TYPE} MATCHES "Release")
-        target_compile_options(${COMMON_PRJ_NAME} PRIVATE
-            "-Wno-unused-function"
-            "-Wno-unused-parameter")
+    if (${CMAKE_BUILD_TYPE} MATCHES "Release")
+        if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+            target_compile_options(${COMMON_PRJ_NAME} PRIVATE
+                "-Wno-unused-function"
+                "-Wno-unused-parameter")
+        endif()
     endif()
 endif()
 
