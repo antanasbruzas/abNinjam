@@ -16,7 +16,7 @@ set (COMMON_SOURCES
 
 
 if (ABNINJAM_USE_LIBLO)
-    if(WIN32)
+    if(WIN32 OR APPLE)
         find_package(LIBLO CONFIG REQUIRED)
     else()
         pkg_check_modules(LIBLO REQUIRED liblo>=0.29)
