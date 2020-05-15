@@ -21,7 +21,7 @@ add_library (${LV2PLUGIN_PRJ_NAME} MODULE
 if(WIN32)
     find_package(LV2 CONFIG REQUIRED)
 else()
-    pkg_check_modules(LV2 REQUIRED lv2>=1.16.0)
+    pkg_check_modules(LV2 REQUIRED lv2>=1.14.0)
 endif()
 target_include_directories("${LV2PLUGIN_PRJ_NAME}" PRIVATE ${LV2_INCLUDE_DIRS})
 target_link_libraries("${LV2PLUGIN_PRJ_NAME}" PRIVATE ${LV2_LIBRARIES})
