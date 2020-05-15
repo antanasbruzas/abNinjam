@@ -16,7 +16,11 @@ set (COMMON_SOURCES
 
 
 if (ABNINJAM_USE_LIBLO)
-   find_library(LIBLO "lo")
+    if(WIN32 OR APPLE)
+        find_library(LIBLO "liblo")
+    else()
+        find_library(LIBLO "lo")
+    endif()
    list(APPEND COMMON_SOURCES
        "${COMMON_BASEDIR}/include/osctransmitter.h"
        "${COMMON_BASEDIR}/source/osctransmitter.cpp")
