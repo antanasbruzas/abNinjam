@@ -1,6 +1,10 @@
 include(CMakeDependentOption)
 
-set(CMAKE_CXX_STANDARD 20 CACHE STRING "C++ standard to be used")
+if(${CMAKE_VERSION} VERSION_LESS "3.13.4")
+    set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ standard to be used")
+else()
+    set(CMAKE_CXX_STANDARD 20 CACHE STRING "C++ standard to be used")
+endif()
 set(CMAKE_C_STANDARD 11 CACHE STRING "C standard to be used")
 
 # Export the compile_commands.json file
@@ -24,12 +28,16 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
 endif()
 
-# If we build with Clang, optionally use libc++. Enabled by default on Apple OS.
-cmake_dependent_option(USE_LIBCPP "Use libc++ with clang" "${APPLE}"
-    "CMAKE_CXX_COMPILER_ID MATCHES Clang" OFF)
-if (USE_LIBCPP)
-    add_compile_options(-stdlib=libc++)
-    add_link_options(-stdlib=libc++)
+if(${CMAKE_VERSION} VERSION_LESS "3.13.4")
+    message("Please consider to switch to CMake 3.13.4 or newer version")
+else()
+    # If we build with Clang, optionally use libc++. Enabled by default on Apple OS.
+    cmake_dependent_option(USE_LIBCPP "Use libc++ with clang" "${APPLE}"
+        "CMAKE_CXX_COMPILER_ID MATCHES Clang" OFF)
+    if (USE_LIBCPP)
+        add_compile_options(-stdlib=libc++)
+        add_link_options(-stdlib=libc++)
+    endif()
 endif()
 
 # Default build type set as Release
