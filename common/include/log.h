@@ -1,6 +1,6 @@
 
-#ifndef __LOG_H__
-#define __LOG_H__
+#ifndef LOG_H
+#define LOG_H
 
 #pragma once
 
@@ -150,7 +150,7 @@ inline std::string NowTime() {
   char buffer[11];
   time_t t;
   time(&t);
-  tm r = {0};
+  tm r = {0, 0, 0, 1, 0, 2020, 0, 0, 0, 0, nullptr};
   strftime(buffer, sizeof(buffer), "%X", localtime_r(&t, &r));
   struct timeval tv;
   gettimeofday(&tv, nullptr);

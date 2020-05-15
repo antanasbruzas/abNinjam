@@ -3,8 +3,14 @@
 
 #pragma once
 
-#include "base/source/fstring.h"
 #include "common.h"
+#ifdef stricmp
+#undef stricmp
+#endif
+#ifdef strnicmp
+#undef strnicmp
+#endif
+#include "base/source/fstring.h"
 #include "pluginterfaces/base/ustring.h"
 #include "public.sdk/source/vst/vstparameters.h"
 

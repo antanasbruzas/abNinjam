@@ -130,16 +130,19 @@ file(COPY "gpl-3.0.txt"
 endif()
 
 # Do not show warnings thrown by sdk
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(${VSTPLUGIN_PRJ_NAME} PRIVATE
-        "-Wno-extra"
-        "-Wno-multichar"
-        "-Wno-reorder"
-        "-Wno-ignored-qualifiers"
-        "-Wno-unknown-pragmas"
-        "-Wno-unused-function"
-        "-Wno-unused-parameter"
-        "-Wno-unused-variable")
+if (${CMAKE_BUILD_TYPE} MATCHES "Release")
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(${VSTPLUGIN_PRJ_NAME} PRIVATE
+            "-Wno-extra"
+            "-Wno-multichar"
+            "-Wno-reorder"
+            "-Wno-ignored-qualifiers"
+            "-Wno-unknown-pragmas"
+            "-Wno-unused-function"
+            "-Wno-unused-parameter"
+            "-Wno-unused-variable"
+            "-Wno-cpp")
+    endif()
 endif()
 
 if (UNIX AND NOT APPLE)
