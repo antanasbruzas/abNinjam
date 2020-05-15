@@ -130,7 +130,7 @@ file(COPY "gpl-3.0.txt"
 endif()
 
 # Do not show warnings thrown by sdk
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang" AND ${CMAKE_BUILD_TYPE} MATCHES "Release")
     target_compile_options(${VSTPLUGIN_PRJ_NAME} PRIVATE
         "-Wno-extra"
         "-Wno-multichar"
@@ -139,7 +139,8 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         "-Wno-unknown-pragmas"
         "-Wno-unused-function"
         "-Wno-unused-parameter"
-        "-Wno-unused-variable")
+        "-Wno-unused-variable"
+        "-Wno-cpp")
 endif()
 
 if (UNIX AND NOT APPLE)

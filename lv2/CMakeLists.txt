@@ -48,6 +48,17 @@ if (ABNINJAM_USE_NJCLIENT)
     file(COPY "gpl-2.0.txt" DESTINATION ${PROJECT_BINARY_DIR})
 endif()
 
+# Do not show warnings thrown by NJClient
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang" AND ${CMAKE_BUILD_TYPE} MATCHES "Release")
+    target_compile_options(${LV2PLUGIN_PRJ_NAME} PRIVATE
+        "-Wno-reorder"
+        "-Wno-unused-function"
+        "-Wno-unused-parameter"
+        "-Wno-missing-field-initializers"
+        "-Wno-cast-function-type"
+        "-Wno-maybe-uninitialized")
+endif()
+
 # Installation
 if (NOT MSVC)
     install (DIRECTORY ${PROJECT_BINARY_DIR} DESTINATION ${LV2PLUGIN_INSTALL_DIR}

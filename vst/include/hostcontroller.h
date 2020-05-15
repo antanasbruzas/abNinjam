@@ -4,6 +4,12 @@
 #pragma once
 
 #include "common.h"
+#ifdef stricmp
+#undef stricmp
+#endif
+#ifdef strnicmp
+#undef strnicmp
+#endif
 #include "pluginterfaces/vst/ivstprocesscontext.h"
 
 using namespace Steinberg;
