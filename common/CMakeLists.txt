@@ -14,6 +14,14 @@ set (COMMON_SOURCES
     "${COMMON_BASEDIR}/source/connectionproperties.cpp"
     "${COMMON_BASEDIR}/source/licensedialog.cpp")
 
+
+if (ABNINJAM_USE_LIBLO)
+   find_library(LIBLO "lo")
+   list(APPEND COMMON_SOURCES
+       "${COMMON_BASEDIR}/include/osctransmitter.h"
+       "${COMMON_BASEDIR}/source/osctransmitter.cpp")
+endif()
+
 # Add common files for developing
 if (UNIX AND NOT APPLE)
     set (COMMON_PRJ_NAME "${PROJECT_NAME}_common")
@@ -44,6 +52,12 @@ function(plugin_add_common NAME)
         "${COMMON_BASEDIR}/source/stringutil.cpp"
         "${COMMON_BASEDIR}/source/connectionproperties.cpp"
         "${COMMON_BASEDIR}/source/licensedialog.cpp")
+    if (ABNINJAM_USE_LIBLO)
+        target_link_libraries("${NAME}" PRIVATE "${LIBLO}")
+        target_sources(${NAME} PRIVATE
+            "${COMMON_BASEDIR}/include/osctransmitter.h"
+            "${COMMON_BASEDIR}/source/osctransmitter.cpp")
+    endif()
     target_include_directories("${NAME}" PRIVATE "${COMMON_BASEDIR}")
     if (ABNINJAM_USE_NJCLIENT)
         # Build NJClient

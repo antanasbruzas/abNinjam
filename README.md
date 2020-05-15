@@ -6,7 +6,7 @@
 
 #### Build
 - Install dependencies:  
-`sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev zenity`
+`sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev zenity lv2-dev`
 - Initialize submodule dependencies:  
 `git submodule update --init`
 - Configure build:  
@@ -50,6 +50,7 @@ Download `https://github.com/maravento/winzenity/raw/master/zenity.zip` and extr
 `brew install pkg-config`  
 `brew install libvorbis`  
 `brew install zenity`
+`brew install lv2`
 - Initialize submodule dependencies:  
 `git submodule update --init`
 - Configure build:  

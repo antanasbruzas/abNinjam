@@ -34,6 +34,10 @@ if (LOG_FILE)
    message(STATUS "LOG_FILE: ${LOG_FILE}")
 endif()
 
+if (ABNINJAM_USE_LIBLO)
+   add_definitions(-DABNINJAM_USE_LIBLO=${ABNINJAM_USE_LIBLO})
+   message(STATUS "ABNINJAM_USE_LIBLO: ${ABNINJAM_USE_LIBLO}")
+endif()
 
 message(STATUS "System architecture: ${CMAKE_SYSTEM_PROCESSOR}")
 

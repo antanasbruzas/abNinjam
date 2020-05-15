@@ -32,6 +32,7 @@ public:
   bool connected = false;
   void clearBuffers(float **buf, int nch, int len);
   void adjustVolume();
+  void setBpm(int bpm);
 
 private:
   thread *connectionThread;

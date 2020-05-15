@@ -25,11 +25,12 @@ public:
   auto &gsPassword() { return password; }
   auto &gsAutoLicenseAgree() { return autoLicenseAgree; }
   auto &gsAutoRemoteVolume() { return autoRemoteVolume; }
+  auto &gsAutoSyncBpm() { return autoSyncBpm; }
   void readFromFile(path path);
 
 private:
   char *host, *username, *password;
-  bool autoLicenseAgree, autoRemoteVolume;
+  bool autoLicenseAgree, autoRemoteVolume, autoSyncBpm;
 };
 
 } // namespace Common

@@ -9,6 +9,7 @@ using namespace AbNinjam::Common;
 
 static int agree = 1;
 static bool autoAgree = false;
+static int bpm = 110;
 
 int licensecallback(void *userData, const char *licensetext) {
   L_(ltrace) << "Entering licensecallback";
@@ -26,7 +27,13 @@ int licensecallback(void *userData, const char *licensetext) {
 void chatmsg_cb(void *userData, NJClient *inst, const char **parms,
                 int nparms) {
   L_(ltrace) << "Entering chatmsg_cb";
-  // TODO: implement
+
+  if (parms[2] && !strcmp(parms[2], "No BPM/BPI permission")) {
+    L_(ldebug) << parms[2];
+    string message = "!vote bpm ";
+    message.append(to_string(bpm));
+    inst->ChatMessage_Send("MSG", message.c_str());
+  }
 }
 
 NinjamClient::NinjamClient() {
@@ -253,4 +260,12 @@ void NinjamClient::adjustVolume() {
       }
     }
   }
+}
+
+void NinjamClient::setBpm(int tempo) {
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::setBpm";
+  bpm = tempo;
+  string message = "bpm ";
+  message.append(to_string(tempo));
+  njClient->ChatMessage_Send("ADMIN", message.c_str());
 }

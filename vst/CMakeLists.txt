@@ -42,6 +42,7 @@ set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
 if (UNIX AND NOT APPLE)
     add_dependencies(${VSTPLUGIN_PRJ_NAME} abNinjam::common)
 endif()
+
 plugin_add_common(${VSTPLUGIN_PRJ_NAME})
 plugin_add_vst3sdk(${VSTPLUGIN_PRJ_NAME})
 plugin_add_vstgui(${VSTPLUGIN_PRJ_NAME})

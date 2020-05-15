@@ -13,6 +13,7 @@ include (abNinjamConfig)
 option (ABNINJAM_VST "Enable VST plug-in build [default: ON]" ON)
 option (ABNINJAM_LV2 "Enable LV2 plug-in build [default: ON]" ON)
 option (ABNINJAM_USE_NJCLIENT "Use NJClient" ON)
+option (ABNINJAM_USE_LIBLO "Use liblo" ON)
 
 # Add the common library targets and sources
 set (COMMON_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/common")

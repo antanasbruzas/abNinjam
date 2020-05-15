@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "hostcontroller.h"
+#include "include/osctransmitter.h"
 #include "plugids.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 #include "pluginterfaces/vst/vsttypes.h"
@@ -61,6 +62,9 @@ private:
   bool clearNotification = true;
   bool notificationCleared = false;
   NinjamClientStatus ninjamClientStatus = disconnected;
+  OscTransmitter *oscTransmitter;
+  double hostBpm, previousHostBpm;
+  float ninjamBpm, previousNinjamBpm;
 };
 
 //------------------------------------------------------------------------
