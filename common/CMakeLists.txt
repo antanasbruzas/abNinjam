@@ -8,18 +8,17 @@ set (COMMON_SOURCES
     "${COMMON_BASEDIR}/include/connectionproperties.h"
     "${COMMON_BASEDIR}/include/licensedialog.h"
     "${COMMON_BASEDIR}/include/ninjamclientstatus.h"
+    "${COMMON_BASEDIR}/include/osctransmitter.h"
     "${COMMON_BASEDIR}/source/ninjamclient.cpp"
     "${COMMON_BASEDIR}/source/fileutil.cpp"
     "${COMMON_BASEDIR}/source/stringutil.cpp"
     "${COMMON_BASEDIR}/source/connectionproperties.cpp"
-    "${COMMON_BASEDIR}/source/licensedialog.cpp")
+    "${COMMON_BASEDIR}/source/licensedialog.cpp"
+    "${COMMON_BASEDIR}/source/osctransmitter.cpp")
 
 
 if (ABNINJAM_USE_LIBLO)
    find_package(Liblo REQUIRED)
-   list(APPEND COMMON_SOURCES
-       "${COMMON_BASEDIR}/include/osctransmitter.h"
-       "${COMMON_BASEDIR}/source/osctransmitter.cpp")
 endif()
 
 # Add common files for developing
@@ -47,15 +46,14 @@ function(plugin_add_common NAME)
         "${COMMON_BASEDIR}/include/connectionproperties.h"
         "${COMMON_BASEDIR}/include/licensedialog.h"
         "${COMMON_BASEDIR}/include/ninjamclientstatus.h"
+        "${COMMON_BASEDIR}/include/osctransmitter.h"
         "${COMMON_BASEDIR}/source/ninjamclient.cpp"
         "${COMMON_BASEDIR}/source/fileutil.cpp"
         "${COMMON_BASEDIR}/source/stringutil.cpp"
         "${COMMON_BASEDIR}/source/connectionproperties.cpp"
-        "${COMMON_BASEDIR}/source/licensedialog.cpp")
+        "${COMMON_BASEDIR}/source/licensedialog.cpp"
+        "${COMMON_BASEDIR}/source/osctransmitter.cpp")
     if (ABNINJAM_USE_LIBLO)
-        target_sources(${NAME} PRIVATE
-            "${COMMON_BASEDIR}/include/osctransmitter.h"
-            "${COMMON_BASEDIR}/source/osctransmitter.cpp")
         target_include_directories("${NAME}" PRIVATE ${LIBLO_INCLUDE_DIRS})
         target_link_libraries("${NAME}" PRIVATE ${LIBLO_LIBRARIES})
     endif()
