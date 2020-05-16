@@ -62,3 +62,4 @@ if (VORBIS_FOUND)
 endif ()
 
 mark_as_advanced (VORBIS_INCLUDE_DIR VORBIS_LIBRARY)
+

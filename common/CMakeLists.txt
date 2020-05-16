@@ -16,11 +16,7 @@ set (COMMON_SOURCES
 
 
 if (ABNINJAM_USE_LIBLO)
-    if(WIN32 OR APPLE)
-        find_package(LIBLO CONFIG REQUIRED)
-    else()
-        pkg_check_modules(LIBLO REQUIRED liblo>=0.29)
-    endif()
+   find_package(Liblo REQUIRED)
    list(APPEND COMMON_SOURCES
        "${COMMON_BASEDIR}/include/osctransmitter.h"
        "${COMMON_BASEDIR}/source/osctransmitter.cpp")
@@ -57,11 +53,11 @@ function(plugin_add_common NAME)
         "${COMMON_BASEDIR}/source/connectionproperties.cpp"
         "${COMMON_BASEDIR}/source/licensedialog.cpp")
     if (ABNINJAM_USE_LIBLO)
-        target_include_directories("${NAME}" PRIVATE ${LIBLO_INCLUDE_DIRS})
-        target_link_libraries("${NAME}" PRIVATE ${LIBLO_LIBRARIES})
         target_sources(${NAME} PRIVATE
             "${COMMON_BASEDIR}/include/osctransmitter.h"
             "${COMMON_BASEDIR}/source/osctransmitter.cpp")
+        target_include_directories("${NAME}" PRIVATE ${LIBLO_INCLUDE_DIRS})
+        target_link_libraries("${NAME}" PRIVATE ${LIBLO_LIBRARIES})
     endif()
     target_include_directories("${NAME}" PRIVATE "${COMMON_BASEDIR}")
     if (ABNINJAM_USE_NJCLIENT)

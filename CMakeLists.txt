@@ -7,7 +7,7 @@ project (abNinjam VERSION 0.0.2)
 set (PROJECT_DESCRIPTION "NINJAM client")
 
 # External configuration CMake scripts
-set (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include (abNinjamConfig)
 
 option (ABNINJAM_VST "Enable VST plug-in build [default: ON]" ON)

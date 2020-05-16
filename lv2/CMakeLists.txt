@@ -17,12 +17,7 @@ add_library (${LV2PLUGIN_PRJ_NAME} MODULE
     source/${PROJECT_NAME}.cpp
     ${LV2PLUGIN_TTL_SRC_FILES})
 
-
-if(WIN32)
-    find_package(LV2 CONFIG REQUIRED)
-else()
-    pkg_check_modules(LV2 REQUIRED lv2>=1.14.0)
-endif()
+find_package(LV2 REQUIRED)
 target_include_directories("${LV2PLUGIN_PRJ_NAME}" PRIVATE ${LV2_INCLUDE_DIRS})
 target_link_libraries("${LV2PLUGIN_PRJ_NAME}" PRIVATE ${LV2_LIBRARIES})
 

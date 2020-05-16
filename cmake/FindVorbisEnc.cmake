@@ -62,3 +62,4 @@ if (VORBISENC_FOUND)
 endif ()
 
 mark_as_advanced (VORBISENC_INCLUDE_DIR VORBISENC_LIBRARY)
+
