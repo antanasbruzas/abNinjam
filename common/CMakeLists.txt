@@ -54,6 +54,7 @@ function(plugin_add_common NAME)
         "${COMMON_BASEDIR}/source/licensedialog.cpp"
         "${COMMON_BASEDIR}/source/osctransmitter.cpp")
     if (ABNINJAM_USE_LIBLO)
+        find_package(Liblo REQUIRED)
         target_include_directories("${NAME}" PRIVATE ${LIBLO_INCLUDE_DIRS})
         target_link_libraries("${NAME}" PRIVATE ${LIBLO_LIBRARIES})
     endif()
