@@ -3,6 +3,13 @@
 
 #pragma once
 
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#ifdef ABNINJAM_USE_LIBLO
+// Prevent windows.h including winsock.h
+#include <winsock2.h>
+#endif
+#endif
+
 #include "../../external/ninjam/ninjam/njclient.h"
 #include "connectionproperties.h"
 #include "log.h"

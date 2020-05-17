@@ -55,11 +55,11 @@ jobs:
       run: |
         cmake --version
         if [ "$RUNNER_OS" == "Linux" ]; then
-              cmake .
+              cmake -DUSE_STATIC_LIBS=ON .
         elif [ "$RUNNER_OS" == "Windows" ]; then
-              cmake -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
+              cmake -DUSE_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
         elif [ "$RUNNER_OS" == "macOS" ]; then
-              cmake -GXcode .
+              cmake -DUSE_STATIC_LIBS=ON -GXcode .
         else
               echo "$RUNNER_OS not supported"
               exit 222
