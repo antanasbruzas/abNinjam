@@ -16,8 +16,8 @@ option (ABNINJAM_USE_NJCLIENT "Use NJClient" ON)
 option (ABNINJAM_USE_LIBLO "Use liblo" ON)
 option (USE_STATIC_LIBS "Use static dependencies" OFF)
 
-if (USE_STATIC_LIBS)
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" ".lib")
+if (BUILD_SHARED_LIBS)
+    message(STATUS "BUILD_SHARED_LIBS: ${BUILD_SHARED_LIBS}")
 endif()
 
 # Add the common library targets and sources

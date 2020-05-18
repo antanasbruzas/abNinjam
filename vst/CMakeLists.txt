@@ -38,12 +38,9 @@ target_include_directories(${VSTPLUGIN_PRJ_NAME}
 set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
     OUTPUT_NAME "${PROJECT_NAME}"
     PREFIX "")
+target_link_libraries(${VSTPLUGIN_PRJ_NAME}
+    PRIVATE ${PROJECT_NAME}::common)
 
-if (UNIX AND NOT APPLE)
-    add_dependencies(${VSTPLUGIN_PRJ_NAME} abNinjam::common)
-endif()
-
-plugin_add_common(${VSTPLUGIN_PRJ_NAME})
 plugin_add_vst3sdk(${VSTPLUGIN_PRJ_NAME})
 plugin_add_vstgui(${VSTPLUGIN_PRJ_NAME})
 

@@ -51,15 +51,14 @@ find_package_handle_standard_args (VorbisEnc
 if (VORBISENC_FOUND)
 	set (VORBISENC_INCLUDE_DIRS ${VORBISENC_INCLUDE_DIR})
 	set (VORBISENC_LIBRARIES ${VORBISENC_LIBRARY} ${VORBIS_LIBRARIES})
-    if (NOT TARGET Vorbis::VorbisEnc)
-		add_library (Vorbis::VorbisEnc UNKNOWN IMPORTED)
-		set_target_properties (Vorbis::VorbisEnc PROPERTIES
+    if (NOT TARGET Vorbis::vorbisenc)
+		add_library (Vorbis::vorbisenc UNKNOWN IMPORTED)
+		set_target_properties (Vorbis::vorbisenc PROPERTIES
 			INTERFACE_INCLUDE_DIRECTORIES "${VORBISENC_INCLUDE_DIR}"
 			IMPORTED_LOCATION "${VORBISENC_LIBRARY}"
-			INTERFACE_LINK_LIBRARIES Vorbis::Vorbis
+			INTERFACE_LINK_LIBRARIES Vorbis::vorbis
 		)
 	endif ()
 endif ()
 
 mark_as_advanced (VORBISENC_INCLUDE_DIR VORBISENC_LIBRARY)
-

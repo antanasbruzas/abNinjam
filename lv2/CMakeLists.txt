@@ -20,6 +20,7 @@ add_library (${LV2PLUGIN_PRJ_NAME} MODULE
 find_package(LV2 REQUIRED)
 target_include_directories("${LV2PLUGIN_PRJ_NAME}" PRIVATE ${LV2_INCLUDE_DIRS})
 target_link_libraries("${LV2PLUGIN_PRJ_NAME}" PRIVATE ${LV2_LIBRARIES})
+target_link_libraries(${LV2PLUGIN_PRJ_NAME} PRIVATE ${PROJECT_NAME}::common)
 
 # Remove the "lib" prefix, rename the target name and build it in the .lv2 build dir
 # <build_dir>/lv2/<plugin_name>_lv2.<ext> to
@@ -27,11 +28,6 @@ target_link_libraries("${LV2PLUGIN_PRJ_NAME}" PRIVATE ${LV2_LIBRARIES})
 set_target_properties (${LV2PLUGIN_PRJ_NAME} PROPERTIES PREFIX "")
 set_target_properties (${LV2PLUGIN_PRJ_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}")
 set_target_properties (${LV2PLUGIN_PRJ_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
-
-if (UNIX AND NOT APPLE)
-    add_dependencies(${LV2PLUGIN_PRJ_NAME} abNinjam::common)
-endif()
-plugin_add_common(${LV2PLUGIN_PRJ_NAME})
 
 # Generate *.ttl files from *.in sources,
 # create the destination directory if it doesn't exists and copy needed files

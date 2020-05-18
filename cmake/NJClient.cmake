@@ -1,8 +1,18 @@
 # Add ninjam -------
+if (NOT CMAKE_VERSION VERSION_LESS 3.15)
+        set (CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
+endif ()
 
-find_package(Ogg REQUIRED)
-find_package(Vorbis REQUIRED)
-find_package(VorbisEnc REQUIRED)
+if (CMAKE_FIND_PACKAGE_PREFER_CONFIG)
+        find_package (Ogg CONFIG REQUIRED)
+        find_package (Vorbis CONFIG COMPONENTS Enc REQUIRED)
+        include (FindPackageHandleStandardArgs)
+        find_package_handle_standard_args (Ogg CONFIG_MODE)
+        find_package_handle_standard_args (Vorbis CONFIG_MODE)
+else ()
+        find_package (Ogg REQUIRED)
+        find_package (Vorbis COMPONENTS Enc REQUIRED)
+endif ()
 
 # --- NJClient ---
 function(plugin_add_njclient NAME)
@@ -24,11 +34,9 @@ function(plugin_add_njclient NAME)
 
     target_include_directories("${NAME}" PRIVATE "${NJCLIENT_BASEDIR}")
     target_include_directories("${NAME}" PRIVATE "${OGG_INCLUDE_DIRS}")
-    target_include_directories("${NAME}" PRIVATE "${VORBIS_INCLUDE_DIRS}")
-    target_include_directories("${NAME}" PRIVATE "${VORBISENC_INCLUDE_DIRS}")
+    target_include_directories("${NAME}" PRIVATE "${Vorbis_Vorbis_INCLUDE_DIRS}")
+    target_include_directories("${NAME}" PRIVATE "${Vorbis_Enc_INCLUDE_DIRS}")
     target_link_libraries("${NAME}" PRIVATE ${OGG_LIBRARIES})
-    target_link_libraries("${NAME}" PRIVATE ${VORBIS_LIBRARIES})
-    target_link_libraries("${NAME}" PRIVATE ${VORBISENC_LIBRARIES})
-
+    target_link_libraries("${NAME}" PRIVATE ${Vorbis_Vorbis_LIBRARIES})
+    target_link_libraries("${NAME}" PRIVATE ${Vorbis_Enc_LIBRARIES})
 endfunction()
-
