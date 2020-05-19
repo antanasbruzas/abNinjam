@@ -43,7 +43,7 @@ find_package_handle_standard_args (VorbisEnc
 	REQUIRED_VARS
 		VORBISENC_LIBRARY
 		VORBISENC_INCLUDE_DIR
-		VORBIS_FOUND
+		Vorbis_Vorbis_FOUND
 	VERSION_VAR
         VORBISENC_VERSION
 	)
