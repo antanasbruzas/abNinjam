@@ -59,7 +59,7 @@ jobs:
         elif [ "$RUNNER_OS" == "Windows" ]; then
               cmake -DUSE_STATIC_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
         elif [ "$RUNNER_OS" == "macOS" ]; then
-              cmake -DCMAKE_BUILD_TYPE=Release -GXcode .
+              cmake -DCMAKE_BUILD_TYPE=Release -DOGG_ROOT=/usr/local/Cellar/libogg/ -DVorbis_ROOT=/usr/local/Cellar/libvorbis/ -DLIBLO_ROOT=/usr/local/Cellar/liblo/ -DLV2_ROOT=/usr/local/Cellar/lv2/ -GXcode ..
         else
               echo "$RUNNER_OS not supported"
               exit 222

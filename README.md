@@ -58,7 +58,7 @@ Download `https://github.com/maravento/winzenity/raw/master/zenity.zip` and extr
 - Initialize submodule dependencies:  
 `git submodule update --init`
 - Configure build:  
-`mkdir build/ && cd build/ && cmake -DOGG_ROOT=/usr/local/Cellar/libogg/ -DVorbis_ROOT=/usr/local/Cellar/libvorbis/ -GXcode ..`
+`mkdir build/ && cd build/ && cmake -DCMAKE_BUILD_TYPE=Release -DOGG_ROOT=/usr/local/Cellar/libogg/ -DVorbis_ROOT=/usr/local/Cellar/libvorbis/ -DLIBLO_ROOT=/usr/local/Cellar/liblo/ -DLV2_ROOT=/usr/local/Cellar/lv2/ -GXcode ..`
 - To build without GUI use option `-DWITHOUT_GUI=ON`
 - To build with logging to file use option `-DLOG_FILE=ON`
 - Compile:  
