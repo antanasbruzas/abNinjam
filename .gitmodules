@@ -16,6 +16,6 @@
 	shallow = true
 	branch = develop
 [submodule "external/ninjam"]
-	path = external/ninjam
+	path = common/external/ninjam
 	url = https://github.com/justinfrankel/ninjam.git
 	shallow = true
