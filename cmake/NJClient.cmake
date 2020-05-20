@@ -1,7 +1,4 @@
 # Add ninjam -------
-#if (NOT CMAKE_VERSION VERSION_LESS 3.15)
-  #      set (CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
-#endif ()
 
 #set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 
@@ -9,13 +6,7 @@ if (CMAKE_FIND_PACKAGE_PREFER_CONFIG)
     message(STATUS "CMAKE_FIND_PACKAGE_PREFER_CONFIG: " ${CMAKE_FIND_PACKAGE_PREFER_CONFIG})
 endif()
 
-find_package (Ogg REQUIRED)
-if (NOT CMAKE_VERSION VERSION_LESS 3.17)
-    find_package(Vorbis COMPONENTS Enc REQUIRED)
-else()
-    find_package(Vorbis REQUIRED)
-    find_package(VorbisEnc REQUIRED)
-endif()
+find_package(Vorbis COMPONENTS Enc REQUIRED)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     message(STATUS "OGG_INCLUDE_DIRS:" ${OGG_INCLUDE_DIRS})

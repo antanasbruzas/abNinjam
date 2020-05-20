@@ -1,9 +1,9 @@
 # - Find vorbisenc
 # Find the native vorbisenc includes and libraries
 #
-#  VORBIS_INCLUDE_DIRS - where to find vorbis.h, etc.
-#  VORBIS_LIBRARIES    - List of libraries when using vorbis.
-#  VORBIS_FOUND        - True if vorbis found.
+#  Vorbis_Vorbis_INCLUDE_DIRS - where to find vorbis.h, etc.
+#  Vorbis_Vorbis_LIBRARIES    - List of libraries when using vorbis.
+#  Vorbis_Vorbis_FOUND        - True if vorbis found.
 
 if (Vorbis_Vorbis_INCLUDE_DIR)
         # Already in cache, be silent
@@ -21,7 +21,7 @@ pkg_check_modules (PC_Vorbis_Vorbis QUIET vorbis)
 pkg_check_modules (PC_Vorbis_Enc QUIET vorbisenc)
 pkg_check_modules (PC_Vorbis_File QUIET vorbisfile)
 
-set (Vorbis_VERSION ${PC_VORBIS_VERSION})
+set (Vorbis_VERSION ${PC_Vorbis_Vorbis_VERSION})
 
 find_path (Vorbis_Vorbis_INCLUDE_DIR vorbis/codec.h
         HINTS
@@ -81,13 +81,11 @@ find_library (Vorbis_File_LIBRARY
         )
 
 include (FindPackageHandleStandardArgs)
-
 find_package_handle_standard_args (Vorbis_Vorbis
         REQUIRED_VARS
                 Vorbis_Vorbis_LIBRARY
                 Vorbis_Vorbis_INCLUDE_DIR
                 Ogg_FOUND
-        NAME_MISMATCHED
         )
 
 find_package_handle_standard_args (Vorbis_Enc
@@ -95,7 +93,6 @@ find_package_handle_standard_args (Vorbis_Enc
                 Vorbis_Enc_LIBRARY
                 Vorbis_Enc_INCLUDE_DIR
                 Vorbis_Vorbis_FOUND
-        NAME_MISMATCHED
         )
 
 find_package_handle_standard_args (Vorbis_File
@@ -103,7 +100,6 @@ find_package_handle_standard_args (Vorbis_File
                 Vorbis_File_LIBRARY
                 Vorbis_File_INCLUDE_DIR
                 Vorbis_Vorbis_FOUND
-        NAME_MISMATCHED
         )
 
 if (Vorbis_Vorbis_FOUND)
