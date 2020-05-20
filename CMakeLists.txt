@@ -17,7 +17,7 @@ option (ABNINJAM_USE_LIBLO "Use liblo" ON)
 
 # Add the common library targets and sources
 set (COMMON_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/common")
-set (NJCLIENT_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ninjam")
+set (NJCLIENT_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/common/external/ninjam")
 add_subdirectory (common)
 
 if (ABNINJAM_VST)

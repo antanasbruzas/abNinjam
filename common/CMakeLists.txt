@@ -20,7 +20,6 @@ set (COMMON_PRJ_NAME "${PROJECT_NAME}Common")
 add_library(${COMMON_PRJ_NAME} STATIC ${COMMON_SOURCES})
 target_include_directories (${COMMON_PRJ_NAME} PUBLIC .)
 target_include_directories (${COMMON_PRJ_NAME} PUBLIC external)
-target_include_directories (${COMMON_PRJ_NAME} PUBLIC ../external)
 set_target_properties (${COMMON_PRJ_NAME} PROPERTIES OUTPUT_NAME ${COMMON_PRJ_NAME} PUBLIC_HEADER "common.h")
 
 if (ABNINJAM_USE_LIBLO)

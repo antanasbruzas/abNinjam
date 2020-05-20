@@ -10,7 +10,7 @@
 #endif
 #endif
 
-#include "../../external/ninjam/ninjam/njclient.h"
+#include "../external/ninjam/ninjam/njclient.h"
 #include "connectionproperties.h"
 #include "log.h"
 #include "ninjamclientstatus.h"
