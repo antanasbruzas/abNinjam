@@ -44,7 +44,7 @@ jobs:
               brew install zenity
               brew install lv2
               brew install liblo
-              /usr/local/bin/zenity --version
+              ls -l /usr/local/Cellar/liblo/
         else
               echo "$RUNNER_OS not supported"
               exit 221

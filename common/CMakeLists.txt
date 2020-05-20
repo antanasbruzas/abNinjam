@@ -16,10 +16,6 @@ set (COMMON_SOURCES
     "${COMMON_BASEDIR}/source/licensedialog.cpp"
     "${COMMON_BASEDIR}/source/osctransmitter.cpp")
 
-if (ABNINJAM_USE_LIBLO)
-   find_package(Liblo REQUIRED)
-endif()
-
 set (COMMON_PRJ_NAME "${PROJECT_NAME}Common")
 add_library(${COMMON_PRJ_NAME} STATIC ${COMMON_SOURCES})
 target_include_directories (${COMMON_PRJ_NAME} PUBLIC .)
@@ -29,7 +25,7 @@ set_target_properties (${COMMON_PRJ_NAME} PROPERTIES OUTPUT_NAME ${COMMON_PRJ_NA
 
 if (ABNINJAM_USE_LIBLO)
     find_package(Liblo REQUIRED)
-    target_include_directories(${COMMON_PRJ_NAME} PRIVATE ${LIBLO_INCLUDE_DIRS})
+    target_include_directories(${COMMON_PRJ_NAME} PUBLIC ${LIBLO_INCLUDE_DIRS})
     target_link_libraries(${COMMON_PRJ_NAME} PRIVATE ${LIBLO_LIBRARIES})
 endif()
 target_include_directories(${COMMON_PRJ_NAME} PRIVATE "${COMMON_BASEDIR}")

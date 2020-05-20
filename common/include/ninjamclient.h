@@ -42,10 +42,10 @@ public:
   void setBpm(int bpm);
 
 private:
-  thread *connectionThread;
+  std::thread *connectionThread;
   NJClient *njClient = new NJClient;
   bool stopConnectionThread, autoRemoteVolume;
-  mutex mtx;
+  std::mutex mtx;
 };
 
 } // namespace Common

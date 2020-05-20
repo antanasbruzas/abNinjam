@@ -8,7 +8,7 @@ OscTransmitter::OscTransmitter() : oscc("localhost", "8000") {}
 OscTransmitter::OscTransmitter() {}
 #endif
 
-int OscTransmitter::sendInt(string path, int value) {
+int OscTransmitter::sendInt(std::string path, int value) {
   L_(ltrace) << "[OscTransmitter] Entering OscTransmitter::send";
 #ifdef ABNINJAM_USE_LIBLO
   L_(ldebug) << "[OscTransmitter] Sending OSC message";

@@ -4,6 +4,7 @@
 #include <fstream>
 
 using namespace AbNinjam::Common;
+using namespace std;
 
 ConnectionProperties::ConnectionProperties() {
   L_(ltrace) << "[ConnectionProperties] Entering "

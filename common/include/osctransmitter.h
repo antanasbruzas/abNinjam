@@ -9,15 +9,13 @@
 #include <lo/lo_cpp.h>
 #endif
 
-using namespace std;
-
 namespace AbNinjam {
 namespace Common {
 
 class OscTransmitter {
 public:
   OscTransmitter();
-  int sendInt(string path, int value);
+  int sendInt(std::string path, int value);
 
 private:
 #ifdef ABNINJAM_USE_LIBLO

@@ -6,6 +6,7 @@
 
 using namespace AbNinjam;
 using namespace Vst3;
+using namespace std;
 
 //-----------------------------------------------------------------------------
 PlugProcessor::PlugProcessor() {
