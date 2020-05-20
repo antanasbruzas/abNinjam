@@ -9,7 +9,7 @@ To disable lv2 build use `-DABNINJAM_LV2=OFF`
 
 #### Build
 - Install dependencies:  
-`sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev zenity lv2-dev`
+`sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev zenity lv2-dev libfreetype-dev libcairo2-dev liblo-dev`
 - Initialize submodule dependencies:  
 `git submodule update --init`
 - Configure build:  
@@ -54,10 +54,11 @@ Download `https://github.com/maravento/winzenity/raw/master/zenity.zip` and extr
 `brew install libvorbis`  
 `brew install zenity`
 `brew install lv2`
+`brew install liblo`
 - Initialize submodule dependencies:  
 `git submodule update --init`
 - Configure build:  
-`mkdir build/ && cd build/ && cmake -DOGG_INCLUDE_DIRS=/usr/local/Cellar/libogg/1.3.4/include -DOGG_LIBRARIES=/usr/local/Cellar/libogg/1.3.4/lib/libogg.a -DVORBIS_INCLUDE_DIRS=/usr/local/Cellar/libvorbis/1.3.6/include -DVORBIS_LIBRARIES=/usr/local/Cellar/libvorbis/1.3.6/lib/libvorbis.a -DVORBISENC_INCLUDE_DIRS=/usr/local/Cellar/libvorbis/1.3.6/include -DVORBISENC_LIBRARIES=/usr/local/Cellar/libvorbis/1.3.6/lib/libvorbisenc.a -GXcode ..`
+`mkdir build/ && cd build/ && cmake -DOGG_ROOT=/usr/local/Cellar/libogg/ -DVorbis_ROOT=/usr/local/Cellar/libvorbis/ -GXcode ..`
 - To build without GUI use option `-DWITHOUT_GUI=ON`
 - To build with logging to file use option `-DLOG_FILE=ON`
 - Compile:  
