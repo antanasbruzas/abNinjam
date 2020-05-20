@@ -83,9 +83,7 @@ tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
-
   // L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::process";
-  ConnectionProperties connectionProperties;
   //--- Read inputs parameter changes-----------
   if (data.inputParameterChanges) {
     int32 numParamsChanged = data.inputParameterChanges->getParameterCount();
@@ -113,7 +111,7 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
             connectionProperties.gsHost() = messageTexts.at(0);
             connectionProperties.gsUsername() = messageTexts.at(1);
             connectionProperties.gsPassword() = messageTexts.at(2);
-            connectToServer(connectParam, connectionProperties);
+            connectToServer(connectParam, &connectionProperties);
           }
           break;
         case AbNinjamParams::kBypassId:
@@ -180,7 +178,6 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
           if (abs(static_cast<double>(ninjamBpm) - hostBpm) >
               numeric_limits<double>::epsilon()) {
             if (connectionProperties.gsAutoSyncBpm()) {
-
               if (abs(ninjamBpm - previousNinjamBpm) >
                   numeric_limits<float>::epsilon()) {
                 // BPM was changed on remote. Sync to host
@@ -366,8 +363,8 @@ char *PlugProcessor::tCharToCharPtr(Steinberg::Vst::TChar *tChar) {
   return nullptr;
 }
 
-void PlugProcessor::connectToServer(int16 value,
-                                    ConnectionProperties connectionProperties) {
+void PlugProcessor::connectToServer(
+    int16 value, ConnectionProperties *connectionProperties) {
   L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::connectToServer";
 
   if (value > 0) {

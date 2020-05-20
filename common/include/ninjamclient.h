@@ -27,7 +27,7 @@ class NinjamClient {
 public:
   NinjamClient();
   ~NinjamClient();
-  NinjamClientStatus connect(ConnectionProperties connectionProperties);
+  NinjamClientStatus connect(ConnectionProperties *connectionProperties);
   void disconnect();
   void audiostreamOnSamples(float **inbuf, int innch, float **outbuf,
                             int outnch, int len, int srate);

@@ -73,8 +73,8 @@ static void run(LV2_Handle instance, uint32_t sample_count) {
         *plugin_data->metronomeVolume;
 
     if (plugin_data->ninjamClientStatus != ok) {
-      plugin_data->ninjamClientStatus = plugin_data->ninjamClient->connect(
-          *plugin_data->connectionProperties);
+      plugin_data->ninjamClientStatus =
+          plugin_data->ninjamClient->connect(plugin_data->connectionProperties);
     } else {
       plugin_data->ninjamClient->audiostreamOnSamples(
           plugin_data->input_buffers, 2, plugin_data->output_buffers, 2,

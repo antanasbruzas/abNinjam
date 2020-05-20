@@ -112,7 +112,7 @@ void keepConnectionThread(NinjamClient *ninjamClient) {
 }
 
 NinjamClientStatus
-NinjamClient::connect(ConnectionProperties connectionProperties) {
+NinjamClient::connect(ConnectionProperties *connectionProperties) {
   L_(ltrace) << "[NinjamClient] Entering NinjamClient::connect";
   path propertiesPath = getHomePath();
   ostringstream oss;
@@ -120,31 +120,31 @@ NinjamClient::connect(ConnectionProperties connectionProperties) {
   propertiesPath /= oss.str();
   if (exists(propertiesPath)) {
     L_(ldebug) << "Configuration file provided: " << propertiesPath;
-    connectionProperties.readFromFile(propertiesPath);
+    connectionProperties->readFromFile(propertiesPath);
   } else {
     L_(ldebug) << "[NinjamClient] Configuration file not provided.";
   }
 
-  if (isEmpty(connectionProperties.gsHost())) {
+  if (isEmpty(connectionProperties->gsHost())) {
     return serverNotProvided;
   }
 
-  if (isEmpty(connectionProperties.gsUsername())) {
-    connectionProperties.gsUsername() = strdup("anonymous");
+  if (isEmpty(connectionProperties->gsUsername())) {
+    connectionProperties->gsUsername() = strdup("anonymous");
   }
 
   agree = 1;
-  autoAgree = connectionProperties.gsAutoLicenseAgree();
-  autoRemoteVolume = connectionProperties.gsAutoRemoteVolume();
+  autoAgree = connectionProperties->gsAutoLicenseAgree();
+  autoRemoteVolume = connectionProperties->gsAutoRemoteVolume();
 
   L_(ltrace) << "[NinjamClient] Status: " << njClient->GetStatus();
   L_(ltrace) << "[NinjamClient] IsAudioRunning: " << njClient->IsAudioRunning();
 
   // TODO: check if "if" condition is needed here
   if (njClient->GetStatus() != 0 && njClient->IsAudioRunning() != 1) {
-    njClient->Connect(connectionProperties.gsHost(),
-                      connectionProperties.gsUsername(),
-                      connectionProperties.gsPassword());
+    njClient->Connect(connectionProperties->gsHost(),
+                      connectionProperties->gsUsername(),
+                      connectionProperties->gsPassword());
   }
 
   while (njClient->GetStatus() >= 0) {

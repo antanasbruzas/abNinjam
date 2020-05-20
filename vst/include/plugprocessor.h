@@ -49,7 +49,7 @@ protected:
   bool mBypass = false;
 
 private:
-  void connectToServer(int16 value, ConnectionProperties connectionProperties);
+  void connectToServer(int16 value, ConnectionProperties *connectionProperties);
   char *tCharToCharPtr(Steinberg::Vst::TChar *tChar);
   NinjamClient *ninjamClient;
 
@@ -65,6 +65,7 @@ private:
   OscTransmitter *oscTransmitter;
   double hostBpm, previousHostBpm;
   float ninjamBpm, previousNinjamBpm;
+  ConnectionProperties connectionProperties;
 };
 
 //------------------------------------------------------------------------
