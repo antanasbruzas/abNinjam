@@ -2,11 +2,14 @@
 
 ## Building from source
 
+To disable vst3 build use `-DABNINJAM_VST=OFF`  
+To disable lv2 build use `-DABNINJAM_LV2=OFF`  
+
 ### Linux (Ubuntu)
 
 #### Build
 - Install dependencies:  
-`sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev zenity`
+`sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev zenity lv2-dev libfreetype-dev libcairo2-dev liblo-dev`
 - Initialize submodule dependencies:  
 `git submodule update --init`
 - Configure build:  
@@ -50,10 +53,12 @@ Download `https://github.com/maravento/winzenity/raw/master/zenity.zip` and extr
 `brew install pkg-config`  
 `brew install libvorbis`  
 `brew install zenity`
+`brew install lv2`
+`brew install liblo`
 - Initialize submodule dependencies:  
 `git submodule update --init`
 - Configure build:  
-`mkdir build/ && cd build/ && cmake -DOGG_INCLUDE_DIRS=/usr/local/Cellar/libogg/1.3.4/include -DOGG_LIBRARIES=/usr/local/Cellar/libogg/1.3.4/lib/libogg.a -DVORBIS_INCLUDE_DIRS=/usr/local/Cellar/libvorbis/1.3.6/include -DVORBIS_LIBRARIES=/usr/local/Cellar/libvorbis/1.3.6/lib/libvorbis.a -DVORBISENC_INCLUDE_DIRS=/usr/local/Cellar/libvorbis/1.3.6/include -DVORBISENC_LIBRARIES=/usr/local/Cellar/libvorbis/1.3.6/lib/libvorbisenc.a -GXcode ..`
+`mkdir build/ && cd build/ && cmake -DCMAKE_BUILD_TYPE=Release -DOGG_ROOT=/usr/local/Cellar/libogg/ -DVorbis_ROOT=/usr/local/Cellar/libvorbis/ -DLIBLO_ROOT=/usr/local/Cellar/liblo/ -DLV2_ROOT=/usr/local/Cellar/lv2/ -GXcode ..`
 - To build without GUI use option `-DWITHOUT_GUI=ON`
 - To build with logging to file use option `-DLOG_FILE=ON`
 - Compile:  
@@ -69,6 +74,8 @@ Plugin can be used with GUI or specifying parameters in `~/abNinjam/connection.p
 - `pass=supersecret`
 - `autoLicenseAgree=true`
 - `autoRemoteVolume=true`
+- `autoSyncBpm=true`
 
 autoLicenseAgree property is used to automatically agree to the license provided by the server (for example if you use your own server and know the license) (default: false).  
-autoRemoteVolume is set for adjusting remote channel volume by distributing it and protecting from clipping (default: true).
+autoRemoteVolume is set for adjusting remote channel volume by distributing it and protecting from clipping (default: true).  
+autoSyncBpm enables sending OSC message `/tempo/raw {int}` to host to change it's BPM if BPM is changed on Ninjam server. As well as sending /bpm command or voting command to change BPM for Ninjam server if BPM is changed on host. (default: true)

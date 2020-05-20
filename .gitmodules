@@ -15,7 +15,7 @@
 	url = https://github.com/steinbergmedia/vstgui.git
 	shallow = true
 	branch = develop
-[submodule "external/ninjam"]
-	path = external/ninjam
+[submodule "common/external/ninjam"]
+	path = common/external/ninjam
 	url = https://github.com/justinfrankel/ninjam.git
 	shallow = true

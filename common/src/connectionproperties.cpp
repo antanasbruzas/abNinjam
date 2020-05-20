@@ -4,6 +4,7 @@
 #include <fstream>
 
 using namespace AbNinjam::Common;
+using namespace std;
 
 ConnectionProperties::ConnectionProperties() {
   L_(ltrace) << "[ConnectionProperties] Entering "
@@ -13,6 +14,7 @@ ConnectionProperties::ConnectionProperties() {
   password = nullptr;
   autoLicenseAgree = false;
   autoRemoteVolume = true;
+  autoSyncBpm = true;
 }
 
 ConnectionProperties::~ConnectionProperties() {
@@ -49,6 +51,10 @@ void ConnectionProperties::readFromFile(path path) {
       if (line.rfind("autoRemoteVolume", 0) == 0) {
         istringstream(line.substr(17, line.length())) >> boolalpha >>
             this->autoRemoteVolume;
+      }
+      if (line.rfind("autoSyncBpm", 0) == 0) {
+        istringstream(line.substr(12, line.length())) >> boolalpha >>
+            this->autoSyncBpm;
       }
     }
   }

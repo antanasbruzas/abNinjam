@@ -9,7 +9,6 @@
 #include "../filesystem.hpp"
 #include <string>
 
-using namespace std;
 using namespace std::filesystem;
 
 namespace AbNinjam {

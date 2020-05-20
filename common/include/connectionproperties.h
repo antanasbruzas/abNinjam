@@ -8,7 +8,6 @@
 #include "../filesystem.hpp"
 #include "log.h"
 
-using namespace std;
 using namespace std::filesystem;
 
 namespace AbNinjam {
@@ -25,11 +24,12 @@ public:
   auto &gsPassword() { return password; }
   auto &gsAutoLicenseAgree() { return autoLicenseAgree; }
   auto &gsAutoRemoteVolume() { return autoRemoteVolume; }
+  auto &gsAutoSyncBpm() { return autoSyncBpm; }
   void readFromFile(path path);
 
 private:
   char *host, *username, *password;
-  bool autoLicenseAgree, autoRemoteVolume;
+  bool autoLicenseAgree, autoRemoteVolume, autoSyncBpm;
 };
 
 } // namespace Common

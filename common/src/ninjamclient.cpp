@@ -6,9 +6,11 @@
 #include <sstream>
 
 using namespace AbNinjam::Common;
+using namespace std;
 
 static int agree = 1;
 static bool autoAgree = false;
+static int bpm = 110;
 
 int licensecallback(void *userData, const char *licensetext) {
   L_(ltrace) << "Entering licensecallback";
@@ -26,7 +28,13 @@ int licensecallback(void *userData, const char *licensetext) {
 void chatmsg_cb(void *userData, NJClient *inst, const char **parms,
                 int nparms) {
   L_(ltrace) << "Entering chatmsg_cb";
-  // TODO: implement
+
+  if (parms[2] && !strcmp(parms[2], "No BPM/BPI permission")) {
+    L_(ldebug) << parms[2];
+    string message = "!vote bpm ";
+    message.append(to_string(bpm));
+    inst->ChatMessage_Send("MSG", message.c_str());
+  }
 }
 
 NinjamClient::NinjamClient() {
@@ -105,7 +113,7 @@ void keepConnectionThread(NinjamClient *ninjamClient) {
 }
 
 NinjamClientStatus
-NinjamClient::connect(ConnectionProperties connectionProperties) {
+NinjamClient::connect(ConnectionProperties *connectionProperties) {
   L_(ltrace) << "[NinjamClient] Entering NinjamClient::connect";
   path propertiesPath = getHomePath();
   ostringstream oss;
@@ -113,31 +121,31 @@ NinjamClient::connect(ConnectionProperties connectionProperties) {
   propertiesPath /= oss.str();
   if (exists(propertiesPath)) {
     L_(ldebug) << "Configuration file provided: " << propertiesPath;
-    connectionProperties.readFromFile(propertiesPath);
+    connectionProperties->readFromFile(propertiesPath);
   } else {
     L_(ldebug) << "[NinjamClient] Configuration file not provided.";
   }
 
-  if (isEmpty(connectionProperties.gsHost())) {
+  if (isEmpty(connectionProperties->gsHost())) {
     return serverNotProvided;
   }
 
-  if (isEmpty(connectionProperties.gsUsername())) {
-    connectionProperties.gsUsername() = strdup("anonymous");
+  if (isEmpty(connectionProperties->gsUsername())) {
+    connectionProperties->gsUsername() = strdup("anonymous");
   }
 
   agree = 1;
-  autoAgree = connectionProperties.gsAutoLicenseAgree();
-  autoRemoteVolume = connectionProperties.gsAutoRemoteVolume();
+  autoAgree = connectionProperties->gsAutoLicenseAgree();
+  autoRemoteVolume = connectionProperties->gsAutoRemoteVolume();
 
   L_(ltrace) << "[NinjamClient] Status: " << njClient->GetStatus();
   L_(ltrace) << "[NinjamClient] IsAudioRunning: " << njClient->IsAudioRunning();
 
   // TODO: check if "if" condition is needed here
   if (njClient->GetStatus() != 0 && njClient->IsAudioRunning() != 1) {
-    njClient->Connect(connectionProperties.gsHost(),
-                      connectionProperties.gsUsername(),
-                      connectionProperties.gsPassword());
+    njClient->Connect(connectionProperties->gsHost(),
+                      connectionProperties->gsUsername(),
+                      connectionProperties->gsPassword());
   }
 
   while (njClient->GetStatus() >= 0) {
@@ -253,4 +261,12 @@ void NinjamClient::adjustVolume() {
       }
     }
   }
+}
+
+void NinjamClient::setBpm(int tempo) {
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::setBpm";
+  bpm = tempo;
+  string message = "bpm ";
+  message.append(to_string(tempo));
+  njClient->ChatMessage_Send("ADMIN", message.c_str());
 }

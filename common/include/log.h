@@ -126,7 +126,10 @@ class FILELOG_DECLSPEC FILELog : public Log<Output2FILE> {};
     FILELog().Get(level)
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-
+#ifdef ABNINJAM_USE_LIBLO
+// Prevent windows.h including winsock.h
+#include <winsock2.h>
+#endif
 #include <windows.h>
 
 inline std::string NowTime() {

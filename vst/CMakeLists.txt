@@ -21,13 +21,13 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     include/X11RunLoop.h
     include/metronomevolumeparameter.h
     include/hostcontroller.h
-    source/plugfactory.cpp
-    source/plugcontroller.cpp
-    source/plugprocessor.cpp
-    source/abvst3editor.cpp
-    source/X11RunLoop.cpp
-    source/metronomevolumeparameter.cpp
-    source/hostcontroller.cpp)
+    src/plugfactory.cpp
+    src/plugcontroller.cpp
+    src/plugprocessor.cpp
+    src/abvst3editor.cpp
+    src/X11RunLoop.cpp
+    src/metronomevolumeparameter.cpp
+    src/hostcontroller.cpp)
 
 if(WIN32)
     target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE vst3.def)
@@ -38,11 +38,9 @@ target_include_directories(${VSTPLUGIN_PRJ_NAME}
 set_target_properties(${VSTPLUGIN_PRJ_NAME} PROPERTIES
     OUTPUT_NAME "${PROJECT_NAME}"
     PREFIX "")
+target_link_libraries(${VSTPLUGIN_PRJ_NAME}
+    PRIVATE ${PROJECT_NAME}::common)
 
-if (UNIX AND NOT APPLE)
-    add_dependencies(${VSTPLUGIN_PRJ_NAME} abNinjam::common)
-endif()
-plugin_add_common(${VSTPLUGIN_PRJ_NAME})
 plugin_add_vst3sdk(${VSTPLUGIN_PRJ_NAME})
 plugin_add_vstgui(${VSTPLUGIN_PRJ_NAME})
 

@@ -6,6 +6,7 @@
 
 using namespace AbNinjam;
 using namespace Vst3;
+using namespace std;
 
 //-----------------------------------------------------------------------------
 PlugProcessor::PlugProcessor() {
@@ -15,6 +16,7 @@ PlugProcessor::PlugProcessor() {
   hostController = new HostController();
   ninjamClient = new NinjamClient();
   connectedOld = false;
+  oscTransmitter = new OscTransmitter();
 }
 
 //-----------------------------------------------------------------------------
@@ -82,7 +84,6 @@ tresult PLUGIN_API PlugProcessor::setActive(TBool state) {
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
-
   // L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::process";
   //--- Read inputs parameter changes-----------
   if (data.inputParameterChanges) {
@@ -108,11 +109,10 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
           if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
               kResultTrue) {
             connectParam = value > 0 ? 1 : 0;
-            ConnectionProperties connectionProperties;
             connectionProperties.gsHost() = messageTexts.at(0);
             connectionProperties.gsUsername() = messageTexts.at(1);
             connectionProperties.gsPassword() = messageTexts.at(2);
-            connectToServer(connectParam, connectionProperties);
+            connectToServer(connectParam, &connectionProperties);
           }
           break;
         case AbNinjamParams::kBypassId:
@@ -173,11 +173,30 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
               data.outputs->channelBuffers32, data.outputs->numChannels,
               data.numSamples, static_cast<int>(processSetup.sampleRate));
 
-          if (!bpmNotification) {
-            float ninjamBpm = ninjamClient->gsNjClient()->GetActualBPM();
-            if (abs(static_cast<double>(ninjamBpm) -
-                    data.processContext->tempo) >
-                numeric_limits<double>::epsilon()) {
+          ninjamBpm = ninjamClient->gsNjClient()->GetActualBPM();
+          hostBpm = data.processContext->tempo;
+
+          if (abs(static_cast<double>(ninjamBpm) - hostBpm) >
+              numeric_limits<double>::epsilon()) {
+            if (connectionProperties.gsAutoSyncBpm()) {
+              if (abs(ninjamBpm - previousNinjamBpm) >
+                  numeric_limits<float>::epsilon()) {
+                // BPM was changed on remote. Sync to host
+                L_(ldebug) << "[PlugProcessor] Sending OSC message";
+                oscTransmitter->sendInt("/tempo/raw",
+                                        static_cast<int>(ninjamBpm));
+                clearNotification = true;
+              } else if (abs(hostBpm - previousHostBpm) >
+                         numeric_limits<double>::epsilon()) {
+                // BPM was changed on host. Sync to remote
+                L_(ldebug) << "[PlugProcessor] BPM was changed on host. "
+                              "Expecting to receive OSC message";
+                ninjamClient->setBpm(static_cast<int>(hostBpm));
+                clearNotification = true;
+              }
+            }
+
+            if (!bpmNotification) {
               L_(linfo) << "[PlugProcessor] "
                            "NINJAM BPM: "
                         << ninjamBpm << ", "
@@ -191,6 +210,10 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
               notificationCleared = false;
             }
           }
+
+          previousNinjamBpm = ninjamClient->gsNjClient()->GetActualBPM();
+          previousHostBpm = data.processContext->tempo;
+
         } else {
           ninjamClient->clearBuffers(data.outputs->channelBuffers32,
                                      data.outputs->numChannels,
@@ -207,6 +230,7 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
             data.numSamples, static_cast<int>(processSetup.sampleRate));
         synced = false;
         clearNotification = true;
+        previousNinjamBpm = 0.f;
       }
       // optimize channel levels
       ninjamClient->adjustVolume();
@@ -216,6 +240,7 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
                                  data.outputs->numChannels, data.numSamples);
       synced = false;
       clearNotification = true;
+      previousNinjamBpm = 0.f;
     }
 
     if (clearNotification && !notificationCleared) {
@@ -339,8 +364,8 @@ char *PlugProcessor::tCharToCharPtr(Steinberg::Vst::TChar *tChar) {
   return nullptr;
 }
 
-void PlugProcessor::connectToServer(int16 value,
-                                    ConnectionProperties connectionProperties) {
+void PlugProcessor::connectToServer(
+    int16 value, ConnectionProperties *connectionProperties) {
   L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::connectToServer";
 
   if (value > 0) {
