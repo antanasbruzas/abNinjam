@@ -14,7 +14,7 @@ set (LV2PLUGIN_TTL_SRC_FILES
 # Build the plugin
 add_library (${LV2PLUGIN_PRJ_NAME} MODULE
     include/ports.h
-    source/${PROJECT_NAME}.cpp
+    src/${PROJECT_NAME}.cpp
     ${LV2PLUGIN_TTL_SRC_FILES})
 
 find_package(LV2 REQUIRED)
