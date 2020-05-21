@@ -13,7 +13,8 @@ enum AbNinjamParams : Vst::ParamID {
   kBypassId = 100,
   kParamConnectId = 1000,
   kParamConnectionIndicatorId = 1001,
-  kParamMetronomeVolId = 1002
+  kParamMetronomeVolId = 1002,
+  kParamTemplateSelectId = 1003
 };
 
 // HERE you have to define new unique class ids: for processor and for

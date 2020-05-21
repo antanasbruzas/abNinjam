@@ -367,25 +367,26 @@ char *PlugProcessor::tCharToCharPtr(Steinberg::Vst::TChar *tChar) {
 void PlugProcessor::connectToServer(
     int16 value, ConnectionProperties *connectionProperties) {
   L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::connectToServer";
-
+  NinjamClientStatus status = ninjamClientStatus;
   if (value > 0) {
     L_(ldebug) << "[PlugProcessor] Connect initiated";
-    NinjamClientStatus status = ninjamClient->connect(connectionProperties);
-
-    L_(ldebug) << "[PlugProcessor] NinjamClient status: " << status;
-    if (ninjamClientStatus != status) {
-      //---send a message
-      if (IPtr<IMessage> message = allocateMessage()) {
-        message->setMessageID("StatusMessage");
-        message->getAttributes()->setInt("ninjamClientStatus", status);
-        sendMessage(message);
-      }
-      ninjamClientStatus = status;
-    }
+    status = ninjamClient->connect(connectionProperties);
   } else {
     L_(ldebug) << "[PlugProcessor] Disconnect initiated";
     if (ninjamClient) {
       ninjamClient->disconnect();
+      status = disconnected;
+    }
+  }
+
+  L_(ldebug) << "[PlugProcessor] NinjamClient status: " << status;
+  if (ninjamClientStatus != status) {
+    ninjamClientStatus = status;
+    if (IPtr<IMessage> message = allocateMessage()) {
+      message->setMessageID("StatusMessage");
+      message->getAttributes()->setInt("ninjamClientStatus",
+                                       ninjamClientStatus);
+      sendMessage(message);
     }
   }
 }

@@ -234,23 +234,33 @@ tresult PLUGIN_API PlugController::notify(Vst::IMessage *message) {
                                          ninjamClientStatus) == kResultOk) {
       auto status = static_cast<NinjamClientStatus>(ninjamClientStatus);
       assert(status == ok || status == serverNotProvided ||
-             status == licenseNotAccepted || status == connectionError);
-      if (notificationLabel) {
+             status == licenseNotAccepted || status == connectionError ||
+             status == disconnected);
+
+      L_(ldebug) << "[PlugController] status: " << status;
+      if (notificationLabel && menu) {
         switch (status) {
         case ok:
+          menu->setValueNormalized(1);
+          break;
         case disconnected:
           notificationLabel->setText("");
+          menu->setValueNormalized(0);
           break;
         case serverNotProvided:
           notificationLabel->setText("Server not provided!");
+          menu->setValueNormalized(0);
           break;
         case licenseNotAccepted:
           notificationLabel->setText("License not accepted!");
+          menu->setValueNormalized(0);
           break;
         case connectionError:
           notificationLabel->setText("Connection error!");
+          menu->setValueNormalized(0);
           break;
         }
+        menu->valueChanged();
       }
     }
   }
@@ -269,6 +279,13 @@ CView *PlugController::createCustomView(UTF8StringPtr name,
     notificationLabel = new CTextLabel(size);
     return notificationLabel;
   }
+
+  if (name && strcmp(name, "Menu") == 0) {
+    CRect size;
+    menu = new CSegmentButton(size);
+    menu->setVisible(false);
+    return menu;
+  }
   return nullptr;
 }
 
@@ -276,4 +293,5 @@ CView *PlugController::createCustomView(UTF8StringPtr name,
 void PlugController::willClose(VST3Editor *editor) {
   L_(ltrace) << "[PlugController] Entering PlugController::willClose";
   notificationLabel = nullptr;
+  menu = nullptr;
 }
