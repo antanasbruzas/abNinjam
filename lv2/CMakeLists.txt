@@ -52,6 +52,10 @@ if (${CMAKE_BUILD_TYPE} MATCHES "Release")
     endif()
 endif()
 
+if (UNIX AND NOT APPLE)
+    target_link_libraries(${LV2PLUGIN_PRJ_NAME} PRIVATE stdc++fs)
+endif()
+
 # Installation
 if (NOT MSVC)
     install (DIRECTORY ${PROJECT_BINARY_DIR} DESTINATION ${LV2PLUGIN_INSTALL_DIR}
