@@ -241,23 +241,34 @@ tresult PLUGIN_API PlugController::notify(Vst::IMessage *message) {
       if (notificationLabel && menu) {
         switch (status) {
         case ok:
+          notificationLabel->setText("");
+#if !defined(_WIN32)
           menu->setValueNormalized(1);
+#endif
           break;
         case disconnected:
           notificationLabel->setText("");
+#if !defined(_WIN32)
           menu->setValueNormalized(0);
+#endif
           break;
         case serverNotProvided:
           notificationLabel->setText("Server not provided!");
+#if !defined(_WIN32)
           menu->setValueNormalized(0);
+#endif
           break;
         case licenseNotAccepted:
           notificationLabel->setText("License not accepted!");
+#if !defined(_WIN32)
           menu->setValueNormalized(0);
+#endif
           break;
         case connectionError:
           notificationLabel->setText("Connection error!");
+#if !defined(_WIN32)
           menu->setValueNormalized(0);
+#endif
           break;
         }
         menu->valueChanged();
@@ -283,7 +294,9 @@ CView *PlugController::createCustomView(UTF8StringPtr name,
   if (name && strcmp(name, "Menu") == 0) {
     CRect size;
     menu = new CSegmentButton(size);
+#if !defined(_WIN32)
     menu->setVisible(false);
+#endif
     return menu;
   }
   return nullptr;
