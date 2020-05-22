@@ -149,6 +149,10 @@ if (UNIX AND NOT APPLE)
     target_link_libraries(${VSTPLUGIN_PRJ_NAME} PRIVATE stdc++fs)
 endif()
 
+if (MSVC)
+    set_property(TARGET ${VSTPLUGIN_PRJ_NAME} PROPERTY CXX_STANDARD 17)
+    set_property(TARGET ${VSTPLUGIN_PRJ_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+endif()
 
 # Installation
 install (DIRECTORY "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}"

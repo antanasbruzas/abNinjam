@@ -183,8 +183,10 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
                   numeric_limits<float>::epsilon()) {
                 // BPM was changed on remote. Sync to host
                 L_(ldebug) << "[PlugProcessor] Sending OSC message";
-                oscTransmitter->sendInt("/tempo/raw",
-                                        static_cast<int>(ninjamBpm));
+                int oscSendStatus = oscTransmitter->sendInt(
+                    "/tempo/raw", static_cast<int>(ninjamBpm));
+                L_(ltrace) << "[PlugProcessor] oscSendStatus: "
+                           << oscSendStatus;
                 clearNotification = true;
               } else if (abs(hostBpm - previousHostBpm) >
                          numeric_limits<double>::epsilon()) {

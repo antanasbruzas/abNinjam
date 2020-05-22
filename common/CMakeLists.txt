@@ -1,5 +1,6 @@
 # Common sources
 set (COMMON_SOURCES
+    "${COMMON_BASEDIR}/filesystem.hpp"
     "${COMMON_BASEDIR}/common.h"
     "${COMMON_BASEDIR}/include/log.h"
     "${COMMON_BASEDIR}/include/ninjamclient.h"
@@ -48,6 +49,7 @@ if (ABNINJAM_USE_NJCLIENT)
         endif()
     endif()
 endif()
+
 add_library (${PROJECT_NAME}::common ALIAS ${COMMON_PRJ_NAME})
 
 
