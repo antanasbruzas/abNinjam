@@ -16,7 +16,7 @@ option (ABNINJAM_LV2 "Enable LV2 plug-in build [default: ON]" ON)
 option (ABNINJAM_USE_NJCLIENT "Use NJClient [default: ON]" ON)
 option (ABNINJAM_USE_LIBLO "Use liblo [default: ON]" ON)
 
-if (ENABLE_LTO)
+if (ENABLE_LTO AND CMAKE_BUILD_TYPE STREQUAL "Release")
     include(CheckIPOSupported)
     check_ipo_supported(RESULT result)
     if(result)
