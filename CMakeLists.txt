@@ -10,10 +10,19 @@ set (PROJECT_DESCRIPTION "NINJAM client")
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include (abNinjamConfig)
 
+option (ENABLE_LTO "Enable Link Time Optimization [default: ON]" ON)
 option (ABNINJAM_VST "Enable VST plug-in build [default: ON]" ON)
 option (ABNINJAM_LV2 "Enable LV2 plug-in build [default: ON]" ON)
-option (ABNINJAM_USE_NJCLIENT "Use NJClient" ON)
-option (ABNINJAM_USE_LIBLO "Use liblo" ON)
+option (ABNINJAM_USE_NJCLIENT "Use NJClient [default: ON]" ON)
+option (ABNINJAM_USE_LIBLO "Use liblo [default: ON]" ON)
+
+if (ENABLE_LTO)
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT result)
+    if(result)
+      set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+    endif()
+endif()
 
 # Add the common library targets and sources
 set (COMMON_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/common")
