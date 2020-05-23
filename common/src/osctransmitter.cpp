@@ -3,7 +3,7 @@
 using namespace AbNinjam::Common;
 
 #ifdef ABNINJAM_USE_LIBLO
-OscTransmitter::OscTransmitter() : oscc("localhost", "8000") {}
+OscTransmitter::OscTransmitter() : oscc("localhost", "8000", LO_UDP) {}
 #else
 OscTransmitter::OscTransmitter() {}
 #endif

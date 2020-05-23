@@ -4,7 +4,9 @@
 #include "metronomevolumeparameter.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
 #include "vstgui/lib/controls/csegmentbutton.h"
+#include "vstgui/lib/controls/cslider.h"
 #include "vstgui/lib/controls/ctextlabel.h"
+#include "vstgui/lib/cscrollview.h"
 #include "vstgui/plugin-bindings/vst3editor.h"
 
 #include <array>
@@ -75,6 +77,7 @@ private:
   std::array<String128, 3> messageTexts;
   CTextLabel *notificationLabel;
   VSTGUI::CSegmentButton *menu;
+  VSTGUI::CScrollView *scrollView;
 };
 
 //------------------------------------------------------------------------

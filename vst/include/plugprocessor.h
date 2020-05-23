@@ -66,6 +66,7 @@ private:
   double hostBpm, previousHostBpm;
   float ninjamBpm, previousNinjamBpm;
   ConnectionProperties connectionProperties;
+  bool manualMixingTouched = false;
 };
 
 //------------------------------------------------------------------------

@@ -299,6 +299,27 @@ CView *PlugController::createCustomView(UTF8StringPtr name,
 #endif
     return menu;
   }
+
+  //  if (name && strcmp(name, "MixerView") == 0) {
+  //     CRect size;
+  //     CRect containerSize;
+  //     int style = 0;
+  //     scrollView = new CScrollView(size, containerSize, style);
+
+  //     CRect sliderSize;
+  //     CBitmap sliderHandle("slider_handle.png");
+  //     CBitmap sliderBackground("slider_background.png");
+  //     CSlider *slider = new CSlider(sliderSize, editor, 2000, 0, 1,
+  //     &sliderHandle,
+  //                                   &sliderBackground);
+
+  //     scrollView->addView(slider);
+  //     // CSlider slider = new CSlider(sliderSize, editor, -2, 0, 1,
+  //     &sliderHandle,
+  //     //                             &sliderBackground);
+  //     // scrollView->menu->setVisible(false);
+  //     return menu;
+  //   }
   return nullptr;
 }
 

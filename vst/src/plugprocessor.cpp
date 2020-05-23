@@ -235,7 +235,9 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
         previousNinjamBpm = 0.f;
       }
       // optimize channel levels
-      ninjamClient->adjustVolume();
+      if (!manualMixingTouched) {
+        ninjamClient->adjustVolume();
+      }
     } else {
       // Not connected
       ninjamClient->clearBuffers(data.outputs->channelBuffers32,

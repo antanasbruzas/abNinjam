@@ -28,8 +28,8 @@ if (ABNINJAM_USE_LIBLO)
     target_include_directories(${COMMON_PRJ_NAME} PUBLIC ${LIBLO_INCLUDE_DIRS})
     target_link_libraries(${COMMON_PRJ_NAME} PRIVATE ${LIBLO_LIBRARIES})
     if (MSVC)
-        # link missing library for liblo_static.lib because it references GetAdaptersAddresses
-        target_link_libraries(${COMMON_PRJ_NAME} PRIVATE "iphlpapi")
+        # link missing libraries for liblo_static.lib
+        target_link_libraries(${COMMON_PRJ_NAME} PRIVATE ws2_32 iphlpapi)
     endif()
     add_definitions(-DABNINJAM_USE_LIBLO=${ABNINJAM_USE_LIBLO})
     message(STATUS "ABNINJAM_USE_LIBLO: ${ABNINJAM_USE_LIBLO}")
