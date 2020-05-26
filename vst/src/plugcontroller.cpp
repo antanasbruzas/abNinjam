@@ -331,7 +331,7 @@ CView *PlugController::createCustomView(UTF8StringPtr name,
   if (name && strcmp(name, "MixerView") == 0) {
 
     CRect scrollViewSize(0, 0, 196, 74);
-    CRect containerSize(0, 0, 185, 500);
+    CRect containerSize(0, 0, 185, 18);
     int scrollViewStyle = 10;
     scrollView =
         new CScrollView(scrollViewSize, containerSize, scrollViewStyle);
@@ -401,9 +401,9 @@ void PlugController::createMixer(VST3Editor *editor) {
   if (scrollView) {
     L_(ltrace) << "[PlugController] scrollView available";
     scrollView->removeAll();
-    scrollView->setDirty();
     CRect labelPlacer(5, 0, 54, 18);
     CRect sliderPlacer(55, 18, 185, 36);
+    int totalRows = 0;
     for (auto remoteUser : remoteUsers) {
       L_(ltrace) << "[PlugController] user: " << remoteUser.name;
       scrollView->addView(
@@ -412,8 +412,8 @@ void PlugController::createMixer(VST3Editor *editor) {
       for (auto channel : remoteUser.channels) {
         L_(ltrace) << "[PlugController] channel: " << channel.name;
         if (!channel.name.empty()) {
-          labelPlacer.top += 17;
-          labelPlacer.bottom += 17;
+          labelPlacer.top += 18;
+          labelPlacer.bottom += 18;
           scrollView->addView(
               createLabel(channel.name, kNormalFontSmaller, labelPlacer));
         }
@@ -423,7 +423,16 @@ void PlugController::createMixer(VST3Editor *editor) {
             channel.volume, editor, remoteUser.id, channel.id));
         sliderPlacer.top += 18;
         sliderPlacer.bottom += 18;
+        totalRows++;
       }
+      labelPlacer.top += 18;
+      labelPlacer.bottom += 18;
+      sliderPlacer.top += 18;
+      sliderPlacer.bottom += 18;
+      totalRows++;
     }
+    CRect containerSize(0, 0, 185, totalRows * 18);
+    scrollView->setContainerSize(containerSize);
+    scrollView->setDirty();
   }
 }
