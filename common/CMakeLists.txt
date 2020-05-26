@@ -10,12 +10,18 @@ set (COMMON_SOURCES
     "${COMMON_BASEDIR}/include/licensedialog.h"
     "${COMMON_BASEDIR}/include/ninjamclientstatus.h"
     "${COMMON_BASEDIR}/include/osctransmitter.h"
+    "${COMMON_BASEDIR}/include/remotechannel.h"
+    "${COMMON_BASEDIR}/include/remoteuser.h"
+    "${COMMON_BASEDIR}/include/remoteuserchannel.h"
     "${COMMON_BASEDIR}/src/ninjamclient.cpp"
     "${COMMON_BASEDIR}/src/fileutil.cpp"
     "${COMMON_BASEDIR}/src/stringutil.cpp"
     "${COMMON_BASEDIR}/src/connectionproperties.cpp"
     "${COMMON_BASEDIR}/src/licensedialog.cpp"
-    "${COMMON_BASEDIR}/src/osctransmitter.cpp")
+    "${COMMON_BASEDIR}/src/osctransmitter.cpp"
+    "${COMMON_BASEDIR}/src/remotechannel.cpp"
+    "${COMMON_BASEDIR}/src/remoteuser.cpp"
+    "${COMMON_BASEDIR}/src/remoteuserchannel.cpp")
 
 set (COMMON_PRJ_NAME "${PROJECT_NAME}Common")
 add_library(${COMMON_PRJ_NAME} STATIC ${COMMON_SOURCES})

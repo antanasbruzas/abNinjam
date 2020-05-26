@@ -224,12 +224,12 @@ void NinjamClient::clearBuffers(float **buf, int nch, int len) {
 
 void NinjamClient::adjustVolume() {
   L_(ltrace) << "[NinjamClient] Entering NinjamClient::adjustVolume";
-  if (autoRemoteVolume && njClient->HasUserInfoChanged()) {
+  if (autoRemoteVolume) {
     int totalRemoteChannels = 0;
     float adjustedVolume = 1.f;
     int mostUserChannels = 0;
     int numUsers = njClient->GetNumUsers();
-    L_(ldebug) << "numUsers: " << numUsers;
+    L_(ldebug) << "[NinjamClient] numUsers: " << numUsers;
     if (numUsers < ADJUST_VOLUME) {
       for (int useridx = 0; useridx < numUsers; useridx++) {
         for (int channelidx = 0; channelidx < MAX_USER_CHANNELS; channelidx++) {
@@ -251,9 +251,7 @@ void NinjamClient::adjustVolume() {
         for (int useridx = 0; useridx < numUsers; useridx++) {
           for (int channelidx = 0; channelidx <= mostUserChannels;
                channelidx++) {
-            njClient->SetUserChannelState(useridx, channelidx, false, false,
-                                          true, adjustedVolume, false, 0.f,
-                                          false, false, false, false);
+            setUserChannelVolume(useridx, channelidx, adjustedVolume);
           }
           L_(ltrace) << "[PlugProcessor] Channels volume updated for useridx: "
                      << useridx;
@@ -263,10 +261,55 @@ void NinjamClient::adjustVolume() {
   }
 }
 
+std::vector<AbNinjam::Common::RemoteUser> NinjamClient::getRemoteUsers() {
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::getRemoteUsers";
+  std::vector<RemoteUser> users;
+  int numUsers = njClient->GetNumUsers();
+  L_(ltrace) << "[NinjamClient] numUsers: " << numUsers;
+  for (int useridx = 0; useridx < numUsers; useridx++) {
+    RemoteUser *user = new RemoteUser();
+    user->id = useridx;
+    user->name = njClient->GetUserState(useridx);
+    L_(ltrace) << "[NinjamClient] user->id: " << user->id;
+    L_(ltrace) << "[NinjamClient] user->name: " << user->name;
+    for (int channelidx = 0; channelidx < MAX_USER_CHANNELS; channelidx++) {
+      float vol;
+      char *result =
+          njClient->GetUserChannelState(useridx, channelidx, nullptr, &vol);
+      if (result != 0) {
+        RemoteChannel *channel = new RemoteChannel();
+        channel->id = channelidx;
+        channel->volume = vol;
+        channel->name = result;
+        user->channels.push_back(*channel);
+        L_(ltrace) << "[NinjamClient] channel->id: " << channel->id;
+        L_(ltrace) << "[NinjamClient] channel->volume: " << channel->volume;
+        L_(ltrace) << "[NinjamClient] channel->name: " << channel->name;
+      } else {
+        L_(ltrace) << "[NinjamClient] No channel with id " << channelidx
+                   << " found for user " << user->name;
+      }
+    }
+    users.push_back(*user);
+  }
+  return users;
+}
 void NinjamClient::setBpm(int tempo) {
   L_(ltrace) << "[NinjamClient] Entering NinjamClient::setBpm";
   bpm = tempo;
   string message = "bpm ";
   message.append(to_string(tempo));
   njClient->ChatMessage_Send("ADMIN", message.c_str());
+}
+
+void NinjamClient::setUserChannelVolume(int userId, int channelId,
+                                        float volume) {
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::setUserChannelVolume";
+  L_(ltrace) << "[NinjamClient] userId: " << userId;
+  L_(ltrace) << "[NinjamClient] channelId: " << channelId;
+  L_(ltrace) << "[NinjamClient] volume: " << volume;
+  if (njClient) {
+    njClient->SetUserChannelState(userId, channelId, false, false, true, volume,
+                                  false, 0.f, false, false, false, false);
+  }
 }

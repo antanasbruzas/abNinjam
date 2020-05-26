@@ -60,6 +60,7 @@ IPlugView *PLUGIN_API PlugController::createView(const char *name) {
 #ifndef WITHOUT_GUI
   if (name && strcmp(name, "editor") == 0) {
     auto *view = new AbVST3Editor(this, "view", "plug.uidesc");
+    vst3Editor = view;
     return view;
   }
 #endif
@@ -248,30 +249,57 @@ tresult PLUGIN_API PlugController::notify(Vst::IMessage *message) {
           break;
         case disconnected:
           notificationLabel->setText("");
+          remoteUsers.clear();
 #if !defined(_WIN32)
           menu->setValueNormalized(0);
 #endif
           break;
         case serverNotProvided:
           notificationLabel->setText("Server not provided!");
+          remoteUsers.clear();
 #if !defined(_WIN32)
           menu->setValueNormalized(0);
 #endif
           break;
         case licenseNotAccepted:
           notificationLabel->setText("License not accepted!");
+          remoteUsers.clear();
 #if !defined(_WIN32)
           menu->setValueNormalized(0);
 #endif
           break;
         case connectionError:
           notificationLabel->setText("Connection error!");
+          remoteUsers.clear();
 #if !defined(_WIN32)
           menu->setValueNormalized(0);
 #endif
           break;
         }
+#if !defined(_WIN32)
         menu->valueChanged();
+#endif
+      }
+    }
+  }
+
+  if (!strcmp(message->getMessageID(), "BinaryMessage")) {
+    const void *data;
+    uint32 size;
+    if (message->getAttributes()->getBinary("remoteUsers", data, size) ==
+        kResultOk) {
+      if (size > 0) {
+        remoteUsers = *const_cast<std::vector<Common::RemoteUser> *>(
+            static_cast<const std::vector<Common::RemoteUser> *>(data));
+        createMixer(vst3Editor);
+      } else {
+        if (remoteUsers.size() > 0) {
+          remoteUsers.clear();
+        }
+      }
+    } else {
+      if (remoteUsers.size() > 0) {
+        remoteUsers.clear();
       }
     }
   }
@@ -294,32 +322,28 @@ CView *PlugController::createCustomView(UTF8StringPtr name,
   if (name && strcmp(name, "Menu") == 0) {
     CRect size;
     menu = new CSegmentButton(size);
-#if !defined(_WIN32)
-    menu->setVisible(false);
-#endif
+    //#if !defined(_WIN32)
+    //    menu->setVisible(false);
+    //#endif
     return menu;
   }
 
-  //  if (name && strcmp(name, "MixerView") == 0) {
-  //     CRect size;
-  //     CRect containerSize;
-  //     int style = 0;
-  //     scrollView = new CScrollView(size, containerSize, style);
+  if (name && strcmp(name, "MixerView") == 0) {
 
-  //     CRect sliderSize;
-  //     CBitmap sliderHandle("slider_handle.png");
-  //     CBitmap sliderBackground("slider_background.png");
-  //     CSlider *slider = new CSlider(sliderSize, editor, 2000, 0, 1,
-  //     &sliderHandle,
-  //                                   &sliderBackground);
+    CRect scrollViewSize(0, 0, 196, 74);
+    CRect containerSize(0, 0, 185, 500);
+    int scrollViewStyle = 10;
+    scrollView =
+        new CScrollView(scrollViewSize, containerSize, scrollViewStyle);
 
-  //     scrollView->addView(slider);
-  //     // CSlider slider = new CSlider(sliderSize, editor, -2, 0, 1,
-  //     &sliderHandle,
-  //     //                             &sliderBackground);
-  //     // scrollView->menu->setVisible(false);
-  //     return menu;
-  //   }
+    // Bitmaps
+    sliderHandle = new CBitmap("slider_handle.png");
+    sliderBackground = new CBitmap("slider_background.png");
+
+    createMixer(editor);
+
+    return scrollView;
+  }
   return nullptr;
 }
 
@@ -328,4 +352,79 @@ void PlugController::willClose(VST3Editor *editor) {
   L_(ltrace) << "[PlugController] Entering PlugController::willClose";
   notificationLabel = nullptr;
   menu = nullptr;
+  scrollView = nullptr;
+  sliderHandle = nullptr;
+  sliderBackground = nullptr;
+}
+
+VSTGUI::CTextLabel *PlugController::createLabel(std::string labelText,
+                                                VSTGUI::CFontRef inFontID,
+                                                VSTGUI::CRect labelPlacer) {
+  L_(ltrace) << "[PlugController] Entering PlugController::createLabel";
+  CTextLabel *label = new CTextLabel(labelPlacer, labelText.c_str());
+  label->setFontColor(CColor(143, 140, 97, 255));
+  label->setFrameColor(CColor(0, 0, 0, 0));
+  label->setBackColor(CColor(0, 0, 0, 0));
+  label->setHoriAlign(kLeftText);
+  label->setFont(inFontID);
+  label->setTextTruncateMode(label->kTruncateTail);
+  return label;
+}
+
+VSTGUI::CSlider *PlugController::createSlider(VSTGUI::CRect sliderPlacer,
+                                              int controlTag, float value,
+                                              VST3Editor *editor, int userId,
+                                              int channelId) {
+  L_(ltrace) << "[PlugController] Entering PlugController::createSlider";
+  CPoint offsetHandle(0, 2);
+  CSlider *slider = new CSlider(sliderPlacer, scrollView, controlTag, 55, 163,
+                                sliderHandle, sliderBackground);
+  slider->setMin(0.f);
+  slider->setMax(1.f);
+
+  L_(ltrace) << "[PlugController] userId: " << userId;
+  L_(ltrace) << "[PlugController] channelId: " << channelId;
+  slider->setAttribute(kCViewUserIdAttrID, userId);
+  slider->setAttribute(kCViewChannelIdAttrID, channelId);
+
+  slider->setOffsetHandle(offsetHandle);
+  slider->setValueNormalized(value);
+
+  if (editor) {
+    slider->registerControlListener(editor);
+  }
+
+  return slider;
+}
+
+void PlugController::createMixer(VST3Editor *editor) {
+  L_(ltrace) << "[PlugController] Entering PlugController::createMixer";
+  if (scrollView) {
+    L_(ltrace) << "[PlugController] scrollView available";
+    scrollView->removeAll();
+    scrollView->setDirty();
+    CRect labelPlacer(5, 0, 54, 18);
+    CRect sliderPlacer(55, 18, 185, 36);
+    for (auto remoteUser : remoteUsers) {
+      L_(ltrace) << "[PlugController] user: " << remoteUser.name;
+      scrollView->addView(
+          createLabel(remoteUser.name, kNormalFontSmall, labelPlacer));
+
+      for (auto channel : remoteUser.channels) {
+        L_(ltrace) << "[PlugController] channel: " << channel.name;
+        if (!channel.name.empty()) {
+          labelPlacer.top += 17;
+          labelPlacer.bottom += 17;
+          scrollView->addView(
+              createLabel(channel.name, kNormalFontSmaller, labelPlacer));
+        }
+        scrollView->addView(createSlider(
+            sliderPlacer,
+            kParamChannelVolumeId + (remoteUser.id * 100) + channel.id,
+            channel.volume, editor, remoteUser.id, channel.id));
+        sliderPlacer.top += 18;
+        sliderPlacer.bottom += 18;
+      }
+    }
+  }
 }

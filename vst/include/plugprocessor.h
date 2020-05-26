@@ -3,12 +3,15 @@
 #include "common.h"
 #include "hostcontroller.h"
 #include "include/osctransmitter.h"
+#include "include/remoteuser.h"
+#include "include/remoteuserchannel.h"
 #include "plugids.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 #include "pluginterfaces/vst/vsttypes.h"
 #include "public.sdk/source/vst/vstaudioeffect.h"
 
 #include <array>
+#include <vector>
 
 using namespace Steinberg;
 using namespace AbNinjam::Common;
@@ -37,6 +40,7 @@ public:
 
   /** We want to receive message. */
   tresult PLUGIN_API notify(Vst::IMessage *message) SMTG_OVERRIDE;
+  tresult receiveText(const char *text) SMTG_OVERRIDE;
 
   static FUnknown *createInstance(void *) {
     return static_cast<Vst::IAudioProcessor *>(new PlugProcessor());

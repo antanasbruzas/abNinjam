@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "include/remoteuserchannel.h"
 #include "plugcontroller.h"
 #include "plugids.h"
 
@@ -23,6 +24,15 @@ public:
   AbVST3Editor(Steinberg::Vst::EditController *controller,
                UTF8StringPtr templateName, UTF8StringPtr xmlFile);
   CMessageResult notify(CBaseObject *sender, IdStringPtr message) override;
+  void valueChanged(CControl *pControl) override;
+  void controlEndEdit(VSTGUI::CControl *pControl) override;
+
+private:
+  static constexpr VSTGUI::CViewAttributeID kCViewUserIdAttrID = 'uidx';
+  static constexpr VSTGUI::CViewAttributeID kCViewChannelIdAttrID = 'cidx';
+  PlugController *getController() const {
+    return static_cast<PlugController *>(Vst::VSTGUIEditor::getController());
+  }
 };
 
 } // namespace Vst3

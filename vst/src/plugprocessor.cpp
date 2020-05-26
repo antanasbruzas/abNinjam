@@ -95,6 +95,10 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
         Vst::ParamValue value;
         int32 sampleOffset;
         int32 numPoints = paramQueue->getPointCount();
+
+        L_(ltrace) << "[PlugProcessor] paramQueue->getParameterId(): "
+                   << paramQueue->getParameterId();
+
         switch (paramQueue->getParameterId()) {
         case AbNinjamParams::kParamMetronomeVolId:
           if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
@@ -234,9 +238,20 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
         clearNotification = true;
         previousNinjamBpm = 0.f;
       }
-      // optimize channel levels
-      if (!manualMixingTouched) {
-        ninjamClient->adjustVolume();
+      if (ninjamClient->gsNjClient()->HasUserInfoChanged()) {
+        // optimize channel levels
+        if (!manualMixingTouched) {
+          ninjamClient->adjustVolume();
+        }
+        vector<Common::RemoteUser> remoteUsers = ninjamClient->getRemoteUsers();
+        if (IPtr<IMessage> message = allocateMessage()) {
+          message->setMessageID("BinaryMessage");
+          message->getAttributes()->setBinary(
+              "remoteUsers", &remoteUsers,
+              remoteUsers.capacity() * sizeof(Common::RemoteUser) +
+                  sizeof(remoteUsers));
+          sendMessage(message);
+        }
       }
     } else {
       // Not connected
@@ -355,6 +370,30 @@ tresult PLUGIN_API PlugProcessor::notify(Vst::IMessage *message) {
     }
   }
 
+  if (!strcmp(message->getMessageID(), "BinaryMessage")) {
+    const void *data;
+    uint32 size;
+    if (message->getAttributes()->getBinary("remoteUserChannel", data, size) ==
+        kResultOk) {
+      L_(ltrace) << "[PlugProcessor] Received remoteUserChannel";
+      if (size > 0) {
+        const RemoteUserChannel remoteUserChannel =
+            *static_cast<const Common::RemoteUserChannel *>(data);
+
+        L_(ltrace) << "[PlugProcessor] remoteUserChannel.userId: "
+                   << remoteUserChannel.userId;
+        L_(ltrace) << "[PlugProcessor] remoteUserChannel.channelId: "
+                   << remoteUserChannel.channelId;
+        L_(ltrace) << "[PlugProcessor] remoteUserChannel.volume: "
+                   << remoteUserChannel.volume;
+
+        ninjamClient->setUserChannelVolume(remoteUserChannel.userId,
+                                           remoteUserChannel.channelId,
+                                           remoteUserChannel.volume);
+      }
+    }
+  }
+
   return AudioEffect::notify(message);
 }
 
@@ -380,6 +419,7 @@ void PlugProcessor::connectToServer(
     if (ninjamClient) {
       ninjamClient->disconnect();
       status = disconnected;
+      manualMixingTouched = false;
     }
   }
 
@@ -393,6 +433,19 @@ void PlugProcessor::connectToServer(
       sendMessage(message);
     }
   }
+}
+
+//------------------------------------------------------------------------
+tresult PlugProcessor::receiveText(const char *text) {
+  L_(ltrace) << "[PlugProcessor] Entering PlugController::receiveText";
+  // received from Component
+  if (text) {
+    L_(ldebug) << "[PlugProcessor] received: " << text;
+  }
+  if (strcmp(text, "manualMixingTouched") == 0) {
+    manualMixingTouched = true;
+  }
+  return kResultOk;
 }
 
 //------------------------------------------------------------------------

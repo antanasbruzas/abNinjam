@@ -14,8 +14,11 @@
 #include "connectionproperties.h"
 #include "log.h"
 #include "ninjamclientstatus.h"
+#include "remotechannel.h"
+#include "remoteuser.h"
 #include <mutex>
 #include <thread>
+#include <vector>
 
 #define ADJUST_VOLUME 10
 
@@ -40,6 +43,8 @@ public:
   void clearBuffers(float **buf, int nch, int len);
   void adjustVolume();
   void setBpm(int bpm);
+  std::vector<RemoteUser> getRemoteUsers();
+  void setUserChannelVolume(int userId, int channelId, float volume);
 
 private:
   std::thread *connectionThread;

@@ -79,6 +79,12 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
     file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/onoff_button_3x.png"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/slider_background.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/slider_handle.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/slider_handle_2x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
 else()
     file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/plug-base64.uidesc"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")

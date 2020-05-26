@@ -1,12 +1,15 @@
 #pragma once
 
 #include "common.h"
+#include "include/remoteuser.h"
 #include "metronomevolumeparameter.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
+#include "vstgui/lib/cbitmap.h"
 #include "vstgui/lib/controls/csegmentbutton.h"
 #include "vstgui/lib/controls/cslider.h"
 #include "vstgui/lib/controls/ctextlabel.h"
 #include "vstgui/lib/cscrollview.h"
+#include "vstgui/lib/vstguifwd.h"
 #include "vstgui/plugin-bindings/vst3editor.h"
 
 #include <array>
@@ -70,6 +73,7 @@ public:
 
   void setMessageText(String128 text, unsigned long index);
   TChar *getMessageText(unsigned long index);
+  std::vector<Common::RemoteUser> remoteUsers;
 
 private:
   using UIMessageControllerList = std::vector<UIMessageController *>;
@@ -78,6 +82,18 @@ private:
   CTextLabel *notificationLabel;
   VSTGUI::CSegmentButton *menu;
   VSTGUI::CScrollView *scrollView;
+  VSTGUI::CBitmap *sliderHandle;
+  VSTGUI::CBitmap *sliderBackground;
+  static constexpr VSTGUI::CViewAttributeID kCViewUserIdAttrID = 'uidx';
+  static constexpr VSTGUI::CViewAttributeID kCViewChannelIdAttrID = 'cidx';
+  VSTGUI::CTextLabel *createLabel(std::string labelText,
+                                  VSTGUI::CFontRef inFontID,
+                                  VSTGUI::CRect labelPlacer);
+  VSTGUI::CSlider *createSlider(VSTGUI::CRect sliderPlacer, int controlTag,
+                                float value, VST3Editor *editor, int userId,
+                                int channelId);
+  void createMixer(VST3Editor *editor);
+  VST3Editor *vst3Editor;
 };
 
 //------------------------------------------------------------------------
