@@ -60,6 +60,15 @@ if (ABNINJAM_USE_NJCLIENT)
     endif()
 endif()
 
+if (ENABLE_LTO AND CMAKE_BUILD_TYPE STREQUAL "Release")
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT result)
+    if(result)
+        message(STATUS "Enabling LTO on ${COMMON_PRJ_NAME}")
+        set_property (TARGET ${COMMON_PRJ_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+    endif()
+endif()
+
 add_library (${PROJECT_NAME}::common ALIAS ${COMMON_PRJ_NAME})
 
 

@@ -341,7 +341,6 @@ CView *PlugController::createCustomView(UTF8StringPtr name,
     sliderBackground = new CBitmap("slider_background.png");
 
     createMixer(editor);
-
     return scrollView;
   }
   return nullptr;

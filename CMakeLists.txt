@@ -16,14 +16,6 @@ option (ABNINJAM_LV2 "Enable LV2 plug-in build [default: ON]" ON)
 option (ABNINJAM_USE_NJCLIENT "Use NJClient [default: ON]" ON)
 option (ABNINJAM_USE_LIBLO "Use liblo [default: ON]" ON)
 
-if (ENABLE_LTO AND CMAKE_BUILD_TYPE STREQUAL "Release")
-    include(CheckIPOSupported)
-    check_ipo_supported(RESULT result)
-    if(result)
-      set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-    endif()
-endif()
-
 # Add the common library targets and sources
 set (COMMON_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/common")
 set (NJCLIENT_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/common/external/ninjam")

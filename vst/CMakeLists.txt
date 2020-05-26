@@ -52,6 +52,11 @@ file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/24F26E6CAA204EB08188B6790CABA3A
 file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/24F26E6CAA204EB08188B6790CABA3AA_snapshot_2.0x.png"
     DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/Snapshots/")
 
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/slider_background.png"
+    DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/slider_handle.png"
+    DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/plug.uidesc"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources/")
@@ -78,10 +83,6 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
     file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/onoff_button_2x.png"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
     file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/onoff_button_3x.png"
-        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
-    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/slider_background.png"
-        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
-    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/slider_handle.png"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
     file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/slider_handle_2x.png"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
