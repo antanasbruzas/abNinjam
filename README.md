@@ -1,4 +1,4 @@
-# abNINJAM
+# abNinjam
 
 ## Building from source
 

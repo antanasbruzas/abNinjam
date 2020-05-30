@@ -1,5 +1,6 @@
 #pragma once
 
+#include "chatcontroller.h"
 #include "common.h"
 #include "include/remoteuser.h"
 #include "metronomevolumeparameter.h"
@@ -13,6 +14,7 @@
 #include "vstgui/plugin-bindings/vst3editor.h"
 
 #include <array>
+#include <limits>
 #include <vector>
 
 using namespace Steinberg;
@@ -52,9 +54,6 @@ public:
   tresult PLUGIN_API getState(IBStream *state) SMTG_OVERRIDE;
   tresult PLUGIN_API setComponentState(IBStream *state) SMTG_OVERRIDE;
 
-  //---from ComponentBase-----
-  tresult receiveText(const char *text) SMTG_OVERRIDE;
-
   /** We want to receive status message. */
   tresult PLUGIN_API notify(Vst::IMessage *message) SMTG_OVERRIDE;
 
@@ -70,6 +69,9 @@ public:
   //---Internal functions-------
   void addUIMessageController(UIMessageController *controller);
   void removeUIMessageController(UIMessageController *controller);
+  // void removeChatController(ChatController *controller);
+  VSTGUI::UTF8String getChatHistory();
+  auto &gsLastChatTextHolderViewSize() { return lastChatTextHolderViewSize; }
 
   void setMessageText(String128 text, unsigned long index);
   TChar *getMessageText(unsigned long index);
@@ -81,7 +83,7 @@ private:
   std::array<String128, 3> messageTexts;
   CTextLabel *notificationLabel;
   VSTGUI::CSegmentButton *menu;
-  VSTGUI::CScrollView *scrollView;
+  VSTGUI::CScrollView *mixerScrollView;
   VSTGUI::CBitmap *sliderHandle;
   VSTGUI::CBitmap *sliderBackground;
   static constexpr VSTGUI::CViewAttributeID kCViewUserIdAttrID = 'uidx';
@@ -93,7 +95,11 @@ private:
                                 float value, VST3Editor *editor, int userId,
                                 int channelId);
   void createMixer(VST3Editor *editor);
+  void cleanNotConnected(std::string notification);
   VST3Editor *vst3Editor;
+  ChatController *chatController;
+  VSTGUI::UTF8String chatHistory;
+  VSTGUI::CRect lastChatTextHolderViewSize;
 };
 
 //------------------------------------------------------------------------

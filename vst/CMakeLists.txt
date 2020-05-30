@@ -21,13 +21,16 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     include/X11RunLoop.h
     include/metronomevolumeparameter.h
     include/hostcontroller.h
+    include/chatcontroller.h
+    include/messagetypes.h
     src/plugfactory.cpp
     src/plugcontroller.cpp
     src/plugprocessor.cpp
     src/abvst3editor.cpp
     src/X11RunLoop.cpp
     src/metronomevolumeparameter.cpp
-    src/hostcontroller.cpp)
+    src/hostcontroller.cpp
+    src/chatcontroller.cpp)
 
 if(WIN32)
     target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE vst3.def)

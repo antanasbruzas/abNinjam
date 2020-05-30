@@ -15,6 +15,7 @@ enum AbNinjamParams : Vst::ParamID {
   kParamConnectionIndicatorId = 1001,
   kParamMetronomeVolId = 1002,
   kParamTemplateSelectId = 1003,
+  kParamSendChatMessageId = 2000,
   kParamChannelVolumeId = 10000
 };
 

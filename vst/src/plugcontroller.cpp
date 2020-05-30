@@ -30,6 +30,7 @@ tresult PLUGIN_API PlugController::initialize(FUnknown *context) {
         0, STR16("Connection"));
 
     notificationLabel = nullptr;
+    mixerScrollView = nullptr;
 
     //---Custom state init------------
     // Steinberg::String defaultPort("2049");
@@ -45,8 +46,16 @@ PlugController::createSubController(UTF8StringPtr name,
                                     VST3Editor * /*editor*/) {
   L_(ltrace) << "[PlugController] Entering PlugController::createSubController";
   if (UTF8StringView(name) == "MessageController") {
+    L_(ltrace) << "[PlugController] Found MessageController";
     auto *controller = new UIMessageController(this);
     addUIMessageController(controller);
+    return controller;
+  }
+
+  if (UTF8StringView(name) == "ChatController") {
+    L_(ltrace) << "[PlugController] Found ChatController";
+    auto *controller = new ChatController(this);
+    chatController = controller;
     return controller;
   }
 
@@ -145,7 +154,7 @@ void PlugController::setMessageText(String128 text, unsigned long index) {
     if (id != nullptr) {
       //---send a message
       if (IPtr<IMessage> message = allocateMessage()) {
-        message->setMessageID("TextMessage");
+        message->setMessageID(textMessage);
         message->getAttributes()->setString(id, text);
         sendMessage(message);
       }
@@ -211,25 +220,24 @@ tresult PLUGIN_API PlugController::getState(IBStream *state) {
 }
 
 //------------------------------------------------------------------------
-tresult PlugController::receiveText(const char *text) {
-  L_(ltrace) << "[PlugController] Entering PlugController::receiveText";
-  // received from Component
-  if (text) {
-    L_(ldebug) << "[PlugController] received: " << text;
-  }
-  if (notificationLabel) {
-    notificationLabel->setText(text);
-  }
-  return kResultOk;
-}
-
-//------------------------------------------------------------------------
 tresult PLUGIN_API PlugController::notify(Vst::IMessage *message) {
   L_(ltrace) << "[PlugController] Entering PlugController::notify";
   if (!message)
     return kInvalidArgument;
 
-  if (!strcmp(message->getMessageID(), "StatusMessage")) {
+  if (strcmp(message->getMessageID(), notificationMessage) == 0) {
+    String128 notification;
+    if (message->getAttributes()->getString(
+            "notification", notification, sizeof(notification)) == kResultOk) {
+      if (notificationLabel) {
+        Steinberg::String str(notification);
+        str.toMultiByte(kCP_Utf8);
+        notificationLabel->setText(str.text8());
+      }
+    }
+  }
+
+  if (!strcmp(message->getMessageID(), statusMessage)) {
     int64 ninjamClientStatus;
     if (message->getAttributes()->getInt("ninjamClientStatus",
                                          ninjamClientStatus) == kResultOk) {
@@ -244,36 +252,20 @@ tresult PLUGIN_API PlugController::notify(Vst::IMessage *message) {
         case ok:
           notificationLabel->setText("");
 #if !defined(_WIN32)
-          menu->setValueNormalized(1);
+          menu->setValueNormalized(1.f);
 #endif
           break;
         case disconnected:
-          notificationLabel->setText("");
-          remoteUsers.clear();
-#if !defined(_WIN32)
-          menu->setValueNormalized(0);
-#endif
+          cleanNotConnected("");
           break;
         case serverNotProvided:
-          notificationLabel->setText("Server not provided!");
-          remoteUsers.clear();
-#if !defined(_WIN32)
-          menu->setValueNormalized(0);
-#endif
+          cleanNotConnected("Server not provided!");
           break;
         case licenseNotAccepted:
-          notificationLabel->setText("License not accepted!");
-          remoteUsers.clear();
-#if !defined(_WIN32)
-          menu->setValueNormalized(0);
-#endif
+          cleanNotConnected("License not accepted!");
           break;
         case connectionError:
-          notificationLabel->setText("Connection error!");
-          remoteUsers.clear();
-#if !defined(_WIN32)
-          menu->setValueNormalized(0);
-#endif
+          cleanNotConnected("Connection error!");
           break;
         }
 #if !defined(_WIN32)
@@ -283,7 +275,7 @@ tresult PLUGIN_API PlugController::notify(Vst::IMessage *message) {
     }
   }
 
-  if (!strcmp(message->getMessageID(), "BinaryMessage")) {
+  if (!strcmp(message->getMessageID(), binaryMessage)) {
     const void *data;
     uint32 size;
     if (message->getAttributes()->getBinary("remoteUsers", data, size) ==
@@ -291,7 +283,10 @@ tresult PLUGIN_API PlugController::notify(Vst::IMessage *message) {
       if (size > 0) {
         remoteUsers = *const_cast<std::vector<Common::RemoteUser> *>(
             static_cast<const std::vector<Common::RemoteUser> *>(data));
-        createMixer(vst3Editor);
+        if (menu && abs(menu->getValueNormalized() - 0.5f) <
+                        std::numeric_limits<float>::epsilon()) {
+          createMixer(vst3Editor);
+        }
       } else {
         if (remoteUsers.size() > 0) {
           remoteUsers.clear();
@@ -304,13 +299,46 @@ tresult PLUGIN_API PlugController::notify(Vst::IMessage *message) {
     }
   }
 
+  if (strcmp(message->getMessageID(), chatMessage) == 0) {
+    String128 chatUpdate;
+    if (message->getAttributes()->getString("chatUpdate", chatUpdate,
+                                            sizeof(chatUpdate)) == kResultOk) {
+      int historyLength = chatHistory.length();
+      Steinberg::String str(chatUpdate);
+      str.toMultiByte(kCP_Utf8);
+      const char8 *text = str.text8();
+
+      if (text && chatController) {
+        if (chatHistory.length() > 0) {
+          L_(ltrace) << "[PlugController] chatHistory: " << chatHistory;
+          chatHistory = chatHistory + "\n" + text;
+        } else {
+          // received first message
+          chatHistory = text;
+        }
+        if (menu && menu->getValueNormalized() > 0.6f) {
+          chatController->displayChatText(chatHistory);
+        } else {
+          // rough estimate multi line message
+          int lines = (chatHistory.length() - historyLength) / 13;
+          L_(ltrace) << "[PlugController] chatHistory.length(): "
+                     << chatHistory.length();
+          L_(ltrace) << "[PlugController] historyLength: " << historyLength;
+          L_(ltrace) << "[PlugController] lines: " << lines;
+          int lineHeight = 12;
+          lastChatTextHolderViewSize.bottom += (lines * lineHeight);
+        }
+      }
+    }
+  }
+
   return EditController::notify(message);
 }
 
 //------------------------------------------------------------------------
 CView *PlugController::createCustomView(UTF8StringPtr name,
-                                        const UIAttributes &attributes,
-                                        const IUIDescription *description,
+                                        const UIAttributes & /*attributes*/,
+                                        const IUIDescription * /*description*/,
                                         VST3Editor *editor) {
   L_(ltrace) << "[PlugController] Entering PlugController::createCustomView";
   if (name && strcmp(name, "NotificationText") == 0) {
@@ -333,7 +361,7 @@ CView *PlugController::createCustomView(UTF8StringPtr name,
     CRect scrollViewSize(0, 0, 196, 74);
     CRect containerSize(0, 0, 185, 18);
     int scrollViewStyle = 10;
-    scrollView =
+    mixerScrollView =
         new CScrollView(scrollViewSize, containerSize, scrollViewStyle);
 
     // Bitmaps
@@ -341,17 +369,18 @@ CView *PlugController::createCustomView(UTF8StringPtr name,
     sliderBackground = new CBitmap("slider_background.png");
 
     createMixer(editor);
-    return scrollView;
+    return mixerScrollView;
   }
+
   return nullptr;
 }
 
 //------------------------------------------------------------------------
-void PlugController::willClose(VST3Editor *editor) {
+void PlugController::willClose(VST3Editor * /*editor*/) {
   L_(ltrace) << "[PlugController] Entering PlugController::willClose";
   notificationLabel = nullptr;
   menu = nullptr;
-  scrollView = nullptr;
+  mixerScrollView = nullptr;
   sliderHandle = nullptr;
   sliderBackground = nullptr;
 }
@@ -376,8 +405,8 @@ VSTGUI::CSlider *PlugController::createSlider(VSTGUI::CRect sliderPlacer,
                                               int channelId) {
   L_(ltrace) << "[PlugController] Entering PlugController::createSlider";
   CPoint offsetHandle(0, 2);
-  CSlider *slider = new CSlider(sliderPlacer, scrollView, controlTag, 55, 163,
-                                sliderHandle, sliderBackground);
+  CSlider *slider = new CSlider(sliderPlacer, mixerScrollView, controlTag, 55,
+                                163, sliderHandle, sliderBackground);
   slider->setMin(0.f);
   slider->setMax(1.f);
 
@@ -396,28 +425,28 @@ VSTGUI::CSlider *PlugController::createSlider(VSTGUI::CRect sliderPlacer,
   return slider;
 }
 
+// TODO: float comparission with epsilon
 void PlugController::createMixer(VST3Editor *editor) {
   L_(ltrace) << "[PlugController] Entering PlugController::createMixer";
-  if (scrollView) {
+  if (mixerScrollView) {
     L_(ltrace) << "[PlugController] scrollView available";
-    scrollView->removeAll();
+    mixerScrollView->removeAll();
     CRect labelPlacer(5, 0, 54, 18);
     CRect sliderPlacer(55, 18, 185, 36);
     int totalRows = 0;
     for (auto remoteUser : remoteUsers) {
       L_(ltrace) << "[PlugController] user: " << remoteUser.name;
-      scrollView->addView(
+      mixerScrollView->addView(
           createLabel(remoteUser.name, kNormalFontSmall, labelPlacer));
-
       for (auto channel : remoteUser.channels) {
         L_(ltrace) << "[PlugController] channel: " << channel.name;
         if (!channel.name.empty()) {
           labelPlacer.top += 18;
           labelPlacer.bottom += 18;
-          scrollView->addView(
+          mixerScrollView->addView(
               createLabel(channel.name, kNormalFontSmaller, labelPlacer));
         }
-        scrollView->addView(createSlider(
+        mixerScrollView->addView(createSlider(
             sliderPlacer,
             kParamChannelVolumeId + (remoteUser.id * 100) + channel.id,
             channel.volume, editor, remoteUser.id, channel.id));
@@ -432,7 +461,23 @@ void PlugController::createMixer(VST3Editor *editor) {
       totalRows++;
     }
     CRect containerSize(0, 0, 185, totalRows * 18);
-    scrollView->setContainerSize(containerSize);
-    scrollView->setDirty();
+    mixerScrollView->setContainerSize(containerSize);
+    mixerScrollView->setDirty();
   }
+}
+
+VSTGUI::UTF8String PlugController::getChatHistory() {
+  L_(ltrace) << "[PlugController] Entering PlugController::getChatHistory";
+  return chatHistory;
+}
+
+void PlugController::cleanNotConnected(std::string notification) {
+  notificationLabel->setText(notification.c_str());
+  chatHistory = nullptr;
+  lastChatTextHolderViewSize.top = 0;
+  lastChatTextHolderViewSize.bottom = 60;
+  remoteUsers.clear();
+#if !defined(_WIN32)
+  menu->setValueNormalized(0.f);
+#endif
 }

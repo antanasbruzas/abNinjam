@@ -1,4 +1,5 @@
 #pragma once
+#include "include/log.h"
 #include "plugids.h"
 #include "vstgui/uidescription/icontroller.h"
 #include <array>
@@ -91,7 +92,9 @@ private:
   }
   //--- is called when the view is loosing the focus -----------------
   void viewLostFocus(CView *view) override {
-
+    L_(ltrace) << "[AbUIMessageController] Entering viewLostFocus";
+    L_(ltrace) << "[AbUIMessageController] textEdits.size(): "
+               << textEdits.size();
     for (unsigned short i = 0; i < textEdits.size(); i++) {
       if (textEdits[i]) {
         if (dynamic_cast<CTextEdit *>(view) == textEdits[i]) {
@@ -101,6 +104,7 @@ private:
           Steinberg::String str;
           str.fromUTF8(text.data());
           str.copyTo(messageText, 0, 128);
+          L_(ltrace) << "[AbUIMessageController] messageText: " << text;
           plugController->setMessageText(messageText, i);
         }
       }

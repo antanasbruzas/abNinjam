@@ -313,3 +313,10 @@ void NinjamClient::setUserChannelVolume(int userId, int channelId,
                                   false, 0.f, false, false, false, false);
   }
 }
+
+void NinjamClient::sendChatMessage(std::string message) {
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::sendChatMessage";
+  if (njClient) {
+    njClient->ChatMessage_Send("MSG", message.c_str());
+  }
+}

@@ -8,6 +8,90 @@ using namespace AbNinjam;
 using namespace Vst3;
 using namespace std;
 
+static int bpm = 110;
+WDL_String g_topic;
+int g_need_disp_update = 0;
+WDL_PtrList<char> g_chat_buffers;
+
+void addChatLine(const char *src, const char *text) {
+  while (g_chat_buffers.GetSize() > 256) {
+    free(g_chat_buffers.Get(0));
+    g_chat_buffers.Delete(0);
+  }
+  WDL_String tmp;
+  if (src && *src && !strncmp(text, "/me ", 4)) {
+    tmp.Set("* ");
+    tmp.Append(src);
+    tmp.Append(" ");
+    const char *p = text + 3;
+    while (*p == ' ')
+      p++;
+    tmp.Append(p);
+  } else {
+    if (src && *src) {
+      tmp.Set("<");
+      tmp.Append(src);
+      tmp.Append("> ");
+    } else if (src) {
+      tmp.Set("*** ");
+    }
+    tmp.Append(text);
+  }
+  g_chat_buffers.Add(strdup(tmp.Get()));
+}
+
+void chatMessageCallback(void * /* userData */, NJClient *inst,
+                         const char **parms, int /* nparms */) {
+  L_(ltrace) << "Entering chatMessageCallback";
+
+  if (parms[2] && !strcmp(parms[2], "No BPM/BPI permission")) {
+    L_(ldebug) << parms[2];
+    string message = "!vote bpm ";
+    message.append(to_string(bpm));
+    inst->ChatMessage_Send("MSG", message.c_str());
+  }
+
+  if (!strcmp(parms[0], "TOPIC")) {
+    if (parms[2]) {
+      WDL_String tmp;
+      if (parms[1] && *parms[1]) {
+        tmp.Set(parms[1]);
+        tmp.Append(" sets topic to: ");
+      } else
+        tmp.Set("Topic is: ");
+      tmp.Append(parms[2]);
+
+      g_topic.Set(parms[2]);
+      addChatLine("", tmp.Get());
+
+      g_need_disp_update = 1;
+    }
+  } else if (!strcmp(parms[0], "MSG")) {
+    if (parms[1] && parms[2])
+      addChatLine(parms[1], parms[2]);
+    g_need_disp_update = 1;
+  } else if (!strcmp(parms[0], "PRIVMSG")) {
+    if (parms[1] && parms[2]) {
+      WDL_String tmp;
+      tmp.Set("*");
+      tmp.Append(parms[1]);
+      tmp.Append("* ");
+      tmp.Append(parms[2]);
+      addChatLine(NULL, tmp.Get());
+    }
+    g_need_disp_update = 1;
+  } else if (!strcmp(parms[0], "JOIN") || !strcmp(parms[0], "PART")) {
+    if (parms[1] && *parms[1]) {
+      WDL_String tmp(parms[1]);
+      tmp.Append(" has ");
+      tmp.Append(parms[0][0] == 'P' ? "left" : "joined");
+      tmp.Append(" the server");
+      addChatLine("", tmp.Get());
+    }
+    g_need_disp_update = 1;
+  }
+}
+
 //-----------------------------------------------------------------------------
 PlugProcessor::PlugProcessor() {
   L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::PlugProcessor";
@@ -15,6 +99,7 @@ PlugProcessor::PlugProcessor() {
   setControllerClass(abNinjamControllerUID);
   hostController = new HostController();
   ninjamClient = new NinjamClient();
+  ninjamClient->gsNjClient()->ChatMessage_Callback = chatMessageCallback;
   connectedOld = false;
   oscTransmitter = new OscTransmitter();
 }
@@ -197,7 +282,8 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
                 // BPM was changed on host. Sync to remote
                 L_(ldebug) << "[PlugProcessor] BPM was changed on host. "
                               "Expecting to receive OSC message";
-                ninjamClient->setBpm(static_cast<int>(hostBpm));
+                bpm = static_cast<int>(hostBpm);
+                ninjamClient->setBpm(bpm);
                 clearNotification = true;
               }
             }
@@ -211,7 +297,7 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
               bpmNotification = true;
               string notification("Ninjam BPM: " +
                                   to_string(static_cast<int>(ninjamBpm)));
-              this->sendTextMessage(notification.c_str());
+              this->sendNotification(notification);
               clearNotification = false;
               notificationCleared = false;
             }
@@ -245,7 +331,7 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
         }
         vector<Common::RemoteUser> remoteUsers = ninjamClient->getRemoteUsers();
         if (IPtr<IMessage> message = allocateMessage()) {
-          message->setMessageID("BinaryMessage");
+          message->setMessageID(binaryMessage);
           message->getAttributes()->setBinary(
               "remoteUsers", &remoteUsers,
               remoteUsers.capacity() * sizeof(Common::RemoteUser) +
@@ -253,6 +339,12 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
           sendMessage(message);
         }
       }
+
+      if (g_need_disp_update > 0) {
+        sendChatMessageUpdate(g_chat_buffers.Get(g_chat_buffers.GetSize() - 1));
+        g_need_disp_update = 0;
+      }
+
     } else {
       // Not connected
       ninjamClient->clearBuffers(data.outputs->channelBuffers32,
@@ -263,7 +355,7 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
     }
 
     if (clearNotification && !notificationCleared) {
-      this->sendTextMessage("");
+      this->sendNotification("");
       notificationCleared = true;
     }
 
@@ -351,9 +443,9 @@ tresult PLUGIN_API PlugProcessor::notify(Vst::IMessage *message) {
   if (!message)
     return kInvalidArgument;
 
-  if (!strcmp(message->getMessageID(), "TextMessage")) {
+  if (!strcmp(message->getMessageID(), textMessage)) {
     Steinberg::Vst::TChar string[256] = {0};
-
+    L_(ltrace) << "[PlugProcessor] Received TextMessage";
     if (message->getAttributes()->getString(
             "host", string, sizeof(string) / sizeof(char16)) == kResultOk) {
       messageTexts[0] = tCharToCharPtr(string);
@@ -370,7 +462,8 @@ tresult PLUGIN_API PlugProcessor::notify(Vst::IMessage *message) {
     }
   }
 
-  if (!strcmp(message->getMessageID(), "BinaryMessage")) {
+  if (!strcmp(message->getMessageID(), binaryMessage)) {
+    L_(ltrace) << "[PlugProcessor] Received BinaryMessage";
     const void *data;
     uint32 size;
     if (message->getAttributes()->getBinary("remoteUserChannel", data, size) ==
@@ -390,6 +483,31 @@ tresult PLUGIN_API PlugProcessor::notify(Vst::IMessage *message) {
         ninjamClient->setUserChannelVolume(remoteUserChannel.userId,
                                            remoteUserChannel.channelId,
                                            remoteUserChannel.volume);
+      }
+    }
+  }
+
+  if (!strcmp(message->getMessageID(), mixingTouchedMessage)) {
+    L_(ltrace) << "[PlugProcessor] Received MixingTouchedMessage";
+    int64 status;
+    if (message->getAttributes()->getInt("manualMixingTouched", status) ==
+        kResultOk) {
+      if (status) {
+        manualMixingTouched = true;
+      }
+    }
+  }
+
+  if (strcmp(message->getMessageID(), chatMessage) == 0) {
+    String128 chatMessage;
+    if (message->getAttributes()->getString("chatMessage", chatMessage,
+                                            sizeof(chatMessage)) == kResultOk) {
+      Steinberg::String str(chatMessage);
+      str.toMultiByte(kCP_Utf8);
+      const char8 *text = str.text8();
+      // Received text message to send as chat message
+      if (text && ninjamClient->connected) {
+        ninjamClient->sendChatMessage(text);
       }
     }
   }
@@ -427,7 +545,7 @@ void PlugProcessor::connectToServer(
   if (ninjamClientStatus != status) {
     ninjamClientStatus = status;
     if (IPtr<IMessage> message = allocateMessage()) {
-      message->setMessageID("StatusMessage");
+      message->setMessageID(statusMessage);
       message->getAttributes()->setInt("ninjamClientStatus",
                                        ninjamClientStatus);
       sendMessage(message);
@@ -436,16 +554,26 @@ void PlugProcessor::connectToServer(
 }
 
 //------------------------------------------------------------------------
-tresult PlugProcessor::receiveText(const char *text) {
-  L_(ltrace) << "[PlugProcessor] Entering PlugController::receiveText";
-  // received from Component
-  if (text) {
-    L_(ldebug) << "[PlugProcessor] received: " << text;
+void PlugProcessor::sendNotification(std::string text) {
+  L_(ltrace) << "[PlugProcessor] Entering PlugController::sendNotification";
+  if (IPtr<IMessage> message = allocateMessage()) {
+    message->setMessageID(notificationMessage);
+    Steinberg::String str(text.c_str());
+    message->getAttributes()->setString("notification", str.text16());
+    sendMessage(message);
   }
-  if (strcmp(text, "manualMixingTouched") == 0) {
-    manualMixingTouched = true;
+}
+
+//------------------------------------------------------------------------
+void PlugProcessor::sendChatMessageUpdate(std::string text) {
+  L_(ltrace)
+      << "[PlugProcessor] Entering PlugController::sendChatMessageUpdate";
+  if (IPtr<IMessage> message = allocateMessage()) {
+    message->setMessageID(chatMessage);
+    Steinberg::String str(text.c_str());
+    message->getAttributes()->setString("chatUpdate", str.text16());
+    sendMessage(message);
   }
-  return kResultOk;
 }
 
 //------------------------------------------------------------------------

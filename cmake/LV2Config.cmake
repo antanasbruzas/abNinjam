@@ -1,5 +1,5 @@
 set (LV2PLUGIN_VERSION_MINOR   1)
-set (LV2PLUGIN_VERSION_MICRO   1)
+set (LV2PLUGIN_VERSION_MICRO   2)
 set (LV2PLUGIN_NAME            "abNinjam")
 set (LV2PLUGIN_COMMENT         "NINJAM client")
 set (LV2PLUGIN_URI             "http://hippie.lt/lv2/abNinjam")

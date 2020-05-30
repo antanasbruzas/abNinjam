@@ -60,7 +60,7 @@ void AbVST3Editor::valueChanged(CControl *pControl) {
                << remoteUserChannel->volume;
 
     if (IPtr<IMessage> message = controller->allocateMessage()) {
-      message->setMessageID("BinaryMessage");
+      message->setMessageID(binaryMessage);
       message->getAttributes()->setBinary(
           "remoteUserChannel", remoteUserChannel, sizeof(RemoteUserChannel));
       controller->sendMessage(message);
@@ -73,7 +73,8 @@ void AbVST3Editor::valueChanged(CControl *pControl) {
 void AbVST3Editor::controlEndEdit(VSTGUI::CControl *pControl) {
   L_(ltrace) << "[AbVST3Editor] Entering AbVST3Editor::controlEndEdit";
   if (pControl->getTag() >= static_cast<signed int>(kParamChannelVolumeId)) {
-    controller->sendTextMessage("manualMixingTouched");
+    // Notify processor through controller
+    sendMixingTouched();
     // Update channel volumes in the controller
     int userId, channelId;
     pControl->getAttribute(kCViewUserIdAttrID, userId);
@@ -96,4 +97,14 @@ void AbVST3Editor::controlEndEdit(VSTGUI::CControl *pControl) {
     }
   }
   VST3Editor::controlEndEdit(pControl);
+}
+
+//------------------------------------------------------------------------
+void AbVST3Editor::sendMixingTouched() {
+  L_(ltrace) << "[PlugProcessor] Entering AbVST3Editor::sendMixingTouched";
+  if (IPtr<IMessage> message = controller->allocateMessage()) {
+    message->setMessageID(mixingTouchedMessage);
+    message->getAttributes()->setInt("manualMixingTouched", 1);
+    controller->sendMessage(message);
+  }
 }

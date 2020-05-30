@@ -5,7 +5,9 @@
 #include "include/osctransmitter.h"
 #include "include/remoteuser.h"
 #include "include/remoteuserchannel.h"
+#include "messagetypes.h"
 #include "plugids.h"
+#include "pluginterfaces/base/fstrdefs.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 #include "pluginterfaces/vst/vsttypes.h"
 #include "public.sdk/source/vst/vstaudioeffect.h"
@@ -40,7 +42,6 @@ public:
 
   /** We want to receive message. */
   tresult PLUGIN_API notify(Vst::IMessage *message) SMTG_OVERRIDE;
-  tresult receiveText(const char *text) SMTG_OVERRIDE;
 
   static FUnknown *createInstance(void *) {
     return static_cast<Vst::IAudioProcessor *>(new PlugProcessor());
@@ -55,8 +56,9 @@ protected:
 private:
   void connectToServer(int16 value, ConnectionProperties *connectionProperties);
   char *tCharToCharPtr(Steinberg::Vst::TChar *tChar);
+  void sendNotification(std::string text);
+  void sendChatMessageUpdate(std::string text);
   NinjamClient *ninjamClient;
-
   std::array<char *, 3> messageTexts = {strdup(""), strdup(""), strdup("")};
   bool connectedOld;
   String128 hostProductString;

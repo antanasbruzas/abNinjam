@@ -4,6 +4,7 @@
 #pragma once
 
 #include "include/remoteuserchannel.h"
+#include "messagetypes.h"
 #include "plugcontroller.h"
 #include "plugids.h"
 
@@ -33,6 +34,7 @@ private:
   PlugController *getController() const {
     return static_cast<PlugController *>(Vst::VSTGUIEditor::getController());
   }
+  void sendMixingTouched();
 };
 
 } // namespace Vst3

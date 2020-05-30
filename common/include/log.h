@@ -1,4 +1,3 @@
-
 #ifndef LOG_H
 #define LOG_H
 
@@ -176,4 +175,4 @@ inline void endLogger() {
     fclose(Output2FILE::Stream());
 }
 
-#endif //__LOG_H__
+#endif // LOG_H
