@@ -143,9 +143,12 @@ void ChatController::displayChatText(VSTGUI::UTF8String text) {
     if (chatScrollView) {
       chatScrollView->setDirty();
     }
+#if !defined(_WIN32)
+    // FIXME: Somehow Windows hangs everything when trying to take focus
     if (chatTextInput) {
       chatTextInput->takeFocus();
     }
+#endif
   }
 }
 
