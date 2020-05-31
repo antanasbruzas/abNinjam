@@ -57,7 +57,7 @@ bool InitModule() {
 #ifdef LOG_FILE
   TLogLevel logLevel = linfo;
 #ifndef NDEBUG
-  logLevel = ltrace;
+  logLevel = ldebug;
 #endif
   path logPath = AbNinjam::Common::getHomePath();
   logPath /= "abNinjam";
