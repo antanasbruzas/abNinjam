@@ -13,9 +13,15 @@ tresult PLUGIN_API PlugController::initialize(FUnknown *context) {
   if (result == kResultTrue) {
     //---Create Parameters------------
     //---Metronome volume parameter--
-    auto *metronomeVolumeParam = new MetronomeVolumeParameter(
-        ParameterInfo::kCanAutomate, AbNinjamParams::kParamMetronomeVolId);
+    auto *metronomeVolumeParam = new VolumeParameter(
+        ParameterInfo::kCanAutomate, AbNinjamParams::kParamMetronomeVolId,
+        "Metronome Volume");
     parameters.addParameter(metronomeVolumeParam);
+    //---Monitor volume parameter--
+    auto *monitorVolumeParam = new VolumeParameter(
+        ParameterInfo::kCanAutomate, AbNinjamParams::kParamChannelVolumeId,
+        "Monitor Volume");
+    parameters.addParameter(monitorVolumeParam);
     parameters.addParameter(STR16("Bypass"), nullptr, 1, 0,
                             ParameterInfo::kCanAutomate |
                                 ParameterInfo::kIsBypass,
@@ -91,6 +97,12 @@ tresult PLUGIN_API PlugController::setComponentState(IBStream *state) {
     return kResultFalse;
   setParamNormalized(AbNinjamParams::kParamMetronomeVolId,
                      metronomeVolumeState);
+
+  double monitorVolumeState = 0;
+  if (streamer.readDouble(monitorVolumeState) == false)
+    return kResultFalse;
+  setParamNormalized(AbNinjamParams::kParamChannelVolumeId, monitorVolumeState);
+
   // read the bypass
   int32 bypassState;
   if (streamer.readInt32(bypassState) == false)
@@ -387,10 +399,11 @@ void PlugController::willClose(VST3Editor * /*editor*/) {
 
 VSTGUI::CTextLabel *PlugController::createLabel(std::string labelText,
                                                 VSTGUI::CFontRef inFontID,
-                                                VSTGUI::CRect labelPlacer) {
+                                                VSTGUI::CRect labelPlacer,
+                                                VSTGUI::CColor fontColor) {
   L_(ltrace) << "[PlugController] Entering PlugController::createLabel";
   CTextLabel *label = new CTextLabel(labelPlacer, labelText.c_str());
-  label->setFontColor(CColor(143, 140, 97, 255));
+  label->setFontColor(fontColor);
   label->setFrameColor(CColor(0, 0, 0, 0));
   label->setBackColor(CColor(0, 0, 0, 0));
   label->setHoriAlign(kLeftText);
@@ -412,8 +425,12 @@ VSTGUI::CSlider *PlugController::createSlider(VSTGUI::CRect sliderPlacer,
 
   L_(ltrace) << "[PlugController] userId: " << userId;
   L_(ltrace) << "[PlugController] channelId: " << channelId;
-  slider->setAttribute(kCViewUserIdAttrID, userId);
-  slider->setAttribute(kCViewChannelIdAttrID, channelId);
+  if (userId >= 0) {
+    slider->setAttribute(kCViewUserIdAttrID, userId);
+  }
+  if (channelId >= 0) {
+    slider->setAttribute(kCViewChannelIdAttrID, channelId);
+  }
 
   slider->setOffsetHandle(offsetHandle);
   slider->setValueNormalized(value);
@@ -425,30 +442,63 @@ VSTGUI::CSlider *PlugController::createSlider(VSTGUI::CRect sliderPlacer,
   return slider;
 }
 
-// TODO: float comparission with epsilon
 void PlugController::createMixer(VST3Editor *editor) {
   L_(ltrace) << "[PlugController] Entering PlugController::createMixer";
   if (mixerScrollView) {
     L_(ltrace) << "[PlugController] scrollView available";
-    mixerScrollView->removeAll();
-    CRect labelPlacer(5, 0, 54, 18);
-    CRect sliderPlacer(55, 18, 185, 36);
-    int totalRows = 0;
+
+    std::vector<CTextLabel *> labels;
+    if (mixerScrollView->getChildViewsOfType<CTextLabel>(labels, true) > 0) {
+      for (auto label : labels) {
+        if (strcmp(label->getText(), "MONITOR") != 0) {
+          mixerScrollView->removeView(label);
+        }
+      }
+    }
+
+    std::vector<CSlider *> sliders;
+    if (mixerScrollView->getChildViewsOfType<CSlider>(sliders, true) > 0) {
+      for (auto slider : sliders) {
+        if (slider->getTag() != kParamChannelVolumeId) {
+          mixerScrollView->removeView(slider);
+        }
+      }
+    }
+
+    // Scroll to the top to get correct size calculation
+    mixerScrollView->resetScrollOffset();
+
+    CRect labelPlacer(5, 18, 54, 36);
+    CRect sliderPlacer(55, 36, 185, 54);
+    int totalRows = 1;
+
+    // Local channel monitoring
+    // Added by uidesc
+    //    mixerScrollView->addView(createLabel(
+    //        "MONITOR", kNormalFontSmaller, labelPlacer, CColor(120, 186, 52,
+    //        255)));
+    //    monitorSlider = createSlider(sliderPlacer, kParamChannelVolumeId,
+    //                                 localChannelVolume, editor, -1, -1);
+    //    mixerScrollView->addView(monitorSlider);
+
     for (auto remoteUser : remoteUsers) {
       L_(ltrace) << "[PlugController] user: " << remoteUser.name;
-      mixerScrollView->addView(
-          createLabel(remoteUser.name, kNormalFontSmall, labelPlacer));
+
+      mixerScrollView->addView(createLabel(remoteUser.name, kNormalFontSmall,
+                                           labelPlacer,
+                                           CColor(143, 140, 97, 255)));
       for (auto channel : remoteUser.channels) {
         L_(ltrace) << "[PlugController] channel: " << channel.name;
         if (!channel.name.empty()) {
           labelPlacer.top += 18;
           labelPlacer.bottom += 18;
-          mixerScrollView->addView(
-              createLabel(channel.name, kNormalFontSmaller, labelPlacer));
+          mixerScrollView->addView(createLabel(channel.name, kNormalFontSmaller,
+                                               labelPlacer,
+                                               CColor(143, 140, 97, 255)));
         }
         mixerScrollView->addView(createSlider(
             sliderPlacer,
-            kParamChannelVolumeId + (remoteUser.id * 100) + channel.id,
+            kParamChannelVolumeId + (remoteUser.id * 100) + channel.id + 1,
             channel.volume, editor, remoteUser.id, channel.id));
         sliderPlacer.top += 18;
         sliderPlacer.bottom += 18;

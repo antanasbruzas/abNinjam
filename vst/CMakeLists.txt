@@ -19,7 +19,7 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     include/abvst3editor.h
     include/abuimessagecontroller.h
     include/X11RunLoop.h
-    include/metronomevolumeparameter.h
+    include/volumeparameter.h
     include/hostcontroller.h
     include/chatcontroller.h
     include/messagetypes.h
@@ -28,7 +28,7 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     src/plugprocessor.cpp
     src/abvst3editor.cpp
     src/X11RunLoop.cpp
-    src/metronomevolumeparameter.cpp
+    src/volumeparameter.cpp
     src/hostcontroller.cpp
     src/chatcontroller.cpp)
 

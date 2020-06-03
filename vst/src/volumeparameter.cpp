@@ -1,16 +1,16 @@
-#include "../include/metronomevolumeparameter.h"
+#include "../include/volumeparameter.h"
 
 using namespace AbNinjam;
 using namespace Vst3;
 
 //------------------------------------------------------------------------
-// MetronomeVolumeParameter Implementation
+// VolumeParameter Implementation
 //------------------------------------------------------------------------
-MetronomeVolumeParameter::MetronomeVolumeParameter(int32 flags, ParamID id) {
-  L_(ltrace) << "[MetronomeVolumeParameter] Entering "
-                "MetronomeVolumeParameter::MetronomeVolumeParameter";
+VolumeParameter::VolumeParameter(int32 flags, ParamID id, std::string title) {
+  L_(ltrace) << "[VolumeParameter] Entering "
+                "VolumeParameter::VolumeParameter";
   Steinberg::UString(info.title, USTRINGSIZE(info.title))
-      .assign(USTRING("Metronome Volume"));
+      .assign(USTRING(title.c_str()));
   Steinberg::UString(info.units, USTRINGSIZE(info.units)).assign(USTRING("dB"));
 
   info.flags = flags;
@@ -23,10 +23,9 @@ MetronomeVolumeParameter::MetronomeVolumeParameter(int32 flags, ParamID id) {
 }
 
 //------------------------------------------------------------------------
-void MetronomeVolumeParameter::toString(ParamValue normValue,
-                                        String128 string) const {
-  L_(ltrace) << "[MetronomeVolumeParameter] Entering "
-                "MetronomeVolumeParameter::toString";
+void VolumeParameter::toString(ParamValue normValue, String128 string) const {
+  L_(ltrace) << "[VolumeParameter] Entering "
+                "VolumeParameter::toString";
   char text[32];
   if (normValue > 0.0001) {
     sprintf(text, "%.2f", 20 * log10(normValue));
@@ -38,10 +37,10 @@ void MetronomeVolumeParameter::toString(ParamValue normValue,
 }
 
 //------------------------------------------------------------------------
-bool MetronomeVolumeParameter::fromString(const TChar *string,
-                                          ParamValue &normValue) const {
-  L_(ltrace) << "[MetronomeVolumeParameter] Entering "
-                "MetronomeVolumeParameter::fromString";
+bool VolumeParameter::fromString(const TChar *string,
+                                 ParamValue &normValue) const {
+  L_(ltrace) << "[VolumeParameter] Entering "
+                "VolumeParameter::fromString";
   Steinberg::String wrapper(
       const_cast<TChar *>(string)); // don't know buffer size here!
   double tmp = 0.0;

@@ -11,6 +11,7 @@
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 #include "pluginterfaces/vst/vsttypes.h"
 #include "public.sdk/source/vst/vstaudioeffect.h"
+#include "public.sdk/source/vst/vstaudioprocessoralgo.h"
 
 #include <array>
 #include <vector>
@@ -51,6 +52,7 @@ protected:
   int16 connectParam = 0;
   int16 connectionIndicatorParam = 0;
   Vst::ParamValue metronomeVolumeParam = 0.5;
+  Vst::ParamValue monitorVolumeParam = 1;
   bool mBypass = false;
 
 private:
@@ -58,6 +60,8 @@ private:
   char *tCharToCharPtr(Steinberg::Vst::TChar *tChar);
   void sendNotification(std::string text);
   void sendChatMessageUpdate(std::string text);
+  void doBypass(int32 numChannels, uint32 sampleFramesSize, void **in,
+                void **out);
   NinjamClient *ninjamClient;
   std::array<char *, 3> messageTexts = {strdup(""), strdup(""), strdup("")};
   bool connectedOld;

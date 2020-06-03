@@ -12,7 +12,10 @@
 		</view>
 	</template>
 	<template background-color="~ TransparentCColor" background-color-draw-style="filled and stroked" class="CViewContainer" mouse-enabled="true" name="mixer" opacity="1" origin="0, 0" size="196, 69" transparent="true" wants-focus="false">
-		<view auto-drag-scrolling="false" auto-hide-scrollbars="false" background-color="~ TransparentCColor" background-color-draw-style="filled and stroked" bordered="true" class="CScrollView" custom-view-name="MixerView" follow-focus-view="false" horizontal-scrollbar="true" mouse-enabled="true" opacity="1" origin="0, 0" overlay-scrollbars="false" scrollbar-background-color="~ TransparentCColor" scrollbar-frame-color="~ TransparentCColor" scrollbar-scroller-color="#60ab15" scrollbar-width="10" size="196, 74" transparent="false" vertical-scrollbar="true" wants-focus="false"/>
+		<view auto-drag-scrolling="false" auto-hide-scrollbars="false" background-color="~ TransparentCColor" background-color-draw-style="filled and stroked" bordered="true" class="CScrollView" custom-view-name="MixerView" follow-focus-view="false" horizontal-scrollbar="true" mouse-enabled="true" opacity="1" origin="0, 0" overlay-scrollbars="false" scrollbar-background-color="~ TransparentCColor" scrollbar-frame-color="~ TransparentCColor" scrollbar-scroller-color="#60ab15" scrollbar-width="10" size="196, 74" transparent="false" vertical-scrollbar="true" wants-focus="false">
+			<view back-color="~ TransparentCColor" background-offset="0, 0" class="CTextLabel" default-value="0.5" font="~ NormalFontSmaller" font-antialias="true" font-color="#98ee42" frame-color="~ TransparentCColor" frame-width="1" max-value="1" min-value="0" mouse-enabled="true" opacity="1" origin="5, 0" round-rect-radius="6" shadow-color="~ TransparentCColor" size="47, 18" style-3D-in="false" style-3D-out="false" style-no-draw="false" style-no-frame="false" style-no-text="false" style-round-rect="false" style-shadow-text="false" text-alignment="center" text-inset="0, 0" text-rotation="0" text-shadow-offset="1, 1" title="MONITOR" transparent="false" value-precision="2" wants-focus="false" wheel-inc-value="0.1"/>
+			<view bitmap="slider_background" bitmap-offset="0, 0" class="CSlider" control-tag="MonitorVolume" default-value="0.5" draw-back="false" draw-back-color="~ BlackCColor" draw-frame="false" draw-frame-color="~ GreyCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false" draw-value-inverted="false" frame-width="1" handle-bitmap="slider_handle" handle-offset="0, 2" max-value="1" min-value="0" mode="use global" mouse-enabled="true" opacity="1" orientation="horizontal" origin="55, 0" reverse-orientation="false" size="130, 18" transparent="false" wants-focus="true" wheel-inc-value="0.1" zoom-factor="10"/>
+		</view>
 	</template>
 	<template background-color="~ TransparentCColor" background-color-draw-style="filled and stroked" class="CViewContainer" mouse-enabled="true" name="chat" opacity="1" origin="0, 0" size="196, 69" transparent="true" wants-focus="false">
 		<view background-color="~ TransparentCColor" background-color-draw-style="filled and stroked" class="CViewContainer" mouse-enabled="true" opacity="1" origin="0, 0" size="196, 69" sub-controller="ChatController" transparent="false" uidesc-label="chat-controller" wants-focus="false">
@@ -37,13 +40,13 @@
 	</template>
 	<custom>
 		<attributes name="FocusDrawing"/>
-		<attributes Path="/home/antanas/.vst3/abNinjam.vst3/Contents/Resources/plug.uidesc" name="VST3Editor"/>
+		<attributes Path="~/.vst3/abNinjam.vst3/Contents/Resources/plug.uidesc" name="VST3Editor"/>
 		<attributes Grids="1x 1,5x 5,10x 10,12x 12,15x 15" Size="10, 10" name="UIGridController"/>
 		<attributes SelectedTemplate="chat" name="UITemplateController"/>
 		<attributes EditViewScale="2" EditorSize="0, 0, 1225, 1016" EncodeBitmaps="true" SplitViewSize_0_0="0.8696969696969697460886550288705620914698" SplitViewSize_0_1="0.1101010101010101022156462136081245262176" SplitViewSize_1_0="0.5111111111111110716365146799944341182709" SplitViewSize_1_1="0.4838383838383838453367502552282530814409" SplitViewSize_2_0="0.686530612244897975315893745573703199625" SplitViewSize_2_1="0.3093877551020408067650180328200804069638" TabSwitchValue="0" Version="1" name="UIEditController"/>
 		<attributes name="UIAttributesController"/>
-		<attributes SelectedRow="30" name="UIViewCreatorDataSource"/>
-		<attributes SelectedRow="5" name="UIBitmapsDataSource"/>
+		<attributes SelectedRow="22" name="UIViewCreatorDataSource"/>
+		<attributes SelectedRow="11" name="UIBitmapsDataSource"/>
 		<attributes SelectedRow="4" name="UITagsDataSource"/>
 		<attributes SelectedRow="-1" name="UIColorsDataSource"/>
 		<attributes SelectedRow="0" name="UIGradientsDataSource"/>
@@ -40957,6 +40960,38 @@
 				vzemC5YlnphfXzvV748r+wXlgvrBfWhq7/D3PXqE8PUD0RAAAAAElFTkSuQmCC
 			</data>
 		</bitmap>
+		<bitmap name="slider_background" path="slider_background.png">
+			<data encoding="base64">
+				iVBORw0KGgoAAAANSUhEUgAAAIIAAAASCAYAAACXZQa+AAAABmJLR0QA/wD/AP+gvaeTAAAATklEQVRoge
+				3UwQmAMAwF0CguUOj+EwqOoKcgivZYpbx3CiGHDwmJAAAAaJmyqCX2L4PQz7qde0/LbYDB1fLcn/vG4K8u
+				H+HtWgAAAAAgHapsBTFszmFuAAAAAElFTkSuQmCC
+			</data>
+		</bitmap>
+		<bitmap name="slider_handle" path="slider_handle.png">
+			<data encoding="base64">
+				iVBORw0KGgoAAAANSUhEUgAAABYAAAAMCAYAAABm+U3GAAAABmJLR0QA/wD/AP+gvaeTAAABG0lEQVQ4ja
+				2TMUsDQRCFv9m7M2IEC2tRFMRKbMR2U1im8bekTpFWf4xgK1xasfEfpAnaWSjBXOD2WeQuuVM5FO/BLm9n
+				hpm3szsGMBr0U5l5AMSvEEWOEH4KtvHw+rYXjwb91F9e+aPjUz4W0N10AMzmYcUBHh6fkMTF+RmzudjqgC
+				SkQClICjxPJx6UOmG+u71DCIFsnq0SVTlAnueEEDAzFlmGc44oiojjZLmShGSjw/7hCZK8AzCzomrlamro
+				SYNPhc9VD22gFFkodo3Bf0FNcZuoKV69bItoXXHZirhiWu/6ws3qtjJB+ZsqKFsRGxq/v716KWDmeJmtg6
+				r8YG93aZtOvvlqihFJ3Lk3KEaaYqT/CUPj4c1d7xNR431nhVyQhgAAAABJRU5ErkJggg==
+			</data>
+		</bitmap>
+		<bitmap name="slider_handle_2x" path="slider_handle_2x.png" scale-factor="2">
+			<data encoding="base64">
+				iVBORw0KGgoAAAANSUhEUgAAACwAAAAYCAYAAACBbx+6AAAABmJLR0QA/wD/AP+gvaeTAAACQ0lEQVRYhd
+				1Xv2/TQBT+7oft2GmLEK1ARR1gYmJgiITEgMSKwsBfgggSEtAqiKWAxMLExj+AoBtrt0ow8D9EtBJt1FYO
+				DnFyj8H15exciGkS1fBN5+/ee/e953eWH4OBZqNOKCE2Xm+xdK0XzUadhk85UM56yrSqgYefUTwkJsTlnO
+				Pp5gemTZ8/ukcXV5ZQu3UfK5cuQwiJeMDhCDXinPJEBMZYhkvx4PELkALebD5JdBChTxICPRARiAAQgUQF
+				FHdOxBIIAIEg3EX0u8cgUmjv7+Hb18/Y3Wtj/eVHxpuNOhERrl2/jWBhCUolaYadyJptyqdibbat1gFa3/
+				e1HeccYRhBCAkpHTiOA8d1EYYRXK8Cr+LD8wNU/AC+X0UYRgiqCwiqi1hdu4obtbsgpdBs1Imnh7hegN6v
+				LpQaJFVQo9UFYOXz3CDuQcVxJimQJR6prE3OljEGISRW167oLWlYIdNENKahbHyes4or4DeJB8DH7pwC9I
+				eDpoEy3qAWzLkA48L+igriNL5FkjTjasFKKZBSc6tSETFFbIyWyPVwSTHTlpgXrD18Vi1RBKYmo8IcjPNS
+				VpjzYef+ExX+Py5dmWG9dGWG9dLNIti8IITQ68KCZyVs2jhyhCHSQc3gk9Y2IXmOjNjjbPJ8/jOrBR8fJj
+				/c/X4MKR0AwMGPQ2swG29y794+O+F2/8rPxruej054pHk9ItVu3sG588tW57NDMq10oxBfdrbbDzfeX8gO
+				oSUFYwzrrz4Nh9AUZRVtjvm/AZUhLfpOavd1AAAAAElFTkSuQmCC
+			</data>
+		</bitmap>
 	</bitmaps>
 	<control-tags>
 		<control-tag name="Bypass" tag="100"/>
@@ -40965,6 +41000,7 @@
 		<control-tag name="MetronomeVolume" tag="1002"/>
 		<control-tag name="TemplateSelect" tag="1003"/>
 		<control-tag name="SendChatMessage" tag="2000"/>
+		<control-tag name="MonitorVolume" tag="10000"/>
 	</control-tags>
 	<gradients>
 		<gradient name="Default TextButton Gradient">

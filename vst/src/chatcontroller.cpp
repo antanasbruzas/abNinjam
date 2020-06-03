@@ -12,16 +12,21 @@ ChatController::ChatController(EditController *plugController)
 
 ChatController::~ChatController() {
   L_(ltrace) << "[ChatController] Entering ChatController::~ChatController";
-  if (PlugController *controller =
-          dynamic_cast<PlugController *>(plugController)) {
-    if (chatTextHolder) {
-      controller->gsLastChatTextHolderViewSize() =
-          chatTextHolder->getViewSize();
-      chatTextHolder = nullptr;
+  if (plugController) {
+    if (PlugController *controller =
+            dynamic_cast<PlugController *>(plugController)) {
+      L_(ltrace) << "[ChatController] plugController available";
+      if (chatTextHolder) {
+        L_(ltrace) << "[ChatController] chatTextHolder available";
+        controller->gsLastChatTextHolderViewSize() =
+            chatTextHolder->getViewSize();
+        chatTextHolder = nullptr;
+      }
     }
   }
 
   if (chatTextInput) {
+    L_(ltrace) << "[ChatController] chatTextInput available";
     viewWillDelete(chatTextInput);
   }
 }
@@ -127,6 +132,7 @@ void ChatController::viewLostFocus(CView *view) {
 void ChatController::viewWillDelete(CView *view) {
   L_(ltrace) << "[ChatController] Entering viewWillDelete";
   if (chatTextInput) {
+    L_(ltrace) << "[ChatController] chatTextInput available";
     if (dynamic_cast<CTextEdit *>(view) == chatTextInput) {
       chatTextInput->unregisterViewListener(this);
       chatTextInput = nullptr;

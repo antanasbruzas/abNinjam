@@ -193,6 +193,15 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
                 static_cast<float>(metronomeVolumeParam);
           }
           break;
+        case AbNinjamParams::kParamChannelVolumeId:
+          L_(ltrace) << "AbNinjamParams::kParamChannelVolumeId has changed";
+          if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
+              kResultTrue) {
+            monitorVolumeParam = value;
+            L_(ltrace) << "monitorVolumeParam: " << monitorVolumeParam;
+            ninjamClient->setLocalChannelVolume(0, monitorVolumeParam);
+          }
+          break;
         case AbNinjamParams::kParamConnectId:
           L_(ltrace) << "AbNinjamParams::kParamConnectId has changed";
           if (paramQueue->getPoint(numPoints - 1, sampleOffset, value) ==
@@ -221,137 +230,181 @@ tresult PLUGIN_API PlugProcessor::process(Vst::ProcessData &data) {
     return kResultOk;
   }
 
-  if (data.numSamples > 0) {
-    if (ninjamClient->connected) {
-      if (hostController->hostIsPlaying(data.processContext)) {
-        if (!hostController->hostPlayingInLastBuffer) {
-          L_(ldebug) << "[PlugProcessor] hostPlayingInLastBuffer: "
-                     << hostController->hostPlayingInLastBuffer;
-          synced = false;
-        }
-        if (!synced) {
-          int pos, samplesInInterval;
-          ninjamClient->gsNjClient()->GetPosition(&pos, &samplesInInterval);
-          if (samplesInInterval > 1000) {
-            int startPosition =
-                static_cast<int>(hostController->getStartPositionForHostSync(
-                    data.processContext));
-            long intervalPosition = 0;
-            if (startPosition >= 0) {
-              intervalPosition = startPosition % samplesInInterval;
-            } else {
-              intervalPosition =
-                  samplesInInterval - abs(startPosition % samplesInInterval);
-            }
+  // (simplification) we suppose that we have the same input
+  // channel count as the output
+  int32 numChannels = data.inputs[0].numChannels;
 
-            if (abs(intervalPosition - pos) < data.numSamples) {
-              synced = true;
+  //---get audio buffers----------------
+  uint32 sampleFramesSize =
+      getSampleFramesSizeInBytes(processSetup, data.numSamples);
+  void **in = getChannelBuffersPointer(processSetup, data.inputs[0]);
+  void **out = getChannelBuffersPointer(processSetup, data.outputs[0]);
+
+  // This case will probably never happen because ninjam server metronome is
+  // transmitted and output buffer is not silent
+  //---check if silence---------------
+  // normally we have to check each channel (simplification)
+  //  if (data.inputs[0].silenceFlags != 0 && data.outputs[0].silenceFlags != 0)
+  //  {
+  //    L_(ldebug) << "[PlugProcessor] Silence detected";
+  //    // the Plug-in has to be sure that if it sets the flags silence that the
+  //    // output buffer are clear
+  //    for (int32 i = 0; i < numChannels; i++) {
+  //      // do not need to be cleared if the buffers are the same (in this case
+  //      // input buffer are already cleared by the host)
+  //      if (in[i] != out[i]) {
+  //        memset(out[i], 0, sampleFramesSize);
+  //      }
+  //    }
+  //    // nothing to do at this point
+  //    return kResultOk;
+  //  }
+  // mark our outputs as not silent
+  // data.outputs[0].silenceFlags = 0;
+
+  if (data.numSamples > 0) {
+
+    //---in bypass mode outputs should be like inputs-----
+    if (mBypass) {
+      L_(ldebug) << "[PlugProcessor] Bypassing";
+      doBypass(numChannels, sampleFramesSize, in, out);
+    } else {
+      if (ninjamClient->connected) {
+        if (hostController->hostIsPlaying(data.processContext)) {
+          if (!hostController->hostPlayingInLastBuffer) {
+            L_(ldebug) << "[PlugProcessor] hostPlayingInLastBuffer: "
+                       << hostController->hostPlayingInLastBuffer;
+            synced = false;
+          }
+          if (!synced) {
+            int pos, samplesInInterval;
+            ninjamClient->gsNjClient()->GetPosition(&pos, &samplesInInterval);
+            if (samplesInInterval > 1000) {
+              int startPosition =
+                  static_cast<int>(hostController->getStartPositionForHostSync(
+                      data.processContext));
+              long intervalPosition = 0;
+              if (startPosition >= 0) {
+                intervalPosition = startPosition % samplesInInterval;
+              } else {
+                intervalPosition =
+                    samplesInInterval - abs(startPosition % samplesInInterval);
+              }
+
+              if (abs(intervalPosition - pos) < data.numSamples) {
+                synced = true;
+              }
+            } else {
+              L_(ldebug) << "[PlugProcessor] audiostreamForSync";
+              ninjamClient->audiostreamForSync(
+                  data.inputs->channelBuffers32, data.inputs->numChannels,
+                  data.outputs->channelBuffers32, data.outputs->numChannels,
+                  data.numSamples, static_cast<int>(processSetup.sampleRate));
             }
-          } else {
-            L_(ldebug) << "[PlugProcessor] audiostreamForSync";
-            ninjamClient->audiostreamForSync(
+          }
+
+          if (synced) {
+            ninjamClient->audiostreamOnSamples(
                 data.inputs->channelBuffers32, data.inputs->numChannels,
                 data.outputs->channelBuffers32, data.outputs->numChannels,
                 data.numSamples, static_cast<int>(processSetup.sampleRate));
-          }
-        }
 
-        if (synced) {
+            ninjamBpm = ninjamClient->gsNjClient()->GetActualBPM();
+            hostBpm = data.processContext->tempo;
+
+            if (abs(static_cast<double>(ninjamBpm) - hostBpm) >
+                numeric_limits<double>::epsilon()) {
+              if (connectionProperties.gsAutoSyncBpm()) {
+                if (abs(ninjamBpm - previousNinjamBpm) >
+                    numeric_limits<float>::epsilon()) {
+                  // BPM was changed on remote. Sync to host
+                  L_(ldebug) << "[PlugProcessor] Sending OSC message";
+                  int oscSendStatus = oscTransmitter->sendInt(
+                      "/tempo/raw", static_cast<int>(ninjamBpm));
+                  L_(ltrace)
+                      << "[PlugProcessor] oscSendStatus: " << oscSendStatus;
+                  clearNotification = true;
+                } else if (abs(hostBpm - previousHostBpm) >
+                           numeric_limits<double>::epsilon()) {
+                  // BPM was changed on host. Sync to remote
+                  L_(ldebug) << "[PlugProcessor] BPM was changed on host. "
+                                "Expecting to receive OSC message";
+                  bpm = static_cast<int>(hostBpm);
+                  ninjamClient->setBpm(bpm);
+                  clearNotification = true;
+                }
+              }
+
+              if (!bpmNotification) {
+                L_(linfo) << "[PlugProcessor] "
+                             "NINJAM BPM: "
+                          << ninjamBpm << ", "
+                          << tCharToCharPtr(hostProductString)
+                          << " BPM: " << data.processContext->tempo;
+                bpmNotification = true;
+                string notification("Ninjam BPM: " +
+                                    to_string(static_cast<int>(ninjamBpm)));
+                this->sendNotification(notification);
+                clearNotification = false;
+                notificationCleared = false;
+              }
+            }
+
+            previousNinjamBpm = ninjamClient->gsNjClient()->GetActualBPM();
+            previousHostBpm = data.processContext->tempo;
+
+          } else {
+            //            ninjamClient->clearBuffers(data.outputs->channelBuffers32,
+            //                                       data.outputs->numChannels,
+            //                                       data.numSamples);
+            doBypass(numChannels, sampleFramesSize, in, out);
+            bpmNotification = false;
+            clearNotification = true;
+          }
+
+        } else {
+          // Connected but not synced to host
           ninjamClient->audiostreamOnSamples(
               data.inputs->channelBuffers32, data.inputs->numChannels,
               data.outputs->channelBuffers32, data.outputs->numChannels,
               data.numSamples, static_cast<int>(processSetup.sampleRate));
-
-          ninjamBpm = ninjamClient->gsNjClient()->GetActualBPM();
-          hostBpm = data.processContext->tempo;
-
-          if (abs(static_cast<double>(ninjamBpm) - hostBpm) >
-              numeric_limits<double>::epsilon()) {
-            if (connectionProperties.gsAutoSyncBpm()) {
-              if (abs(ninjamBpm - previousNinjamBpm) >
-                  numeric_limits<float>::epsilon()) {
-                // BPM was changed on remote. Sync to host
-                L_(ldebug) << "[PlugProcessor] Sending OSC message";
-                int oscSendStatus = oscTransmitter->sendInt(
-                    "/tempo/raw", static_cast<int>(ninjamBpm));
-                L_(ltrace) << "[PlugProcessor] oscSendStatus: "
-                           << oscSendStatus;
-                clearNotification = true;
-              } else if (abs(hostBpm - previousHostBpm) >
-                         numeric_limits<double>::epsilon()) {
-                // BPM was changed on host. Sync to remote
-                L_(ldebug) << "[PlugProcessor] BPM was changed on host. "
-                              "Expecting to receive OSC message";
-                bpm = static_cast<int>(hostBpm);
-                ninjamClient->setBpm(bpm);
-                clearNotification = true;
-              }
-            }
-
-            if (!bpmNotification) {
-              L_(linfo) << "[PlugProcessor] "
-                           "NINJAM BPM: "
-                        << ninjamBpm << ", "
-                        << tCharToCharPtr(hostProductString)
-                        << " BPM: " << data.processContext->tempo;
-              bpmNotification = true;
-              string notification("Ninjam BPM: " +
-                                  to_string(static_cast<int>(ninjamBpm)));
-              this->sendNotification(notification);
-              clearNotification = false;
-              notificationCleared = false;
-            }
-          }
-
-          previousNinjamBpm = ninjamClient->gsNjClient()->GetActualBPM();
-          previousHostBpm = data.processContext->tempo;
-
-        } else {
-          ninjamClient->clearBuffers(data.outputs->channelBuffers32,
-                                     data.outputs->numChannels,
-                                     data.numSamples);
-          bpmNotification = false;
+          synced = false;
           clearNotification = true;
+          previousNinjamBpm = 0.f;
+        }
+        if (ninjamClient->gsNjClient()->HasUserInfoChanged()) {
+          // optimize channel levels
+          if (!manualMixingTouched) {
+            ninjamClient->adjustVolume();
+          }
+          vector<Common::RemoteUser> remoteUsers =
+              ninjamClient->getRemoteUsers();
+          if (IPtr<IMessage> message = allocateMessage()) {
+            message->setMessageID(binaryMessage);
+            message->getAttributes()->setBinary(
+                "remoteUsers", &remoteUsers,
+                remoteUsers.capacity() * sizeof(Common::RemoteUser) +
+                    sizeof(remoteUsers));
+            sendMessage(message);
+          }
+        }
+
+        if (g_need_disp_update > 0) {
+          sendChatMessageUpdate(
+              g_chat_buffers.Get(g_chat_buffers.GetSize() - 1));
+          g_need_disp_update = 0;
         }
 
       } else {
-        // Connected but not synced to host
-        ninjamClient->audiostreamOnSamples(
-            data.inputs->channelBuffers32, data.inputs->numChannels,
-            data.outputs->channelBuffers32, data.outputs->numChannels,
-            data.numSamples, static_cast<int>(processSetup.sampleRate));
+        // Not connected
+        //        ninjamClient->clearBuffers(data.outputs->channelBuffers32,
+        //                                   data.outputs->numChannels,
+        //                                   data.numSamples);
+        doBypass(numChannels, sampleFramesSize, in, out);
         synced = false;
         clearNotification = true;
         previousNinjamBpm = 0.f;
       }
-      if (ninjamClient->gsNjClient()->HasUserInfoChanged()) {
-        // optimize channel levels
-        if (!manualMixingTouched) {
-          ninjamClient->adjustVolume();
-        }
-        vector<Common::RemoteUser> remoteUsers = ninjamClient->getRemoteUsers();
-        if (IPtr<IMessage> message = allocateMessage()) {
-          message->setMessageID(binaryMessage);
-          message->getAttributes()->setBinary(
-              "remoteUsers", &remoteUsers,
-              remoteUsers.capacity() * sizeof(Common::RemoteUser) +
-                  sizeof(remoteUsers));
-          sendMessage(message);
-        }
-      }
-
-      if (g_need_disp_update > 0) {
-        sendChatMessageUpdate(g_chat_buffers.Get(g_chat_buffers.GetSize() - 1));
-        g_need_disp_update = 0;
-      }
-
-    } else {
-      // Not connected
-      ninjamClient->clearBuffers(data.outputs->channelBuffers32,
-                                 data.outputs->numChannels, data.numSamples);
-      synced = false;
-      clearNotification = true;
-      previousNinjamBpm = 0.f;
     }
 
     if (clearNotification && !notificationCleared) {
@@ -398,6 +451,10 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream *state) {
   if (streamer.readDouble(savedMetronomeVolumeParam) == false)
     return kResultFalse;
 
+  double savedMonitorVolumeParam = 0;
+  if (streamer.readDouble(savedMonitorVolumeParam) == false)
+    return kResultFalse;
+
   int32 savedBypass = 0;
   if (streamer.readInt32(savedBypass) == false)
     return kResultFalse;
@@ -411,6 +468,7 @@ tresult PLUGIN_API PlugProcessor::setState(IBStream *state) {
     return kResultFalse;
 
   metronomeVolumeParam = savedMetronomeVolumeParam;
+  monitorVolumeParam = savedMonitorVolumeParam;
   mBypass = savedBypass > 0;
   connectParam = savedConnectParam > 0 ? 1 : 0;
   connectionIndicatorParam = savedConnectionIndicatorParam > 0 ? 1 : 0;
@@ -424,12 +482,14 @@ tresult PLUGIN_API PlugProcessor::getState(IBStream *state) {
   // here we need to save the model (preset or project)
 
   double toSaveMetronomeVolumeParam = metronomeVolumeParam;
+  double toSaveMonitorVolumeParam = monitorVolumeParam;
   int32 toSaveBypass = mBypass ? 1 : 0;
   int32 toSaveConnectParam = connectParam;
   int32 toSaveConnectionIndicatorParam = connectionIndicatorParam;
 
   IBStreamer streamer(state, kLittleEndian);
   streamer.writeDouble(toSaveMetronomeVolumeParam);
+  streamer.writeDouble(toSaveMonitorVolumeParam);
   streamer.writeInt32(toSaveBypass);
   streamer.writeInt32(toSaveConnectParam);
   streamer.writeInt32(toSaveConnectionIndicatorParam);
@@ -532,6 +592,9 @@ void PlugProcessor::connectToServer(
   if (value > 0) {
     L_(ldebug) << "[PlugProcessor] Connect initiated";
     status = ninjamClient->connect(connectionProperties);
+    if (status == ok) {
+      L_(ldebug) << "[PlugProcessor] Connection status is OK";
+    }
   } else {
     L_(ldebug) << "[PlugProcessor] Disconnect initiated";
     if (ninjamClient) {
@@ -573,6 +636,18 @@ void PlugProcessor::sendChatMessageUpdate(std::string text) {
     Steinberg::String str(text.c_str());
     message->getAttributes()->setString("chatUpdate", str.text16());
     sendMessage(message);
+  }
+}
+
+void PlugProcessor::doBypass(int32 numChannels, uint32 sampleFramesSize,
+                             void **in, void **out) {
+  // L_(ltrace) << "[PlugProcessor] Entering PlugController::doBypass";
+  // Note: assumption that input and output channel count is the same
+  for (int32 i = 0; i < numChannels; i++) {
+    // do not need to be copied if the buffers are the same
+    if (in[i] != out[i]) {
+      memcpy(out[i], in[i], sampleFramesSize);
+    }
   }
 }
 

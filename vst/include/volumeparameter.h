@@ -1,5 +1,5 @@
-#ifndef METRONOMEVOLUMEPARAMETER_H
-#define METRONOMEVOLUMEPARAMETER_H
+#ifndef VOLUMEPARAMETER_H
+#define VOLUMEPARAMETER_H
 
 #pragma once
 
@@ -22,9 +22,9 @@ using namespace Vst;
 namespace AbNinjam {
 namespace Vst3 {
 
-class MetronomeVolumeParameter : public Parameter {
+class VolumeParameter : public Parameter {
 public:
-  MetronomeVolumeParameter(int32 flags, ParamID id);
+  VolumeParameter(int32 flags, ParamID id, std::string title);
 
   void toString(ParamValue normValue, String128 string) const SMTG_OVERRIDE;
   bool fromString(const TChar *string,
@@ -34,4 +34,4 @@ public:
 } // namespace Vst3
 } // namespace AbNinjam
 
-#endif // METRONOMEVOLUMEPARAMETER_H
+#endif // VOLUMEPARAMETER_H

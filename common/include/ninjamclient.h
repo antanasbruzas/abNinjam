@@ -45,6 +45,7 @@ public:
   void setBpm(int bpm);
   std::vector<RemoteUser> getRemoteUsers();
   void setUserChannelVolume(int userId, int channelId, float volume);
+  void setLocalChannelVolume(int channelId, float volume);
   void sendChatMessage(std::string message);
 
 private:

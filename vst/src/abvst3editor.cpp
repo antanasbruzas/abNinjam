@@ -47,7 +47,8 @@ CMessageResult AbVST3Editor::notify(CBaseObject *sender, IdStringPtr message) {
 void AbVST3Editor::valueChanged(CControl *pControl) {
   L_(ltrace) << "[AbVST3Editor] Entering AbVST3Editor::valueChanged";
   L_(ltrace) << "[AbVST3Editor] pControl->getTag(): " << pControl->getTag();
-  if (pControl->getTag() >= static_cast<signed int>(kParamChannelVolumeId)) {
+  // Remote channels
+  if (pControl->getTag() > static_cast<signed int>(kParamChannelVolumeId)) {
     RemoteUserChannel *remoteUserChannel = new RemoteUserChannel();
     pControl->getAttribute(kCViewUserIdAttrID, remoteUserChannel->userId);
     pControl->getAttribute(kCViewChannelIdAttrID, remoteUserChannel->channelId);
@@ -72,7 +73,8 @@ void AbVST3Editor::valueChanged(CControl *pControl) {
 
 void AbVST3Editor::controlEndEdit(VSTGUI::CControl *pControl) {
   L_(ltrace) << "[AbVST3Editor] Entering AbVST3Editor::controlEndEdit";
-  if (pControl->getTag() >= static_cast<signed int>(kParamChannelVolumeId)) {
+  // Remote channels
+  if (pControl->getTag() > static_cast<signed int>(kParamChannelVolumeId)) {
     // Notify processor through controller
     sendMixingTouched();
     // Update channel volumes in the controller

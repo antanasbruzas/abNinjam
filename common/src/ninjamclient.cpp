@@ -314,6 +314,20 @@ void NinjamClient::setUserChannelVolume(int userId, int channelId,
   }
 }
 
+void NinjamClient::setLocalChannelVolume(int channelId, float volume) {
+  L_(ltrace) << "[NinjamClient] Entering NinjamClient::setLocalChannelVolume";
+  L_(ltrace) << "[NinjamClient] channelId: " << channelId;
+  L_(ltrace) << "[NinjamClient] volume: " << volume;
+  if (njClient) {
+    if (volume > 1 || volume < 0) {
+      L_(lwarning) << "[NinjamClient] monitor volume is out of range";
+    } else {
+      njClient->SetLocalChannelMonitoring(channelId, true, volume, false, 0.0f,
+                                          false, false, false, false);
+    }
+  }
+}
+
 void NinjamClient::sendChatMessage(std::string message) {
   L_(ltrace) << "[NinjamClient] Entering NinjamClient::sendChatMessage";
   if (njClient) {

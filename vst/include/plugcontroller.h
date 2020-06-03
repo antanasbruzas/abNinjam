@@ -3,8 +3,8 @@
 #include "chatcontroller.h"
 #include "common.h"
 #include "include/remoteuser.h"
-#include "metronomevolumeparameter.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
+#include "volumeparameter.h"
 #include "vstgui/lib/cbitmap.h"
 #include "vstgui/lib/controls/csegmentbutton.h"
 #include "vstgui/lib/controls/cslider.h"
@@ -90,7 +90,8 @@ private:
   static constexpr VSTGUI::CViewAttributeID kCViewChannelIdAttrID = 'cidx';
   VSTGUI::CTextLabel *createLabel(std::string labelText,
                                   VSTGUI::CFontRef inFontID,
-                                  VSTGUI::CRect labelPlacer);
+                                  VSTGUI::CRect labelPlacer,
+                                  VSTGUI::CColor fontColor);
   VSTGUI::CSlider *createSlider(VSTGUI::CRect sliderPlacer, int controlTag,
                                 float value, VST3Editor *editor, int userId,
                                 int channelId);
