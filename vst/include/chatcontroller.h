@@ -3,6 +3,12 @@
 
 #pragma once
 #include "common.h"
+#ifdef stricmp
+#undef stricmp
+#endif
+#ifdef strnicmp
+#undef strnicmp
+#endif
 #include "messagetypes.h"
 #include "plugids.h"
 #include "vstgui/lib/vstkeycode.h"

@@ -60,11 +60,11 @@ jobs:
       run: |
         cmake --version
         if [ "$RUNNER_OS" == "Linux" ]; then
-              cmake -DCMAKE_BUILD_TYPE=Release .
+              cmake -DUSE_STATIC_DEPENDENCIES=ON -DCMAKE_BUILD_TYPE=Release .
         elif [ "$RUNNER_OS" == "Windows" ]; then
               cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DLIBLO_INCLUDE_DIR=/C/Program\ Files\ \(x86\)/liblo/include/ -DLIBLO_LIBRARY=/C/Program\ Files\ \(x86\)/liblo/lib/liblo_static.lib .
         elif [ "$RUNNER_OS" == "macOS" ]; then
-              cmake -DCMAKE_BUILD_TYPE=Release -DOGG_ROOT=/usr/local/Cellar/libogg/ -DVorbis_ROOT=/usr/local/Cellar/libvorbis/ -DLIBLO_ROOT=/usr/local/Cellar/liblo/ -DLV2_ROOT=/usr/local/Cellar/lv2/ -GXcode .
+              cmake -DUSE_STATIC_DEPENDENCIES=ON -DCMAKE_BUILD_TYPE=Release -DOGG_ROOT=/usr/local/Cellar/libogg/ -DVorbis_ROOT=/usr/local/Cellar/libvorbis/ -DLIBLO_ROOT=/usr/local/Cellar/liblo/ -DLV2_ROOT=/usr/local/Cellar/lv2/ -GXcode .
         else
               echo "$RUNNER_OS not supported"
               exit 222
@@ -104,30 +104,30 @@ jobs:
       name: upload-artifact-linux-vst3
       uses: actions/upload-artifact@v2
       with:
-        name: abNinjam-vst3-${{ matrix.os }}-${{ matrix.cmake }}
+        name: abNinjam-vst3-${{ matrix.os }}-static-${{ matrix.cmake }}
         path: ~/.vst3
     - if: ${{ matrix.os == 'windows-latest' }}
       name: upload-artifact-windows-vst3
       uses: actions/upload-artifact@v2
       with:
-        name: abNinjam-vst3-${{ matrix.os }}-${{ matrix.cmake }}
+        name: abNinjam-vst3-${{ matrix.os }}-static-${{ matrix.cmake }}
         path: C:\Program Files\Common Files\VST3
     - if: ${{ matrix.os == 'macOS-latest' }}
       name: upload-artifact-mac-vst3
       uses: actions/upload-artifact@v2
       with:
-        name: abNinjam-vst3-${{ matrix.os }}-${{ matrix.cmake }}
+        name: abNinjam-vst3-${{ matrix.os }}-static-${{ matrix.cmake }}
         path: /Users/runner/Library/Audio/Plug-ins/VST3
     - if: ${{ matrix.os == 'ubuntu-latest' }}
       name: upload-artifact-linux-lv2
       uses: actions/upload-artifact@v2
       with:
-        name: abNinjam-lv2-${{ matrix.os }}-${{ matrix.cmake }}
+        name: abNinjam-lv2-${{ matrix.os }}-static-${{ matrix.cmake }}
         path: ~/.lv2
     - if: ${{ matrix.os == 'macOS-latest' }}
       name: upload-artifact-mac-lv2
       uses: actions/upload-artifact@v2
       with:
-        name: abNinjam-lv2-${{ matrix.os }}-${{ matrix.cmake }}
+        name: abNinjam-lv2-${{ matrix.os }}-static-${{ matrix.cmake }}
         path: /Users/runner/Library/Audio/Plug-ins/lv2
 

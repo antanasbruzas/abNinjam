@@ -1,8 +1,4 @@
 # Add ninjam -------
-
-set(DEFAULT_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
-#set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" ".lib")
-
 find_package(Vorbis COMPONENTS Enc REQUIRED)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -49,5 +45,3 @@ function(plugin_add_njclient NAME)
     target_link_libraries("${NAME}" PRIVATE ${Vorbis_Vorbis_LIBRARIES})
     target_link_libraries("${NAME}" PRIVATE ${Vorbis_Enc_LIBRARIES})
 endfunction()
-set(CMAKE_FIND_LIBRARY_SUFFIXES ${DEFAULT_CMAKE_FIND_LIBRARY_SUFFIXES})
-message(STATUS "CMAKE_FIND_LIBRARY_SUFFIXES: " ${CMAKE_FIND_LIBRARY_SUFFIXES})

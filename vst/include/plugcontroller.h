@@ -1,7 +1,13 @@
 #pragma once
 
-#include "chatcontroller.h"
 #include "common.h"
+#ifdef stricmp
+#undef stricmp
+#endif
+#ifdef strnicmp
+#undef strnicmp
+#endif
+#include "chatcontroller.h"
 #include "include/remoteuser.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
 #include "volumeparameter.h"

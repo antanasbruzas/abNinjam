@@ -15,6 +15,14 @@ option (ABNINJAM_VST "Enable VST plug-in build [default: ON]" ON)
 option (ABNINJAM_LV2 "Enable LV2 plug-in build [default: ON]" ON)
 option (ABNINJAM_USE_NJCLIENT "Use NJClient [default: ON]" ON)
 option (ABNINJAM_USE_LIBLO "Use liblo [default: ON]" ON)
+option (USE_STATIC_DEPENDENCIES "Use static dependencies [default: OFF]" OFF)
+
+set(DEFAULT_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
+set(STATIC_CMAKE_FIND_LIBRARY_SUFFIXES ".a" ".lib")
+if (USE_STATIC_DEPENDENCIES)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${STATIC_CMAKE_FIND_LIBRARY_SUFFIXES})
+endif()
+message(STATUS "CMAKE_FIND_LIBRARY_SUFFIXES: " ${CMAKE_FIND_LIBRARY_SUFFIXES})
 
 # Add the common library targets and sources
 set (COMMON_BASEDIR "${CMAKE_CURRENT_SOURCE_DIR}/common")
