@@ -33,7 +33,25 @@ jobs:
     - name: dependencies
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libvorbis-dev zenity lv2-dev liblo-dev
+              sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev zenity lv2-dev
+              cd ~
+              git clone https://github.com/radarsat1/liblo.git
+              cd liblo/cmake
+              cmake -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DWITH_STATIC=ON -DWITH_TOOLS=OFF -DWITH_TESTS=OFF -DWITH_EXAMPLES=OFF -DWITH_CPP_TESTS=OFF .
+              cmake --build . --config Release
+              sudo cmake --build . --config Release --target install
+              cd ~
+              git clone https://github.com/xiph/ogg.git
+              cd ogg
+              cmake -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release .
+              cmake --build . --config Release
+              sudo cmake --build . --config Release --target install
+              cd ~
+              git clone https://github.com/xiph/vorbis.git
+              cd vorbis
+              cmake -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release .
+              cmake --build . --config Release
+              sudo cmake --build . --config Release --target install
         elif [ "$RUNNER_OS" == "Windows" ]; then
               vcpkg install libvorbis:x64-windows-static
               vcpkg integrate install
@@ -45,11 +63,26 @@ jobs:
               cmake --build . --config Release --target install
         elif [ "$RUNNER_OS" == "macOS" ]; then
               brew install pkg-config
-              brew install libvorbis
               brew install zenity
               brew install lv2
-              brew install liblo
-              ls -l /usr/local/Cellar/liblo/
+              cd ~
+              git clone https://github.com/radarsat1/liblo.git
+              cd liblo/cmake
+              cmake -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DWITH_STATIC=ON -DWITH_TOOLS=OFF -DWITH_TESTS=OFF -DWITH_EXAMPLES=OFF -DWITH_CPP_TESTS=OFF .
+              cmake --build . --config Release
+              sudo cmake --build . --config Release --target install
+              cd ~
+              git clone https://github.com/xiph/ogg.git
+              cd ogg
+              cmake -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release .
+              cmake --build . --config Release
+              sudo cmake --build . --config Release --target install
+              cd ~
+              git clone https://github.com/xiph/vorbis.git
+              cd vorbis
+              cmake -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release .
+              cmake --build . --config Release
+              sudo cmake --build . --config Release --target install
         else
               echo "$RUNNER_OS not supported"
               exit 221
@@ -64,7 +97,7 @@ jobs:
         elif [ "$RUNNER_OS" == "Windows" ]; then
               cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DLIBLO_INCLUDE_DIR=/C/Program\ Files\ \(x86\)/liblo/include/ -DLIBLO_LIBRARY=/C/Program\ Files\ \(x86\)/liblo/lib/liblo_static.lib .
         elif [ "$RUNNER_OS" == "macOS" ]; then
-              cmake -DUSE_STATIC_DEPENDENCIES=ON -DCMAKE_BUILD_TYPE=Release -DOGG_ROOT=/usr/local/Cellar/libogg/ -DVorbis_ROOT=/usr/local/Cellar/libvorbis/ -DLIBLO_ROOT=/usr/local/Cellar/liblo/ -DLV2_ROOT=/usr/local/Cellar/lv2/ -GXcode .
+              cmake -DUSE_STATIC_DEPENDENCIES=ON -DCMAKE_BUILD_TYPE=Release -DLV2_ROOT=/usr/local/Cellar/lv2/ -GXcode .
         else
               echo "$RUNNER_OS not supported"
               exit 222

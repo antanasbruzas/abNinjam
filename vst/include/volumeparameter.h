@@ -14,7 +14,7 @@
 #include "pluginterfaces/base/ustring.h"
 #include "public.sdk/source/vst/vstparameters.h"
 
-#include <math.h>
+#include <cmath>
 
 using namespace Steinberg;
 using namespace Vst;
