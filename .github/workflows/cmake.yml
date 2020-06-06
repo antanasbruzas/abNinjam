@@ -137,30 +137,30 @@ jobs:
       name: upload-artifact-linux-vst3
       uses: actions/upload-artifact@v2
       with:
-        name: abNinjam-vst3-${{ matrix.os }}-static-${{ matrix.cmake }}
+        name: abNinjam-vst3-${{ matrix.os }}-${{ matrix.cmake }}
         path: ~/.vst3
     - if: ${{ matrix.os == 'windows-latest' }}
       name: upload-artifact-windows-vst3
       uses: actions/upload-artifact@v2
       with:
-        name: abNinjam-vst3-${{ matrix.os }}-static-${{ matrix.cmake }}
+        name: abNinjam-vst3-${{ matrix.os }}-${{ matrix.cmake }}
         path: C:\Program Files\Common Files\VST3
     - if: ${{ matrix.os == 'macOS-latest' }}
       name: upload-artifact-mac-vst3
       uses: actions/upload-artifact@v2
       with:
-        name: abNinjam-vst3-${{ matrix.os }}-static-${{ matrix.cmake }}
+        name: abNinjam-vst3-${{ matrix.os }}-${{ matrix.cmake }}
         path: /Users/runner/Library/Audio/Plug-ins/VST3
     - if: ${{ matrix.os == 'ubuntu-latest' }}
       name: upload-artifact-linux-lv2
       uses: actions/upload-artifact@v2
       with:
-        name: abNinjam-lv2-${{ matrix.os }}-static-${{ matrix.cmake }}
+        name: abNinjam-lv2-${{ matrix.os }}-${{ matrix.cmake }}
         path: ~/.lv2
     - if: ${{ matrix.os == 'macOS-latest' }}
       name: upload-artifact-mac-lv2
       uses: actions/upload-artifact@v2
       with:
-        name: abNinjam-lv2-${{ matrix.os }}-static-${{ matrix.cmake }}
+        name: abNinjam-lv2-${{ matrix.os }}-${{ matrix.cmake }}
         path: /Users/runner/Library/Audio/Plug-ins/lv2
 
