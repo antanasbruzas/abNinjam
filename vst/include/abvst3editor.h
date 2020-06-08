@@ -21,6 +21,7 @@ public:
                UTF8StringPtr templateName, UTF8StringPtr xmlFile);
   void valueChanged(CControl *pControl) override;
   void controlEndEdit(VSTGUI::CControl *pControl) override;
+  Steinberg::tresult PLUGIN_API canResize() override;
 
 private:
   static constexpr VSTGUI::CViewAttributeID kCViewUserIdAttrID = 'uidx';

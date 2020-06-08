@@ -35,8 +35,9 @@
 		<view back-color="~ TransparentCColor" background-offset="0, 0" class="CTextLabel" default-value="0.5" font="~ NormalFontVerySmall" font-antialias="true" font-color="#8f8c61" frame-color="~ TransparentCColor" frame-width="1" max-value="1" min-value="0" mouse-enabled="true" opacity="1" origin="206, 90" round-rect-radius="6" shadow-color="~ TransparentCColor" size="60, 20" style-3D-in="false" style-3D-out="false" style-no-draw="false" style-no-frame="false" style-no-text="false" style-round-rect="false" style-shadow-text="false" text-alignment="center" text-inset="0, 0" text-rotation="0" text-shadow-offset="1, 1" title="dB" transparent="false" value-precision="2" wants-focus="false" wheel-inc-value="0.1"/>
 		<view back-color="~ TransparentCColor" background-offset="0, 0" class="CTextLabel" default-value="0.5" font="~ NormalFontVerySmall" font-antialias="true" font-color="#8f8c61" frame-color="~ TransparentCColor" frame-width="1" max-value="1" min-value="0" mouse-enabled="true" opacity="1" origin="198, 84" round-rect-radius="6" shadow-color="~ TransparentCColor" size="30, 20" style-3D-in="false" style-3D-out="false" style-no-draw="false" style-no-frame="false" style-no-text="false" style-round-rect="false" style-shadow-text="false" text-alignment="center" text-inset="0, 0" text-rotation="0" text-shadow-offset="1, 1" title="-oo" transparent="false" value-precision="2" wants-focus="false" wheel-inc-value="0.1"/>
 		<view back-color="~ TransparentCColor" background-offset="0, 0" class="CTextLabel" default-value="0.5" font="~ NormalFontVerySmall" font-antialias="true" font-color="#8f8c61" frame-color="~ TransparentCColor" frame-width="1" max-value="1" min-value="0" mouse-enabled="true" opacity="1" origin="244, 84" round-rect-radius="6" shadow-color="~ TransparentCColor" size="30, 20" style-3D-in="false" style-3D-out="false" style-no-draw="false" style-no-frame="false" style-no-text="false" style-round-rect="false" style-shadow-text="false" text-alignment="center" text-inset="0, 0" text-rotation="0" text-shadow-offset="1, 1" title="0.0" transparent="false" value-precision="2" wants-focus="false" wheel-inc-value="0.1"/>
-		<view back-color="~ TransparentCColor" background-offset="0, 0" class="CTextLabel" custom-view-name="NotificationText" default-value="0.5" font="~ NormalFontSmall" font-antialias="true" font-color="~ BlackCColor" frame-color="~ TransparentCColor" frame-width="1" max-value="1" min-value="0" mouse-enabled="true" opacity="1" origin="60, 20" round-rect-radius="6" shadow-color="~ TransparentCColor" size="140, 20" style-3D-in="false" style-3D-out="false" style-no-draw="false" style-no-frame="false" style-no-text="false" style-round-rect="false" style-shadow-text="false" text-alignment="left" text-inset="0, 0" text-rotation="0" text-shadow-offset="1, 1" transparent="false" value-precision="2" wants-focus="false" wheel-inc-value="0.1"/>
+		<view back-color="~ TransparentCColor" background-offset="0, 0" class="CTextLabel" custom-view-name="NotificationText" default-value="0.5" font="~ NormalFontSmall" font-antialias="true" font-color="~ BlackCColor" frame-color="~ TransparentCColor" frame-width="1" max-value="1" min-value="0" mouse-enabled="true" opacity="1" origin="60, 20" round-rect-radius="6" shadow-color="~ TransparentCColor" size="110, 20" style-3D-in="false" style-3D-out="false" style-no-draw="false" style-no-frame="false" style-no-text="false" style-round-rect="false" style-shadow-text="false" text-alignment="left" text-inset="0, 0" text-rotation="0" text-shadow-offset="1, 1" transparent="false" value-precision="2" wants-focus="false" wheel-inc-value="0.1"/>
 		<view class="CSegmentButton" control-tag="TemplateSelect" custom-view-name="Menu" default-value="0" font="~ NormalFontSmall" frame-color="~ TransparentCColor" frame-width="1" gradient-highlighted="menu" icon-text-margin="0" max-value="1" min-value="0" mouse-enabled="true" opacity="1" origin="170, 14" round-radius="4" segment-names="Main,Mixer,Chat" selection-mode="Single" size="100, 16" style="horizontal" text-alignment="center" text-color="~ BlackCColor" text-color-highlighted="#d17711" transparent="false" wants-focus="true" wheel-inc-value="0.1"/>
+		<view back-color="~ TransparentCColor" background-offset="0, 0" bitmap="zoom" class="COptionMenu" default-value="0" font="~ NormalFontVerySmall" font-antialias="true" font-color="~ TransparentCColor" frame-color="~ TransparentCColor" frame-width="1" max-value="4" menu-check-style="false" menu-popup-style="false" min-value="0" mouse-enabled="true" opacity="1" origin="194, 32" round-rect-radius="6" shadow-color="~ TransparentCColor" size="10, 10" style-3D-in="false" style-3D-out="false" style-no-draw="false" style-no-frame="false" style-no-text="false" style-round-rect="false" style-shadow-text="false" sub-controller="EditorSizeController" text-alignment="center" text-inset="0, 0" text-rotation="0" text-shadow-offset="1, 1" tooltip="Zoom" transparent="false" value-precision="2" wants-focus="true" wheel-inc-value="0.1"/>
 	</template>
 	<custom>
 		<attributes name="FocusDrawing"/>
@@ -45,7 +46,7 @@
 		<attributes SelectedTemplate="chat" name="UITemplateController"/>
 		<attributes EditViewScale="2" EditorSize="0, 0, 1225, 1016" EncodeBitmaps="true" SplitViewSize_0_0="0.8696969696969697460886550288705620914698" SplitViewSize_0_1="0.1101010101010101022156462136081245262176" SplitViewSize_1_0="0.5111111111111110716365146799944341182709" SplitViewSize_1_1="0.4838383838383838453367502552282530814409" SplitViewSize_2_0="0.686530612244897975315893745573703199625" SplitViewSize_2_1="0.3093877551020408067650180328200804069638" TabSwitchValue="0" Version="1" name="UIEditController"/>
 		<attributes name="UIAttributesController"/>
-		<attributes SelectedRow="22" name="UIViewCreatorDataSource"/>
+		<attributes SelectedRow="14" name="UIViewCreatorDataSource"/>
 		<attributes SelectedRow="11" name="UIBitmapsDataSource"/>
 		<attributes SelectedRow="4" name="UITagsDataSource"/>
 		<attributes SelectedRow="-1" name="UIColorsDataSource"/>
@@ -40990,6 +40991,39 @@
 				VpjzYef+ExX+Py5dmWG9dGWG9dLNIti8IITQ68KCZyVs2jhyhCHSQc3gk9Y2IXmOjNjjbPJ8/jOrBR8fJj
 				/c/X4MKR0AwMGPQ2swG29y794+O+F2/8rPxruej054pHk9ItVu3sG588tW57NDMq10oxBfdrbbDzfeX8gO
 				oSUFYwzrrz4Nh9AUZRVtjvm/AZUhLfpOavd1AAAAAElFTkSuQmCC
+			</data>
+		</bitmap>
+		<bitmap name="zoom" path="zoom.png">
+			<data encoding="base64">
+				iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAiElEQVQYlY
+				3OsQnCABCF4U+xMTiA2BvL9Ia4QwZwNkcwTiAoIoi1hZXW9mJp4RlCCOhf3T3+4x0fMlQ4YYdSBxkuyGMf
+				Y4tlW6wa0pckjmv6mODQEp+4RVstvqKuTYprMyjjp6SRrbBpSgOsMcI56lIcMUOBfUebDMOYp7iH/JM5Hi
+				h6f8gL5G+9lhY0WuGJfQAAAABJRU5ErkJggg==
+			</data>
+		</bitmap>
+		<bitmap name="zoom_2x" path="zoom_2x.png" scale-factor="2">
+			<data encoding="base64">
+				iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABmJLR0QA/wD/AP+gvaeTAAABPUlEQVQ4ja
+				3TQSuEURTG8d+glCFRdoqyIgtTJN9DvoDYKVs+wGx8AytbFlhaUayUnQ0LsaSskKJhLO5Rb8y8c5Wnbrf3
+				Pc/933PvPafit2awhFkM4Ron2MVLC39bDWAPzRgNPBW+H7H4F9hlLNzHfCE2iBU8RHw1B/id2XqJZxQ3kX
+				mtDDZTyKyTpvCJozJTPYDzZaaCDsI/3CrYJb3mB84zgccxT7QDDuE1EwZvMfe0A15LrzyYCRyP+bmdYVm6
+				k5UMWBducV9m6peK9kEqjTJtxeYbnXZeDOONVBqtMtsMzzsmOwFJHdCQ6uwAa/GvLh3zu/2auMNYDrQmFW
+				3zx7iXjtmH7QJ0PAdKKto5LGD6R6yCnYDe6nzvWerGYUCvMPIf0F6pa5q4kF/HperDaUDPUP1vaE5zZKka
+				sP4vDNZQOaoQ1NQAAAAASUVORK5CYII=
+			</data>
+		</bitmap>
+		<bitmap name="zoom_3x" path="zoom_3x.png" scale-factor="3">
+			<data encoding="base64">
+				iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAABmJLR0QA/wD/AP+gvaeTAAACAElEQVRIib
+				3WMWgUQRTG8d8F5Dw9yxDbFLEJ2ARJExGLFIJwjSCI2KiFjY2CkMJCsLeJhQbsTWUjBBRECCQQLYJFmkuh
+				oKS6wrMQNWcxe8zckkt29/Q+WHiw881/3szbN1tzuKawiDnUUUMHm3iL7hH+0prFKvbRG/J0sYzJfwVdwq
+				8c5Dc+oX3AYjpojQp9loOtYEHY4r7quIy13AJuV4UuJZO0cbaAp4XvmWdfqIdSmhW3t43TJbzzwnn38AXN
+				MuBVcXuLZJrXTXG37hc1TYkFs1IB2td2NsduUcN1cbULI4DvJfPMHDV4QmgO8AfrI4DfJ/Hc0FEJuJ7FO8
+				Jqq2oniY8ssAnxG22MAIUTSVwbOioBd7J4Wsy+is4k8V4R8GYW11RoAIlS71YRQ1NsAGsVoQ18y+bYKGNc
+				Fj+FKg3/ceK/UcY4KZx1T+i98yW8aY//qEBh5dVKJugKbfAwNQxm2sMHnCwLJlxt6X27LXSkczgltNfzeC
+				SeaS/neWfw0yqsReGWGfbnkX+2cFUs0B7e4HgVeFO4ZXYPAW4IhdQ/0wv4kbx/hWPDAEUKYUbovc1s/J6Q
+				5dcDxl7EazHbl7gm3AP/XZfwU8z8hQqVXlVXhJ+KPvz5uMCE80+r/ek44bcMFuSTccLv5OAPxwm/m4NPjx
+				P+IIN+VrGtjqLpPvQvyP+sPj9MfPkAAAAASUVORK5CYII=
 			</data>
 		</bitmap>
 	</bitmaps>

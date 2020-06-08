@@ -8,6 +8,7 @@
 #undef strnicmp
 #endif
 #include "chatcontroller.h"
+#include "editorsizecontroller.h"
 #include "include/remoteuser.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
 #include "volumeparameter.h"
@@ -63,6 +64,10 @@ public:
   /** We want to receive status message. */
   tresult PLUGIN_API notify(Vst::IMessage *message) SMTG_OVERRIDE;
 
+  //------------------------------------------------------------------------
+  void editorAttached(EditorView *editor) SMTG_OVERRIDE;
+  void editorRemoved(EditorView *editor) SMTG_OVERRIDE;
+  void editorDestroyed(EditorView *editor) SMTG_OVERRIDE;
   //---from VST3EditorDelegate-----------
   IController *createSubController(UTF8StringPtr name,
                                    const IUIDescription *description,
@@ -103,10 +108,19 @@ private:
                                 int channelId);
   void createMixer(VST3Editor *editor);
   void cleanNotConnected(std::string notification);
+  void extractCurrentInfo(EditorView *editor);
   VST3Editor *vst3Editor;
   ChatController *chatController;
   VSTGUI::UTF8String chatHistory;
   VSTGUI::CRect lastChatTextHolderViewSize;
+  using EditorVector = std::vector<Steinberg::Vst::EditorView *>;
+  EditorVector editors;
+  using EditorMap =
+      std::map<Steinberg::Vst::EditorView *, EditorSizeController *>;
+  EditorMap editorsSubCtlerMap;
+  uint32 width = 0;
+  uint32 height = 0;
+  double sizeFactor = 0;
 };
 
 //------------------------------------------------------------------------

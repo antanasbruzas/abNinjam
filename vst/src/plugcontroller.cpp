@@ -46,10 +46,38 @@ tresult PLUGIN_API PlugController::initialize(FUnknown *context) {
 }
 
 //------------------------------------------------------------------------
+void PlugController::extractCurrentInfo(EditorView *editor) {
+  auto rect = editor->getRect();
+  height = rect.getHeight();
+  width = rect.getWidth();
+
+  auto *vst3editor = dynamic_cast<VST3Editor *>(editor);
+  if (vst3editor)
+    sizeFactor = vst3editor->getZoomFactor();
+}
+
+//------------------------------------------------------------------------
+void PlugController::editorRemoved(EditorView *editor) {
+  extractCurrentInfo(editor);
+  editors.erase(std::find(editors.begin(), editors.end(), editor));
+
+  editorsSubCtlerMap.erase(editor);
+}
+
+//------------------------------------------------------------------------
+void PlugController::editorDestroyed(EditorView * /*editor*/) {}
+
+//------------------------------------------------------------------------
+void PlugController::editorAttached(EditorView *editor) {
+  editors.push_back(editor);
+  extractCurrentInfo(editor);
+}
+
+//------------------------------------------------------------------------
 IController *
 PlugController::createSubController(UTF8StringPtr name,
                                     const IUIDescription * /*description*/,
-                                    VST3Editor * /*editor*/) {
+                                    VST3Editor *editor) {
   L_(ltrace) << "[PlugController] Entering PlugController::createSubController";
   if (UTF8StringView(name) == "MessageController") {
     L_(ltrace) << "[PlugController] Found MessageController";
@@ -65,6 +93,21 @@ PlugController::createSubController(UTF8StringPtr name,
     return controller;
   }
 
+  if (UTF8StringView(name) == "EditorSizeController") {
+    auto sizeFunc = [&](float _sizeFactor) {
+      sizeFactor = _sizeFactor;
+      L_(ltrace) << "[PlugController] sizeFactor: " << sizeFactor;
+      for (auto &editor : editors) {
+        auto *vst3editor = dynamic_cast<VST3Editor *>(editor);
+        if (vst3editor)
+          vst3editor->setZoomFactor(sizeFactor);
+      }
+    };
+    auto subController = new EditorSizeController(this, sizeFunc, sizeFactor);
+    editorsSubCtlerMap.insert({editor, subController});
+    return subController;
+  }
+
   return nullptr;
 }
 
@@ -75,6 +118,11 @@ IPlugView *PLUGIN_API PlugController::createView(const char *name) {
 #ifndef WITHOUT_GUI
   if (name && strcmp(name, "editor") == 0) {
     auto *view = new AbVST3Editor(this, "view", "plug.uidesc");
+    if (sizeFactor != 0) {
+      ViewRect rect(0, 0, width, height);
+      view->setRect(rect);
+      view->setZoomFactor(sizeFactor);
+    }
     vst3Editor = view;
     return view;
   }

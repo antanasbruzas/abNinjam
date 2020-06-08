@@ -22,13 +22,15 @@ add_library(${VSTPLUGIN_PRJ_NAME} MODULE
     include/hostcontroller.h
     include/chatcontroller.h
     include/messagetypes.h
+    include/editorsizecontroller.h
     src/plugfactory.cpp
     src/plugcontroller.cpp
     src/plugprocessor.cpp
     src/abvst3editor.cpp
     src/volumeparameter.cpp
     src/hostcontroller.cpp
-    src/chatcontroller.cpp)
+    src/chatcontroller.cpp
+    src/editorsizecontroller.cpp)
 
 if(WIN32)
     target_sources(${VSTPLUGIN_PRJ_NAME} PRIVATE vst3.def)
@@ -86,6 +88,12 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
     file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/onoff_button_3x.png"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
     file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/slider_handle_2x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/zoom.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/zoom_2x.png"
+        DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/zoom_3x.png"
         DESTINATION "${PROJECT_BINARY_DIR}/${VSTPLUGIN_BUNDLE_NAME}/Contents/Resources")
 else()
     file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/resource/plug-base64.uidesc"

@@ -78,3 +78,6 @@ void AbVST3Editor::sendMixingTouched() {
     controller->sendMessage(message);
   }
 }
+
+//-----------------------------------------------------------------------------
+Steinberg::tresult PLUGIN_API AbVST3Editor::canResize() { return kResultFalse; }
