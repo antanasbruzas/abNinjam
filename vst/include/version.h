@@ -8,18 +8,18 @@
 #define SUB_VERSION_STR "0"
 #define SUB_VERSION_INT 0
 
-#define RELEASE_NUMBER_STR "6"
-#define RELEASE_NUMBER_INT 6
+#define RELEASE_NUMBER_STR "9"
+#define RELEASE_NUMBER_INT 9
 
 #define BUILD_NUMBER_STR "1"
 #define BUILD_NUMBER_INT 1
 
-// Version with build number (example "0.0.6.1")
+// Version with build number (example "0.0.9.1")
 #define FULL_VERSION_STR                                                       \
   MAJOR_VERSION_STR "." SUB_VERSION_STR "." RELEASE_NUMBER_STR                 \
                     "." BUILD_NUMBER_STR
 
-// Version without build number (example "0.0.6")
+// Version without build number (example "0.0.9")
 #define VERSION_STR MAJOR_VERSION_STR "." SUB_VERSION_STR "." RELEASE_NUMBER_STR
 
 // HERE you have to define your plug-in, company name, email and web

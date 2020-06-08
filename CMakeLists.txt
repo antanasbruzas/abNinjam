@@ -3,7 +3,7 @@ if (WIN32)
 else()
     cmake_minimum_required(VERSION 3.10.2)
 endif()
-project (abNinjam VERSION 0.0.6)
+project (abNinjam VERSION 0.0.9)
 set (PROJECT_DESCRIPTION "NINJAM client")
 
 # External configuration CMake scripts
