@@ -81,29 +81,54 @@ find_library (Vorbis_File_LIBRARY
         )
 
 include (FindPackageHandleStandardArgs)
-find_package_handle_standard_args (Vorbis_Vorbis
-        REQUIRED_VARS
-                Vorbis_Vorbis_LIBRARY
-                Vorbis_Vorbis_INCLUDE_DIR
-                Ogg_FOUND
-        NAME_MISMATCHED
-        )
 
-find_package_handle_standard_args (Vorbis_Enc
-        REQUIRED_VARS
-                Vorbis_Enc_LIBRARY
-                Vorbis_Enc_INCLUDE_DIR
-                Vorbis_Vorbis_FOUND
-        NAME_MISMATCHED
-        )
+if(${CMAKE_VERSION} VERSION_LESS "3.17")
+    message("Please consider to switch to CMake 3.17 or newer version")
+    find_package_handle_standard_args (Vorbis_Vorbis
+            REQUIRED_VARS
+                    Vorbis_Vorbis_LIBRARY
+                    Vorbis_Vorbis_INCLUDE_DIR
+                    Ogg_FOUND
+            )
 
-find_package_handle_standard_args (Vorbis_File
-        REQUIRED_VARS
-                Vorbis_File_LIBRARY
-                Vorbis_File_INCLUDE_DIR
-                Vorbis_Vorbis_FOUND
-        NAME_MISMATCHED
-        )
+    find_package_handle_standard_args (Vorbis_Enc
+            REQUIRED_VARS
+                    Vorbis_Enc_LIBRARY
+                    Vorbis_Enc_INCLUDE_DIR
+                    Vorbis_Vorbis_FOUND
+            )
+
+    find_package_handle_standard_args (Vorbis_File
+            REQUIRED_VARS
+                    Vorbis_File_LIBRARY
+                    Vorbis_File_INCLUDE_DIR
+                    Vorbis_Vorbis_FOUND
+            )
+else()
+    find_package_handle_standard_args (Vorbis_Vorbis
+            REQUIRED_VARS
+                    Vorbis_Vorbis_LIBRARY
+                    Vorbis_Vorbis_INCLUDE_DIR
+                    Ogg_FOUND
+            NAME_MISMATCHED
+            )
+
+    find_package_handle_standard_args (Vorbis_Enc
+            REQUIRED_VARS
+                    Vorbis_Enc_LIBRARY
+                    Vorbis_Enc_INCLUDE_DIR
+                    Vorbis_Vorbis_FOUND
+            NAME_MISMATCHED
+            )
+
+    find_package_handle_standard_args (Vorbis_File
+            REQUIRED_VARS
+                    Vorbis_File_LIBRARY
+                    Vorbis_File_INCLUDE_DIR
+                    Vorbis_Vorbis_FOUND
+            NAME_MISMATCHED
+            )
+endif()
 
 if (Vorbis_Vorbis_FOUND)
         set (Vorbis_Vorbis_INCLUDE_DIRS ${Vorbis_Vorbis_INCLUDE_DIR})
