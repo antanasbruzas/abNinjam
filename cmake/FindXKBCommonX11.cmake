@@ -1,0 +1,40 @@
+# - Try to find xkbcommon-x11
+# Once done, this will define
+#
+#   XKBCOMMONX11_FOUND - System has xkbcommon-x11
+#   XKBCOMMONX11_INCLUDE_DIRS - The xkbcommon-x11 include directories
+#   XKBCOMMONX11_LIBRARIES - The libraries needed to use xkbcommon-x11
+#   XKBCOMMONX11_DEFINITIONS - Compiler switches required for using xkbcommon-x11
+#   XKBCOMMONX11_VERSION - xkbcommon-x11 version
+
+find_package(PkgConfig)
+pkg_check_modules(PC_XKBCOMMONX11 QUIET xkbcommon-x11)
+set(XKBCOMMONX11_DEFINITIONS ${PC_XKBCOMMONX11_CFLAGS_OTHER})
+
+set (XKBCOMMONX11_VERSION ${PC_XKBCOMMONX11_VERSION})
+
+find_path(XKBCOMMONX11_INCLUDE_DIR
+    NAMES xkbcommon/xkbcommon-x11.h
+    HINTS ${PC_XKBCOMMONX11_INCLUDE_DIR} ${PC_XKBCOMMONX11_INCLUDE_DIRS}
+)
+
+find_library(XKBCOMMONX11_LIBRARY
+    NAMES xkbcommon-x11
+    HINTS ${PC_XKBCOMMONX11_LIBRARY} ${PC_XKBCOMMONX11_LIBRARY_DIRS}
+)
+
+set(XKBCOMMONX11_LIBRARIES ${XKBCOMMONX11_LIBRARY})
+set(XKBCOMMONX11_LIBRARY_DIRS ${XKBCOMMONX11_LIBRARY_DIRS})
+set(XKBCOMMONX11_INCLUDE_DIRS ${XKBCOMMONX11_INCLUDE_DIR})
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(XKBCommonX11
+	REQUIRED_VARS
+		XKBCOMMONX11_LIBRARY
+		XKBCOMMONX11_INCLUDE_DIR
+	VERSION_VAR
+		XKBCOMMONX11_VERSION
+)
+
+mark_as_advanced(XKBCOMMONX11_LIBRARY XKBCOMMONX11_INCLUDE_DIR)
+

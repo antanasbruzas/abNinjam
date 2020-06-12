@@ -231,39 +231,27 @@ function(plugin_add_vstgui NAME)
             endif()
         endif()
         find_package(PkgConfig REQUIRED)
-        pkg_check_modules(LIBXCB REQUIRED xcb)
-        pkg_check_modules(LIBXCB_UTIL REQUIRED xcb-util)
-        pkg_check_modules(LIBXCB_CURSOR REQUIRED xcb-cursor)
-        pkg_check_modules(LIBXCB_KEYSYMS REQUIRED xcb-keysyms)
-        pkg_check_modules(LIBXCB_XKB REQUIRED xcb-xkb)
-        pkg_check_modules(LIBXKB_COMMON REQUIRED xkbcommon)
-        pkg_check_modules(LIBXKB_COMMON_X11 REQUIRED xkbcommon-x11)
-        pkg_check_modules(CAIRO REQUIRED cairo)
-        pkg_check_modules(FONTCONFIG REQUIRED fontconfig)
+        find_package(XCB COMPONENTS UTIL CURSOR KEYSYMS XKB REQUIRED)
+        find_package(XKBCommon REQUIRED)
+        find_package(XKBCommonX11 REQUIRED)
+        find_package(Cairo REQUIRED)
+        find_package(Fontconfig REQUIRED)
         target_include_directories("${NAME}" PRIVATE
             ${X11_INCLUDE_DIRS}
             ${FREETYPE_INCLUDE_DIRS}
-            ${LIBXCB_INCLUDE_DIRS}
-            ${LIBXCB_UTIL_INCLUDE_DIRS}
-            ${LIBXCB_CURSOR_INCLUDE_DIRS}
-            ${LIBXCB_KEYSYMS_INCLUDE_DIRS}
-            ${LIBXCB_XKB_INCLUDE_DIRS}
-            ${LIBXKB_COMMON_INCLUDE_DIRS}
-            ${LIBXKB_COMMON_X11_INCLUDE_DIRS}
+            ${XCB_INCLUDE_DIRS}
+            ${XKBCOMMON_INCLUDE_DIRS}
+            ${XKBCOMMONX11_INCLUDE_DIRS}
             ${CAIRO_INCLUDE_DIRS}
-            ${FONTCONFIG_INCLUDE_DIRS})
+            ${Fontconfig_INCLUDE_DIRS})
         target_link_libraries("${NAME}"  PRIVATE
             ${X11_LIBRARIES}
             ${FREETYPE_LIBRARIES}
-            ${LIBXCB_LIBRARIES}
-            ${LIBXCB_UTIL_LIBRARIES}
-            ${LIBXCB_CURSOR_LIBRARIES}
-            ${LIBXCB_KEYSYMS_LIBRARIES}
-            ${LIBXCB_XKB_LIBRARIES}
-            ${LIBXKB_COMMON_LIBRARIES}
-            ${LIBXKB_COMMON_X11_LIBRARIES}
+            ${XCB_LIBRARIES}
+            ${XKBCOMMON_LIBRARIES}
+            ${XKBCOMMONX11_LIBRARIES}
             ${CAIRO_LIBRARIES}
-            ${FONTCONFIG_LIBRARIES})
+            ${Fontconfig_LIBRARIES})
 #        find_library(DL_LIBRARY "dl")
 #        if(DL_LIBRARY)
 #            target_link_libraries("${NAME}" PRIVATE "${DL_LIBRARY}")
