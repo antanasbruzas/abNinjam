@@ -86,6 +86,7 @@ find_package_handle_standard_args (Vorbis_Vorbis
                 Vorbis_Vorbis_LIBRARY
                 Vorbis_Vorbis_INCLUDE_DIR
                 Ogg_FOUND
+        NAME_MISMATCHED
         )
 
 find_package_handle_standard_args (Vorbis_Enc
@@ -93,6 +94,7 @@ find_package_handle_standard_args (Vorbis_Enc
                 Vorbis_Enc_LIBRARY
                 Vorbis_Enc_INCLUDE_DIR
                 Vorbis_Vorbis_FOUND
+        NAME_MISMATCHED
         )
 
 find_package_handle_standard_args (Vorbis_File
@@ -100,6 +102,7 @@ find_package_handle_standard_args (Vorbis_File
                 Vorbis_File_LIBRARY
                 Vorbis_File_INCLUDE_DIR
                 Vorbis_Vorbis_FOUND
+        NAME_MISMATCHED
         )
 
 if (Vorbis_Vorbis_FOUND)
