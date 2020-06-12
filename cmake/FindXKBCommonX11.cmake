@@ -7,7 +7,12 @@
 #   XKBCOMMONX11_DEFINITIONS - Compiler switches required for using xkbcommon-x11
 #   XKBCOMMONX11_VERSION - xkbcommon-x11 version
 
-find_package(PkgConfig)
+if (XKBCOMMONX11_INCLUDE_DIR)
+	# Already in cache, be silent
+	set(XKBCOMMONX11_FIND_QUIETLY TRUE)
+endif ()
+
+find_package(PkgConfig QUIET)
 pkg_check_modules(PC_XKBCOMMONX11 QUIET xkbcommon-x11)
 set(XKBCOMMONX11_DEFINITIONS ${PC_XKBCOMMONX11_CFLAGS_OTHER})
 

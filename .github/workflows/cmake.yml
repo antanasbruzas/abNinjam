@@ -33,7 +33,12 @@ jobs:
     - name: dependencies
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev zenity lv2-dev
+              sudo apt-get install libxcb-util-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-xkb-dev zenity lv2-dev meson bison doxygen
+              cd ~
+              git clone https://github.com/xkbcommon/libxkbcommon.git
+              cd libxkbcommon
+              meson setup build -Ddefault_library=static
+              ninja -C build
               cd ~
               git clone https://github.com/radarsat1/liblo.git
               cd liblo/cmake
@@ -93,7 +98,7 @@ jobs:
       run: |
         cmake --version
         if [ "$RUNNER_OS" == "Linux" ]; then
-              cmake -DUSE_STATIC_DEPENDENCIES=ON -DCMAKE_BUILD_TYPE=Release .
+              cmake -DUSE_STATIC_DEPENDENCIES=ON -DCMAKE_BUILD_TYPE=Release -DXKBCOMMON_INCLUDE_DIR=~/libxkbcommon/xkbcommon/ -DXKBCOMMON_LIBRARY=~/libxkbcommon/build/libxkbcommon.a -DXKBCOMMONX11_INCLUDE_DIR=~/libxkbcommon/xkbcommon/ -DXKBCOMMONX11_LIBRARY=~/libxkbcommon/build/libxkbcommon-x11.a .
         elif [ "$RUNNER_OS" == "Windows" ]; then
               cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DLIBLO_INCLUDE_DIR=/C/Program\ Files\ \(x86\)/liblo/include/ -DLIBLO_LIBRARY=/C/Program\ Files\ \(x86\)/liblo/lib/liblo_static.lib .
         elif [ "$RUNNER_OS" == "macOS" ]; then

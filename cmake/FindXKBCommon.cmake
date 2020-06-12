@@ -7,7 +7,12 @@
 #   XKBCOMMON_DEFINITIONS - Compiler switches required for using XKBCommon
 #   XKBCOMMON_VERSION - XKBCommon version
 
-find_package(PkgConfig)
+if (XKBCOMMON_INCLUDE_DIR)
+	# Already in cache, be silent
+	set(XKBCOMMON_FIND_QUIETLY TRUE)
+endif ()
+
+find_package(PkgConfig QUIET)
 pkg_check_modules(PC_XKBCOMMON QUIET xkbcommon)
 set(XKBCOMMON_DEFINITIONS ${PC_XKBCOMMON_CFLAGS_OTHER})
 
