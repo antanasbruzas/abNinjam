@@ -60,6 +60,12 @@ jobs:
               make
               sudo make install
               cd ~
+              git clone --recursive https://gitlab.freedesktop.org/xorg/lib/libxcb-image.git
+              cd libxcb-image
+              CFLAGS='-g -O2 -fPIC' ./autogen.sh
+              make
+              sudo make install
+              cd ~
               git clone --recursive https://gitlab.freedesktop.org/xorg/lib/libxcb-cursor.git
               cd libxcb-cursor
               CFLAGS='-g -O2 -fPIC' ./autogen.sh
@@ -68,12 +74,6 @@ jobs:
               cd ~
               git clone --recursive https://gitlab.freedesktop.org/xorg/lib/libxcb-keysyms.git
               cd libxcb-keysyms
-              CFLAGS='-g -O2 -fPIC' ./autogen.sh
-              make
-              sudo make install
-              cd ~
-              git clone --recursive https://gitlab.freedesktop.org/xorg/lib/libxcb-image.git
-              cd libxcb-image
               CFLAGS='-g -O2 -fPIC' ./autogen.sh
               make
               sudo make install
