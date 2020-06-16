@@ -33,7 +33,8 @@ jobs:
     - name: dependencies
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get install zenity lv2-dev meson bison doxygen wayland-protocols gperf libxml2-utils xutils-dev
+              sudo apt-get install zenity lv2-dev meson bison doxygen wayland-protocols gperf libxml2-utils xutils-dev dh-autoreconf
+              export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
               cd ~
               git clone https://gitlab.freedesktop.org/xorg/proto/xcbproto.git
               cd xcbproto
@@ -41,7 +42,6 @@ jobs:
               make
               sudo make install
               cd ~
-              export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
               git clone https://gitlab.freedesktop.org/xorg/lib/libxcb.git
               cd libxcb
               CFLAGS='-g -O2 -fPIC' ./autogen.sh
@@ -50,6 +50,12 @@ jobs:
               cd ~
               git clone --recursive https://gitlab.freedesktop.org/xorg/lib/libxcb-util.git
               cd libxcb-util
+              CFLAGS='-g -O2 -fPIC' ./autogen.sh
+              make
+              sudo make install
+              cd ~
+              git clone --recursive https://gitlab.freedesktop.org/xorg/lib/libxcb-render-util.git
+              cd libxcb-render-util
               CFLAGS='-g -O2 -fPIC' ./autogen.sh
               make
               sudo make install
@@ -68,12 +74,6 @@ jobs:
               cd ~
               git clone --recursive https://gitlab.freedesktop.org/xorg/lib/libxcb-image.git
               cd libxcb-image
-              CFLAGS='-g -O2 -fPIC' ./autogen.sh
-              make
-              sudo make install
-              cd ~
-              git clone --recursive https://gitlab.freedesktop.org/xorg/lib/libxcb-render-util.git
-              cd libxcb-render-util
               CFLAGS='-g -O2 -fPIC' ./autogen.sh
               make
               sudo make install
