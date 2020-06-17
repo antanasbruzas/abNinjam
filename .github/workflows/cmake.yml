@@ -33,7 +33,7 @@ jobs:
     - name: dependencies
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get install zenity lv2-dev meson bison doxygen libwayland-client0 wayland-protocols gperf libxml2-utils xutils-dev dh-autoreconf
+              sudo apt-get install zenity lv2-dev meson bison doxygen wayland-protocols libwayland-dev gperf libxml2-utils xutils-dev dh-autoreconf
               export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
               cd ~
               git clone https://gitlab.freedesktop.org/xorg/proto/xcbproto.git
