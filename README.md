@@ -76,6 +76,7 @@ Plugin can be used with GUI or specifying parameters in `~/abNinjam/connection.p
 - `autoRemoteVolume=true`
 - `autoSyncBpm=true`
 
+Leaving `pass` empty will connect anonymously (if the server permits) and `user` is used as the nickname.
 autoLicenseAgree property is used to automatically agree to the license provided by the server (for example if you use your own server and know the license) (default: false).  
 autoRemoteVolume is set for adjusting remote channel volume by distributing it and protecting from clipping (default: true).  
 autoSyncBpm enables sending OSC message `/tempo/raw {int}` to host to change it's BPM if BPM is changed on Ninjam server. As well as sending /bpm command or voting command to change BPM for Ninjam server if BPM is changed on host. (default: true)
