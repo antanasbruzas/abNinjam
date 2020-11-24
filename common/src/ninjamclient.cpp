@@ -132,6 +132,12 @@ NinjamClient::connect(ConnectionProperties *connectionProperties) {
 
   if (isEmpty(connectionProperties->gsUsername())) {
     connectionProperties->gsUsername() = strdup("anonymous");
+  } else {
+    if (isEmpty(connectionProperties->gsPassword())) {
+      string anonUser = string("anonymous:");
+      anonUser.append(connectionProperties->gsUsername());
+      connectionProperties->gsUsername() = strdup(anonUser.c_str());
+    }
   }
 
   agree = 1;
