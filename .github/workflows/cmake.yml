@@ -82,7 +82,9 @@ jobs:
               cd libxkbcommon
               meson setup build -Ddefault_library=static
               ninja -C build
+              ls -la
               cd build
+              ls -la
               meson install
               cd ~
               git clone https://github.com/radarsat1/liblo.git
