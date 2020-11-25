@@ -80,13 +80,12 @@ jobs:
               cd ~
               git clone --depth 1 --branch xkbcommon-0.10.0 https://github.com/xkbcommon/libxkbcommon.git
               cd libxkbcommon
-              meson setup build -Ddefault_library=static
+              meson setup build -Ddefault_library=static -Dbuildtype=release
               ninja -C build
-              pwd
               cd build
-              pwd
+              meson configure -Ddefault_library=static -Dbuildtype=release
               meson configure
-              meson install
+              ninja install
               cd ~
               git clone https://github.com/radarsat1/liblo.git
               cd liblo/cmake
