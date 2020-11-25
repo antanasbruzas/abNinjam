@@ -78,7 +78,7 @@ jobs:
               make
               sudo make install
               cd ~
-              git clone https://github.com/xkbcommon/libxkbcommon.git
+              git clone --depth 1 --branch xkbcommon-0.10.0 https://github.com/xkbcommon/libxkbcommon.git
               cd libxkbcommon
               meson setup build -Ddefault_library=static
               ninja -C build
