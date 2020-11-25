@@ -83,7 +83,6 @@ jobs:
               meson setup build -Ddefault_library=static
               ninja -C build
               pwd
-              meson configure
               cd build
               pwd
               meson configure
