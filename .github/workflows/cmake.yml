@@ -85,7 +85,7 @@ jobs:
               cd build
               meson configure -Ddefault_library=static -Dbuildtype=release
               meson configure
-              ninja install
+              sudo ninja install
               cd ~
               git clone https://github.com/radarsat1/liblo.git
               cd liblo/cmake
