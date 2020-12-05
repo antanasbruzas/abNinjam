@@ -132,10 +132,58 @@ tresult PLUGIN_API PlugProcessor::setBusArrangements(
     Vst::SpeakerArrangement *inputs, int32 numIns,
     Vst::SpeakerArrangement *outputs, int32 numOuts) {
   L_(ltrace) << "[PlugProcessor] Entering PlugProcessor::setBusArrangements";
-  // we only support one in and output bus and these buses must have the same
-  // number of channels
-  if (numIns == 1 && numOuts == 1 && inputs[0] == outputs[0]) {
-    return AudioEffect::setBusArrangements(inputs, numIns, outputs, numOuts);
+  if (numIns == 1 && numOuts == 1)
+  {
+      // the host wants Mono => Mono (or 1 channel -> 1 channel)
+      if (SpeakerArr::getChannelCount (inputs[0]) == 1 &&
+          SpeakerArr::getChannelCount (outputs[0]) == 1)
+      {
+          auto* bus = FCast<AudioBus> (audioInputs.at (0));
+          if (bus)
+          {
+              // check if we are Mono => Mono, if not we need to recreate the busses
+              if (bus->getArrangement () != inputs[0])
+              {
+                  getAudioInput (0)->setArrangement (inputs[0]);
+                  getAudioInput (0)->setName (STR16 ("Mono In"));
+                  getAudioOutput (0)->setArrangement (inputs[0]);
+                  getAudioOutput (0)->setName (STR16 ("Mono Out"));
+              }
+              return kResultOk;
+          }
+      }
+      // the host wants something else than Mono => Mono,
+      // in this case we are always Stereo => Stereo
+      else
+      {
+          auto* bus = FCast<AudioBus> (audioInputs.at (0));
+          if (bus)
+          {
+              tresult result = kResultFalse;
+
+              // the host wants 2->2 (could be LsRs -> LsRs)
+              if (SpeakerArr::getChannelCount (inputs[0]) == 2 &&
+                  SpeakerArr::getChannelCount (outputs[0]) == 2)
+              {
+                  getAudioInput (0)->setArrangement (inputs[0]);
+                  getAudioInput (0)->setName (STR16 ("Stereo In"));
+                  getAudioOutput (0)->setArrangement (outputs[0]);
+                  getAudioOutput (0)->setName (STR16 ("Stereo Out"));
+                  result = kResultTrue;
+              }
+              // the host want something different than 1->1 or 2->2 : in this case we want stereo
+              else if (bus->getArrangement () != SpeakerArr::kStereo)
+              {
+                  getAudioInput (0)->setArrangement (SpeakerArr::kStereo);
+                  getAudioInput (0)->setName (STR16 ("Stereo In"));
+                  getAudioOutput (0)->setArrangement (SpeakerArr::kStereo);
+                  getAudioOutput (0)->setName (STR16 ("Stereo Out"));
+                  result = kResultFalse;
+              }
+
+              return result;
+          }
+      }
   }
   return kResultFalse;
 }
