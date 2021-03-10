@@ -54,6 +54,9 @@ endif()
 
 if (UNIX AND NOT APPLE)
     target_link_libraries(${LV2PLUGIN_PRJ_NAME} PRIVATE stdc++fs)
+
+    find_package(Threads REQUIRED)
+    target_link_libraries(${LV2PLUGIN_PRJ_NAME} PRIVATE Threads::Threads)
 endif()
 
 # Installation
